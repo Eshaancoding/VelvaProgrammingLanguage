@@ -598,25 +598,26 @@ static void MainLoop() {
 //===----------------------------------------------------------------------===//
 
 int main() {
-  // Install standard binary operators.
-  // 1 is lowest precedence.
-  BinopPrecedence['<'] = 10;
-  BinopPrecedence['+'] = 20;
-  BinopPrecedence['-'] = 20;
-  BinopPrecedence['*'] = 40; // highest.
+  // // Install standard binary operators.
+  // // 1 is lowest precedence.
+  // BinopPrecedence['<'] = 10;
+  // BinopPrecedence['+'] = 20;
+  // BinopPrecedence['-'] = 20;
+  // BinopPrecedence['*'] = 40; // highest.
 
-  // Prime the first token.
-  fprintf(stderr, "ready> ");
-  getNextToken();
+  // // Prime the first token.
+  // fprintf(stderr, "ready> ");
+  // getNextToken();
 
-  // Make the module, which holds all the code.
-  InitializeModule();
+  // // Make the module, which holds all the code.
+  // InitializeModule();
 
-  // Run the main "interpreter loop" now.
-  MainLoop();
+  // // Run the main "interpreter loop" now.
+  // MainLoop();
 
-  // Print out all of the generated code.
-  TheModule->print(errs(), nullptr);
+  // // Print out all of the generated code.
+  // TheModule->print(errs(), nullptr);
 
-  return 0;
+  // return 0;
+  printf("Hello World!\n");
 }

@@ -21,6 +21,7 @@
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
+using namespace llvm;
 
 // Base Class
 class ExprAST {
