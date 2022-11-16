@@ -1,6 +1,10 @@
 #include "AST.cpp"
 #include "Lexer.cpp"
 
+
+// damn error still persists.
+// Let me check if it still doesn't work 
+
 // Just to track the tokens
 static int CurTok;
 static void printCurToken() {
