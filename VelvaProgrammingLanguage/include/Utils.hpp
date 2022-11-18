@@ -55,13 +55,11 @@ bool Result<T,E>::visit(function<void(T)> success, function<void(E)> err)  {
 
 template<class T, class E>
 string Result<T,E>::to_string() {
-    static_assert(!is_pointer<E>());
     return get<E>(value).to_string();
 }
 
 template<class T, class E>
 string Result<T,E>::to_string() {
-    static_assert(is_pointer<E>());
     return get<E>(value)->to_string();
 }
 
