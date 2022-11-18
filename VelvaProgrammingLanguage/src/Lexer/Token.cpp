@@ -27,10 +27,7 @@ std::string CharacterToken::to_str() {return std::string("Character toekn with c
 
 // Constructors
 EOFToken::EOFToken () { token_id = -1; }
-ERRToken::ERRToken (std::string error_msg) { 
-    token_id = -2; 
-    this->error_msg = error_msg;
-}
+ERRToken::ERRToken () { token_id = -2; }
 IntegerToken::IntegerToken (int value) { 
     token_id = -3; 
     this->value = value;    

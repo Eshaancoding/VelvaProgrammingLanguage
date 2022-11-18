@@ -65,7 +65,8 @@ Token *Lexer::getToken() {
             if (LastChar != EOF)
                 return getToken();
         } else {
-            return err("Expected //, not /");
+            log_err("Expected //, not /");
+            return new ERRToken();
         }
     }
 
@@ -80,7 +81,7 @@ Token *Lexer::getToken() {
     return new CharacterToken(ThisChar);
 }
 
-ERRToken *Lexer::err (std::string error_msg) {
+void Lexer::log_err (std::string error_msg) {
     // would display:
     /*
     In file main.vtk, line 14:                   (colored white)
@@ -99,6 +100,4 @@ ERRToken *Lexer::err (std::string error_msg) {
     }
 
     printf("\033[31;1;4m\nError: %s\n\n\033[0m", error_msg.c_str());   
-
-    return new ERRToken(error_msg);
 }

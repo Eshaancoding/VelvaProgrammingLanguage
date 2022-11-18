@@ -39,7 +39,7 @@ public:
     {};
 
     Token *getToken ();
-    ERRToken *err (std::string error_msg); // prints error based upon the character position
+    void log_err (std::string error_msg); // prints error based upon the character position
  
     // return private vars
     int get_integer ();
