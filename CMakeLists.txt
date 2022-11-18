@@ -6,7 +6,7 @@ find_package(LLVM REQUIRED CONFIG) #Make sure that LLVM is in your CMAKE_MODULES
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
-add_executable(vilvatakic TutorialCode.cpp)
+add_executable(vilvatakic main.cpp)
 set_property(TARGET vilvatakic PROPERTY CXX_STANDARD 17) #We can set this to 20 in the future
 
 include_directories(${LLVM_INCLUDE_DIRS})
