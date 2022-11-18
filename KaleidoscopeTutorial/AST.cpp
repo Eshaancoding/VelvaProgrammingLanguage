@@ -65,7 +65,7 @@ public:
   }
 };
 
-//************************ FUNCTIONS ***********************//
+//************************ FUNCTIONS ***********************
 
 /// CallExprAST - Expression class for function calls. ex: plus(1,2), whe
 class CallExprAST : public ExprAST {
