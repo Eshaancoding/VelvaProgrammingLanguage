@@ -1,4 +1,6 @@
 #include "Parser.cpp"
+#include "AST.hpp"
+#include "AST.cpp"
 
 int main() {
   // 1 is lowest precedence.
@@ -11,6 +13,9 @@ int main() {
   // Prime the first token.
   fprintf(stderr, "ready> ");
   getNextToken();
+
+  // make the IR generation context with context builder and module
+  InitializeModule();
 
   // Run the main "interpreter loop" now.
   MainLoop();

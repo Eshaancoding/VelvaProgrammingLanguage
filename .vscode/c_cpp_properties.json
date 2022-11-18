@@ -7,7 +7,8 @@
                 "/usr/include/llvm-17",
                 "/usr/include/llvm-c-17",
                 "/opt/homebrew/Cellar/llvm/15.0.5/include",
-                "${workspaceFolder}/VelvaProgrammingLang/include/"
+                "${workspaceFolder}/VelvaProgrammingLang/include/",
+                "/usr/include/llvm-10"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
