@@ -4,15 +4,16 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/usr/include/llvm-14",
-                "/usr/include/llvm-c-14",
+                "/usr/include/llvm-17",
+                "/usr/include/llvm-c-17",
+                "/opt/homebrew/Cellar/llvm/15.0.5/include",
                 "${workspaceFolder}/VelvaProgrammingLang/include/"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c17",
-            "cppStandard": "c++14",
-            "intelliSenseMode": "linux-clang-x64"
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macOS-clang-arm64"
         }
     ],
     "version": 4

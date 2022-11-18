@@ -3,6 +3,8 @@ project(Velva)
 
 find_package(LLVM REQUIRED CONFIG) #Make sure that LLVM is in your CMAKE_MODULES_PATH
 
+# GIVE ME EDIT ACCESS FOR TERMINAL no problem :)
+# it should be done
 set(COMPILER_NAME "veld")
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")

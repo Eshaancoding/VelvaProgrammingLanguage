@@ -32,9 +32,8 @@ public:
 };
 
 class ERRToken : public Token {
-    std::string error_msg;
 public: 
-    ERRToken(std::string error_msg); 
+    ERRToken(); 
     bool isErr () override;
     std::string to_str () override; 
 };
