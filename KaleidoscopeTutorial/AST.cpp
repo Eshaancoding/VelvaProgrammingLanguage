@@ -1,114 +1,107 @@
-#ifndef AST
-#define AST 
-#include <cctype>
-#include <cstdio>
-#include <cstdlib>
-#include <map>
-#include <memory>
-#include <string>
-#include <utility>
-#include <vector>
-#include "Lexer.cpp"
-#include "llvm-c/Core.h"
-#include "llvm/ADT/APFloat.h"
-#include "llvm/ADT/STLExtras.h"
-#include "llvm/IR/BasicBlock.h"
-#include "llvm/IR/Constants.h" 
-#include "llvm/IR/DerivedTypes.h"
-#include "llvm/IR/Function.h"
-#include "llvm/IR/IRBuilder.h"
-#include "llvm/IR/LLVMContext.h"
-#include "llvm/IR/Module.h"
-#include "llvm/IR/Type.h"
-#include "llvm/IR/Verifier.h"
+#include "AST.hpp"
+#include "Parser.cpp"
 using namespace llvm;
 
-// Base Class
-class ExprAST {
-public: 
-    virtual ~ExprAST() {};
-    virtual void print () {printf("Base Class EXPR AST\n");}
-    virtual Value *codegen() = 0;
-};
-
-// Just storing the number
-class NumberExprAST : public ExprAST {
-    double Val; 
-public: 
-    NumberExprAST(double Val) : Val(Val) {}
-    void print () {printf("Number EXPR AST with Val: %f \n", Val);}
-};
-
-/// VariableExprAST - Expression class for referencing a variable, like "a".
-class VariableExprAST : public ExprAST {
-  std::string Name;
-public:
-  VariableExprAST(const std::string &Name) : Name(Name) {}
-  void print () {printf("Variable EXPR AST with variable name: %s\n", Name.c_str());}
-};
-
-/// BinaryExprAST - Expression class for a binary operator.
-class BinaryExprAST : public ExprAST {
-  char Op; // could be stuff like *, /, +, etc.
-  std::unique_ptr<ExprAST> LHS, RHS; 
+void InitializeModule() {
+  Context = std::make_unique<LLVMContext>();
+  TheModule = std::make_unique<Module>("jit pog", *Context);
   
-  // LHS or RHS can be any "VariableExprAST", "NumberExprAST", etc.
-  // Also note that unique ptr provides garbage collection, so I love that.
-  
-public:
-  BinaryExprAST(char op, std::unique_ptr<ExprAST> LHS,
-                std::unique_ptr<ExprAST> RHS)
-    : Op(op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
-    // apparently this "move" functionality moves the pointer from one argument to another, so that the original can be overwritten in memory from the compiler later, because WE LOVE COMPILERS ahhhhhhhhhh 
-  void print () {
-    printf("Binary EXPR AST with op: %c\n", Op);
+  Builder = std::make_unique<IRBuilder<>>(*Context);
+}
+
+// log errors for values, Value is any IR returned item
+Value *LogErrorV(const char *Str) {
+  LogError(Str);
+  return nullptr;
+}
+
+Value *NumberExprAST::codegen() {
+  return ConstantFP::get(Context, APFloat(Val))
+}
+
+Value *VariableExprAST::codegen() {
+  Value *V = NamedValues[Name];
+  if(!V) LogErrorV("Unknown Variable Name");
+  return V;
+}
+
+Value *BinaryExprAST::codegen() {
+  Value *L = LHS->codegen();
+  Value *R = RHS->codegen();
+  if(!L || !R) return nullptr;
+
+  switch (Op) {
+    case '+':
+      return Builder.CreateFAdd(L, R, "addtmp");
+    case '-':
+      return Builder.CreateFSub(L, R, "subtmp");
+    case '*':
+      return Builder.CreateFMul(L, R, "multmp");
+    case '<':
+      L = Builder.CreateFCmpULT(L, R< "cmptmp");
+      // converts bool 1 bit integer to a double
+      return Builder.CreateUIToFP(L, Type::getDoubleTy(Context), "booltmp");
+    default:
+      return LogErrorV("invalid binary operator");
   }
-};
+}
 
-//************************ FUNCTIONS ***********************
+Value *CallExprAST::codegen() {
+  Function *CalleeF = TheModule->getFunction(Callee);
+  if(!CalleeF) return LogErrorV("Unknown function referenced");
+  if(CalleeF->arg_size() != Args.size()) return LogErrorV("Incorrect number of arguments");
 
-/// CallExprAST - Expression class for function calls. ex: plus(1,2), whe
-class CallExprAST : public ExprAST {
-  std::string Callee; // The name of the function
-  std::vector<std::unique_ptr<ExprAST>> Args; // the arguments to the function
-
-public:
-  CallExprAST(const std::string &Callee,
-              std::vector<std::unique_ptr<ExprAST>> Args)
-    : Callee(Callee), Args(std::move(Args)) {}
-  void print () {
-    printf("Call Expr (calling functions) AST with Callee %s\n", Callee.c_str());
+  std::vector<Value *> ArgsV;
+  for(unsigned i=0, e = Args.size(); i != e; ++i) {
+    ArgsV.push_back(Args[i]->codegen());
+    if(!ArgsV.back()) return nullptr;
   }
-};
 
-// Stores the function name and the arguments names
-class PrototypeAST {
-  std::string Name;
-  std::vector<std::string> Args;
+  return Builder.CreateCall(CalleeF, ArgsV, "calltmp");
+}
 
-public:
-  PrototypeAST(const std::string &name, std::vector<std::string> Args)
-    : Name(name), Args(std::move(Args)) {}
-    // I guess std::move is just another way to add something to a vector maybe.
+Function *PrototypeAST::codegen() {
+  // this creates a list of argument types, only doubles for now but we'll have multiple types to extend to later 
+  std::vector<Type*> Doubles(Args.size(), Type::getDoubleTy(Context));
+  // NOTE: types are unique so you dont use new for a type and use get function to create a new instance
+  FunctionType *FT = FunctionType::get(Type::getDoubleTy(Context), Doubles, false);
+  // creates IR function from prototype, external linkage checks if function declaration from outside module
+  Function *F = Function::Create(FT, Function::ExternalLinkage, Name, TheModule.get());
 
-  const std::string &getName() const { return Name; }
-  void print () {
-    printf("Prototype Function with name %s\n",Name.c_str());
+  // sets argument names in the IR to the names provided in the function prototype
+  unsigned Idx = 0;
+  for (auto &Arg : F->args()) Arg.setName(Args[Idx++]);
+
+  return F;
+}
+
+Function *FunctionAST::codegen() {
+  // gets function from previous function declaration table (possibly in extern)
+  Function *Func = TheModule->getFunction(Proto->getName());
+
+  // if no previous function declaration exists generate the function IR from the prototype
+  if(!Func) Func = Proto->codegen();
+  if(!Func) return nullptr;
+  if(!Func->empty()) return (Func*) LogErrorV("Function cannot be redefined");
+
+  // basic block: sequential instruction set, creates a sequential execution for a function
+  BasicBlock *BB = BasicBlock::Create(Context, "entry", Func);
+  // inserts previously created BB instructions to end of the newly created block
+  Builder.SetInsertPoint(BB);
+
+  NamedValues.clear();
+  for(auto &Arg : Func->args()) NamedValues[Arg.getName()] = &Arg;
+
+  // computes the function and returns a value to see if the fucntion is working properly
+  if(Value *RetVal = Body->codegen()) {
+    // ret instruction completes the function IR generation
+    Builder.CreateRet(RetVal);
+    // validates the generated code
+    verifyFunction(*Func);
+    return Func;
   }
-};
 
-/// FunctionAST - This class represents a function definition itself.
-class FunctionAST {
-  std::unique_ptr<PrototypeAST> Proto; // Stores the function name and arguments
-  std::unique_ptr<ExprAST> Body; // The actual function itself!
+  Func->eraseFromParent();
+  return nullptr;
+}
 
-public:
-  FunctionAST(std::unique_ptr<PrototypeAST> Proto,
-              std::unique_ptr<ExprAST> Body)
-    : Proto(std::move(Proto)), Body(std::move(Body)) {}
-  void print () {
-    printf("Function AST");
-  }
-};
-
-#endif

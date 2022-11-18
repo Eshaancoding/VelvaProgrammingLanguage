@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "/usr/include/llvm-14",
                 "/usr/include/llvm-c-14",
-                "${workspaceFolder}/VelvaProgrammingLang/include/"
+                "${workspaceFolder}/VelvaProgrammingLang/include/",
+                "/usr/include/llvm-10"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
