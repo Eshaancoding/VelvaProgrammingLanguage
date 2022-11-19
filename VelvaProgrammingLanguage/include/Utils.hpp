@@ -56,14 +56,22 @@ void Result<T,E>::visit(function<void(&T)> success, function<void(&E)> err) {
 }
 
 template<class T, class E>
+<<<<<<< HEAD
 std::string Result<T,E>::to_string() {
     static_assert(!is_pointer<E>());
+=======
+string Result<T,E>::to_string() {
+>>>>>>> 6f03afca8870c947dca9e1e6606515e2551cb707
     return get<E>(value).to_string();
 }
 
 template<class T, class E>
+<<<<<<< HEAD
 std::string Result<T,E>::to_string() {
     static_assert(is_pointer<E>());
+=======
+string Result<T,E>::to_string() {
+>>>>>>> 6f03afca8870c947dca9e1e6606515e2551cb707
     return get<E>(value)->to_string();
 }
 
