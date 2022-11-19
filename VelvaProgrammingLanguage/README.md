@@ -13,7 +13,7 @@ The Velva Programming Language is a low-level programming language designed for 
 
 ## Implemented so far:
 
-* Only `int` (integer) variables Declaration:
+* Only `int` (integer) variables declaration:
     * `int a = 3`
 * `print` statements with the int variable
     * Expressions (ex: operations `+`, `-`, etc.) are not supported! Yet..
@@ -44,7 +44,7 @@ print(a)
 ## Why are we doing this?
 
 * We don't know
-* Why beshaan is doing this: because he's bored of machine learning and frontend development from time to time
+* Why Beshaan is doing this: because he's bored of machine learning and frontend development from time to time
     * He also likes C++ a lot and always wanted to make a big project out of it.
     * He also wants to learn from Daniel D'Silva about low-level programming stuff.
 
@@ -211,4 +211,11 @@ tensor array = [[2.3,4.2],[2.3,4.2]]
 map<int, int> myMap = [{2.3:62}, {63:2.3}];
 var myMap = [{2.3:62}, {3.2:662}]
 map<tensor, int>
+
+// Arbitrary-sized integers
+int<16> shortNum = -65536;
+int<8388608> maxSizedNum = 1;
+for (int i = 0; i < 2500000; i++) P
+	maxSizedNum *= 10; // Won't overflow!
+}
 ```
