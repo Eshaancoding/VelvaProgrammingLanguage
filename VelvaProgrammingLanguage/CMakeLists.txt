@@ -5,10 +5,12 @@ project(Velva)
 execute_process (
     COMMAND bash ../cmake_pre.bash
 )
+message(STATUS "Prefix path: $ENV{CMAKE_PREFIX_PATH}")
 execute_process (
     COMMAND bash list_files.sh
 )
 
+message (STATUS "File path: $ENV{VELVA_FILE_PATH}")
 # Find path
 find_package(LLVM REQUIRED CONFIG) #Make sure that LLVM is in your CMAKE_PREFIX_PATH
 

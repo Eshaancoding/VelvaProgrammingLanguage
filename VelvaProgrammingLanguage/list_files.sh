@@ -1,1 +1,2 @@
-export VELVA_FILE_LIST=$(find src -name \*.cpp -print | sed 's/\n/;/g')
+export VELVA_FILE_LIST=$(find src -name \*.cpp -print | xargs -I {} printf {}\;)
+echo $VELVA_FILE_LIST
