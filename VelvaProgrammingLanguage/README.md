@@ -215,7 +215,7 @@ map<tensor, int>
 // Arbitrary-sized integers
 int<16> shortNum = -65536;
 int<8388608> maxSizedNum = 1;
-for (int i = 0; i < 2500000; i++) P
+for (int i = 0; i < 2500000; i++) {
 	maxSizedNum *= 10; // Won't overflow!
 }
 ```
