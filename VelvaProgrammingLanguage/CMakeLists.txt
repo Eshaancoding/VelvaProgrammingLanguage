@@ -17,6 +17,8 @@ message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 add_executable(${COMPILER_NAME} src/Driver/compiler.cpp src/Lexer/Lexer.cpp src/Lexer/Token.cpp) 
 set_property(TARGET ${COMPILER_NAME} PROPERTY CXX_STANDARD 17) #We can set this to 20 in the future
 
+message(STATUS "LLVM include dirs: ${LLVM_INCLUDE_DIRS}")
+
 include_directories(${LLVM_INCLUDE_DIRS} include)
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 add_definitions(${LLVM_DEFINITIONS_LIST})

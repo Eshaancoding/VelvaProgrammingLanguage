@@ -3,18 +3,22 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
-                "/usr/include/llvm-17",
-                "/usr/include/llvm-c-17",
-                "/opt/homebrew/Cellar/llvm/15.0.5/include",
-                "${workspaceFolder}/VelvaProgrammingLang/include/",
-                "/usr/include/llvm-10"
+                "${workspaceFolder}/VelvaProgrammingLanguage/include/",
+                "/home/eshaa/llvm-project-15.0.5.src/llvm/include",
+                "/home/eshaa/llvm-project-15.0.5.src/build/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "macOS-clang-arm64"
+            "intelliSenseMode": "linux-clang-x86",
+            "mergeConfigurations": false,
+            "browse": {
+                "path": [
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
         }
     ],
     "version": 4

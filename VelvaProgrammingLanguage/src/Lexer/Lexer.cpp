@@ -13,7 +13,6 @@ char Lexer::getChar () {
 }
 
 Token *Lexer::getToken() {
-
     //***************** Skip Whitespace *****************
     while (isspace(LastChar))
         LastChar = getChar();

@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "algorithm": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "string": "cpp",
+        "variant": "cpp"
     }
 }
