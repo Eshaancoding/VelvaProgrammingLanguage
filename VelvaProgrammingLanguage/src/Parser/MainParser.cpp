@@ -1,35 +1,36 @@
 #include "Parser.hpp"
 
+Parser::Parser () {
+    this->currentToken = lexer.getToken();
+}
+
 Parser::Parser (char* filename) {
     lexer = Lexer(filename);
     this->currentToken = lexer.getToken();
 }
 
-Parser::MainParser () {
+unique_ptr<Expr> Parser::MainParser () {
     // Main parser, which will iterate through until there's an EOF token 
-    while (!token->isEOF() && !token->isErr()) {
-        printf("%s\n", token->to_str().c_str());
+    while (!currentToken->isEOF() && !currentToken->isErr()) {
+        printf("%s\n", currentToken->to_str().c_str());
         
         // it's an identifier
-        if (token.isIdent()) {
-            switch (token.getName())
-            {
-            case "int":
-                ParseVariableDeclaration(false);
-                break;
-            case "float":
-                ParseVariableDeclaration(true);
-                break;
-            case "print":
-                ParsePrintDeclaration();
-                break;
-            default:
-                lexer.log_err("Unexpected Identifier!");
-                token = new ERRToken(); 
-                break;
+        if (currentToken->isIdent()) {
+            std::string name = currentToken->getName();
+            if (name == "int") {
+                return ParseVariableDeclaration(false);
             }
+            else if (name == "float") {
+                return ParseVariableDeclaration(true);
+            }
+            else if (name == "print") {
+                return ParsePrintDeclaration();
+            }
+            else {
+                lexer.log_err("Undefined identifier");
+                return make_unique<ErrorExpr>();
+            } 
         }
-
-        token = lexer.getToken();
+        currentToken = lexer.getToken();
     }
 }

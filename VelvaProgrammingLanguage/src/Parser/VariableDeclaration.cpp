@@ -1,14 +1,45 @@
 #include "Parser.hpp"
 
 // Ex: `int i = 3;`
-void Parser::ParseVariableDeclaration(bool is_floating_point) {
+variant<unique_ptr<VarDeclareExpr>, unique_ptr<ErrorExpr>> Parser::ParseVariableDeclaration(bool is_floating_point) {
     // eat the int, float declaration
-    token = lexer.getToken();
+    currentToken = lexer.getToken();
+    std::string var_name;
     
     // then get the identifier
-    if (token.isIdent()) {
-        
+    if (currentToken->isIdent()) {
+        var_name = currentToken->getName();  
     } else {
-        return nullptr
+        lexer.log_err("Expected Identifier");
+        return make_unique<ErrorExpr>();
     }
+    currentToken = lexer.getToken(); // eat the identifier
+
+    // then parse the =
+    if (!currentToken->isChar() || !currentToken->getCharacter() != '=') {
+        lexer.log_err("Expected = ");
+        return make_unique<ErrorExpr>();
+    }
+    currentToken = lexer.getToken(); // eat the =
+
+    // Eat the number
+    // cannot declare int i = 3.0;
+    if (!is_floating_point && currentToken->isFloatIdent()) {
+        lexer.log_err("Expected = ");
+        return make_unique<ErrorExpr>();
+    }
+
+    unique_ptr<Expr> value; 
+    if (currentToken->isFloatIdent()) {
+        value = make_unique<FloatExpr>(currentToken->getFloatValue());
+    } 
+    else if (currentToken->isIntIdent()) {
+        value = make_unique<IntExpr>(currentToken->getIntValue());
+    }
+    else {
+        lexer.log_err("Expected a number");
+        return make_unique<ErrorExpr>();
+    }
+
+    return make_unique<VarDeclareExpr>(VAR_MUTABILITY_VAR);
 }

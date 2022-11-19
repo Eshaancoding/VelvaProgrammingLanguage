@@ -27,6 +27,7 @@ private:
     int start_char_idx;  // keep track of the beginning of the word/phrase
     int char_idx; 
 public:
+    Lexer ();
 
     Lexer (char* filename) : 
         file_read(filename),

@@ -2,12 +2,15 @@
 #include "Utils.hpp"
 #include <iostream>
 #include <variant>
+#include <tuple>
 CompilationContext::CompilationContext() : context(make_unique<LLVMContext>()), mod(make_unique<Module>("jit pog", *context)), builder(make_unique<IRBuilder<>>()), namedValues(map<string, Value*>()) {}
+using namespace llvm;
+using namespace std;
 
 //We need to deal with errors later but right now let's be lazy; ok
 
 Value *IntExpr::codegen(CompilationContext &ctx) {
-    return ConstantInt::get(ctx.context, APFloat(num));
+    return ConstantInt::get(ctx.context, APInt(numBits, num));
 }
 
 Value *DecimalExpr::codegen(CompilationContext &ctx) {
@@ -29,37 +32,80 @@ Value *CallFuncExpr::codegen(CompilationContext &ctx) {
 
 }
 
-// daniel can you create a print function for IR and for AST?
-// maybe it could be a variant of CallFuncExpr idk
-//uh yeah that works for now but we'll ahve 
-// 
-// daniel for the strings should i just create an array of ints for char ascii values as the return
-// Why can't you just create a std::s
-// does it have support for char*? 
-//that's ascii only right
-// it doesnt i checked the docs, we can just do ascii values tho right
-// yeah pretty much I think
-// I will review the docs later, k
-//wait I just realized — becuase of the way this is implemented, every object needs a to_string method that inserts instructions for string conversion
-//ugh
-// for the IR generation the only string support is stringref which doesnt have good memory management and does not actually work for altering and deleting the string
 Value *StringExpr::codegen(CompilationContext &ctx) {
     vector<ConstantInt> charArr;
-    // wait what exactly is text im a little confused as to how were storing the string there
-    
-    //Remember that all strings are format strings
-    //So we have an array that stores all elements of the string — either as regular text, or an expression, so like each char?
     for(auto &value: text) {
-        visit(Overload {
-            [&charArr](string &s) { 
+        visit(Overload (
+            [&charArr, &ctx](string &s) { 
                 charArr.push_back(ConstantInt::get(ctx.context, APInt(int(value))));
             },
-            [&charArr](unique_ptr<Expr> &expr) { expr->generate_str() /* Implement leftovers and I'll implement generate_str*/ },
-        }, text); 
+            [&charArr, &ctx](unique_ptr<Expr> &expr) { expr->generate_str() /* Implement leftovers and I'll implement generate_str*/ }
+        ), text); 
     }
 }
-// for params in declar function expr dont we have to add the type with it
-// and if we have to add it should we use Pair
-Function *DeclareFunctionExpr::codegen() {
+
+Function *DeclareFunctionExpr::codegen(CompilationContext &ctx) {
     std::vector<Type*> paramTypes(params.size());
+    for(auto &param : params) {
+        switch(get<0>(param)) {
+            case "int":
+                paramTypes.push_back(Type::getInt32Ty(ctx.context));
+            case "double":
+                paramTypes.push_back(Type::getDoubleTy(ctx.context));
+            case "string":
+                // to be done because complicated
+        }
+    }
+
+    Type *retType;
+    switch(returnType) {
+            case "int":
+                retType = Type::getInt32Ty(ctx.context);
+                break;
+            case "double":
+                retType = Type::getDoubleTy(ctx.context);
+                break;
+            case "string":
+                // to be done because complicated
+                break;
+            default:
+                retType = Type::getVoidTy(ctx.context);
+                break;
+        }
+
+    FunctionType *FT = FunctionType::get(retType, paramTypes, false);
+
+    Function *F = Function::Create(FT, Function::ExternalLinkage, name, ctx.mod.get());
+
+    unsigned Idx = 0;
+    for(auto &Arg : F->args()) {
+        Arg.setName(get<1>(params[Idx]));
+        Idx++;
+    }
+
+    return F;
 }
+
+Value *VarUseExpr::codegen(CompilationContext &ctx) {
+    Value *V = NamedValues[var];
+    return ctx.builder.CreateLoad(V, name.c_str());
+}
+
+void VarDeclareExpr::alloc(CompilationContext &ctx) {
+    // needs scope declarations to add the memory allocation for the right areas
+    // for now just adding to the global builder
+    Type *t;
+    switch(type) {
+        case "int":
+            t = Type::getInt32Ty(ctx.context);
+        case "double":
+            t = Type.getDoubleTy(ctx.context);
+    }
+
+    auto alloca = ctx.builder.CreateAlloca(t, 0, name.c_str());
+    ctx.namedValues[name] = alloca;
+}
+
+// need to add scope for vardeclare and test
+// need to add assignment allocation 
+// probably move variable memory allocation to new file

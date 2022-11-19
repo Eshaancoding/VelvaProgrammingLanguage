@@ -49,7 +49,7 @@ CharacterToken::CharacterToken (char character) {
 }
 
 // Accessor methods
-int IntegerToken::getValue () { return value; }
-float FloatToken::getValue () { return value; }
+int IntegerToken::getIntValue () { return value; }
+float FloatToken::getFloatValue () { return value; }
 std::string IdentifierToken::getName () { return name; }
 char CharacterToken::getCharacter () { return character; }

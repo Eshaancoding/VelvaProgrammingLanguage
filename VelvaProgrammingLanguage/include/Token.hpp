@@ -10,18 +10,25 @@ public:
     Token () : token_id(0) {};
     
     // check 
-    virtual bool isEOF ();
-    virtual bool isErr ();
-    virtual bool isIntIdent ();
-    virtual bool isFloatIdent ();
-    virtual bool isIdent ();
-    virtual bool isChar ();
+    virtual bool isEOF() { return false; };
+    virtual bool isErr() { return false; };
+    virtual bool isIntIdent() { return false; };
+    virtual bool isFloatIdent() { return false; };
+    virtual bool isIdent() { return false; };
+    virtual bool isChar() { return false; };
 
     // print
-    virtual std::string to_str ();
+    virtual std::string to_str () = 0;
 
     // id 
     int return_id ();
+
+    // emtpy declaration used in child classes
+    virtual std::string getName() = 0;
+    virtual char getCharacter() = 0;
+    virtual int getIntValue() = 0;
+    virtual float getFloatValue() = 0;
+    
 };
 
 class EOFToken : public Token {
@@ -45,7 +52,7 @@ public:
     IntegerToken(int value);
     bool isIntIdent () override;
     std::string to_str () override;
-    int getValue ();
+    int getIntValue () override;
 };
 
 class FloatToken : public Token {
@@ -55,7 +62,7 @@ public:
     FloatToken(float value);
     bool isFloatIdent () override;
     std::string to_str () override;
-    float getValue();
+    float getFloatValue() override;
 };
 
 class IdentifierToken : public Token {
@@ -65,7 +72,7 @@ public:
     IdentifierToken(std::string name);
     bool isIdent () override;
     std::string to_str() override;
-    std::string getName();
+    std::string getName() override;
 };
 
 class CharacterToken : public Token {
@@ -75,7 +82,7 @@ public:
     CharacterToken(char character);
     bool isChar () override;
     std::string to_str() override;
-    char getCharacter();
+    char getCharacter() override;
 };
 
 #endif
