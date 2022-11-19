@@ -4,8 +4,6 @@
 
 #include "AST.hpp"
 
-
-
 Value *DecimalExpr::codegen() {
     return ConstantFP::get(Context, APFloat(decimal));
 }
