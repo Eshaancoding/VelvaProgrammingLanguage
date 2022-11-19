@@ -5,6 +5,9 @@ project(Velva)
 execute_process (
     COMMAND bash ../cmake_pre.bash
 )
+execute_process (
+    COMMAND bash list_files.sh
+)
 
 # Find path
 find_package(LLVM REQUIRED CONFIG) #Make sure that LLVM is in your CMAKE_PREFIX_PATH
@@ -28,7 +31,7 @@ message(STATUS "LLVM include dirs: ${LLVM_INCLUDE_DIRS}")
 # Idk maybe we could do this or something different. Not sure
 
 #In the future we can prob create a bash script to look through the dir automatically
-add_executable(${COMPILER_NAME} src/Driver/compiler.cpp src/Lexer/Lexer.cpp src/Lexer/Token.cpp) 
+add_executable(${COMPILER_NAME} $ENV{VELVA_FILE_PATH}) 
 set_property(TARGET ${COMPILER_NAME} PROPERTY CXX_STANDARD 17) #We can set this to 20 in the future
 
 add_executable(TestInstantiator tests/TestMain.cpp)

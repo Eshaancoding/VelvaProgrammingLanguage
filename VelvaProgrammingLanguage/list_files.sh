@@ -1,0 +1,1 @@
+export VELVA_FILE_LIST=$(find src -name \*.cpp -print | sed 's/\n/;/g')
