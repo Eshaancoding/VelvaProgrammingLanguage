@@ -5,7 +5,8 @@ typedef enum {
     TOK_ERR,
     TOK_INDENT,
     TO
-}
-class Token {
+};
 
-}
+class TokenTwo {
+
+};

@@ -4,6 +4,8 @@
 #include <memory>
 #include <tuple>
 #include <optional>
+#include <functional>
+#include <variant>
 #include "llvm-c/Core.h"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
@@ -55,8 +57,8 @@ class Expr {
          * @param ctx The compilation context to generate code for.
          * @return Value* Returns the code generated.
          */
-        virtual Value *codegen(CompilationContext &ctx) = 0;
-        // virtual optional<Value*> generate_str(CompilationContext &ctx) = 0;
+        virtual optional<Value*> codegen(CompilationContext &ctx) = 0;
+        virtual std::optional<Value*> generate_str(CompilationContext &ctx) = 0;
 };
 
 /**
@@ -70,9 +72,9 @@ class IntExpr : public Expr {
          * 
          */
         int num;
-        int numBits;
-        IntExpr(int i) : num(i) {};
-        Value *codegen(CompilationContext &ctx) override; 
+        unsigned int numBits;
+        IntExpr(int i) : num(i), numBits(32) {}; // defaults to 32 for int
+        optional<Value*> codegen(CompilationContext &ctx) override; 
 };
 
 /**
@@ -87,7 +89,7 @@ class FloatExpr : public Expr {
         */
         float decimal;
         public: FloatExpr(float d) : decimal(d) {};
-        Value *codegen(CompilationContext &ctx) override;
+        optional<Value*> codegen(CompilationContext &ctx) override;
 };
 
 /**
@@ -105,16 +107,16 @@ class CallFuncExpr : public Expr {
          * @brief The parameters of the function to be called.
          * 
          */
-        vector<Expr> params;
-        CallFuncExpr(string name, vector<Expr> params) : functionName(name), params(params) {};
-        Value *codegen(CompilationContext &ctx) override;
+        vector<unique_ptr<Expr>> params;
+        CallFuncExpr(string name, vector<unique_ptr<Expr>> params) : functionName(name), params(params) {};
+        std::optional<Value*> codegen(CompilationContext &ctx) override;
 };
 
 /**
  * @brief An AST node representing a function prototype.
  * 
  */
-class DeclareFunctionExpr : public Expr {
+class DeclareFunctionExpr {
     public:
         /**
          * @brief Whether the function is pure or not.
@@ -135,9 +137,9 @@ class DeclareFunctionExpr : public Expr {
          * @brief This represents the return type of the function. 
          * This is nullopt when there the return type is void.
          */
-        optional<string> returnType;
+        optional<std::string> returnType;
         DeclareFunctionExpr(bool isPure, string name, vector<tuple<string, string> > params, optional<string> returnType) : isPure(isPure), name(name), params(params), returnType(returnType) {} ;
-        Function *codegen(CompilationContext &ctx) override;
+        optional<Function*> codegen(CompilationContext &ctx);
 };
 
 /**
@@ -160,10 +162,10 @@ class StringExpr: public Expr {
         * @brief This is a list of variants of either a string literal, or a format value inserted with the ${} syntax.
         * 
         */
-        vector<variant<string, unique_ptr<Expr> > text;
-        StringExpr(string t) : text(vector<variant<string, unique_ptr<Expr>>>(t)) {}
-        StringExpr(vector<variant<string, unique_ptr<Expr> > t) : text(t) {}            
-        Value *codegen(CompilationContext &ctx) override;    
+        vector<variant<string, unique_ptr<Expr>>> text;
+        StringExpr(string t); // Defined in  AST.cpp
+        StringExpr(vector<variant<string, unique_ptr<Expr>>> t) : text(t) {}            
+        optional<Value*> codegen(CompilationContext &ctx) override;    
 };
 
 /**
@@ -178,7 +180,7 @@ class VarUseExpr : public Expr {
          */
         string var;
         VarUseExpr(string var) : var(var) {};
-        Value *codegen(CompilationContext &ctx) override;
+        optional<Value*> codegen(CompilationContext &ctx) override;
 };
 //didn't we have more mutability types before, we'll add more later.
 /**
@@ -245,5 +247,5 @@ class AssignExpr {
          */
         unique_ptr<Expr> value;
         AssignExpr(string name, unique_ptr<Expr> value) : varName(name), value(move(value)) {};
-        Value *codegen(CompilationContext &ctx);
+        optional<Value*> codegen(CompilationContext &ctx);
 };

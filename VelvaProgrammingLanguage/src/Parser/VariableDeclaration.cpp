@@ -30,16 +30,19 @@ variant<unique_ptr<VarDeclareExpr>, unique_ptr<ErrorExpr>> Parser::ParseVariable
     }
 
     unique_ptr<Expr> value; 
+    std::string type;
     if (currentToken->isFloatIdent()) {
         value = make_unique<FloatExpr>(currentToken->getFloatValue());
+        type = "float";
     } 
     else if (currentToken->isIntIdent()) {
         value = make_unique<IntExpr>(currentToken->getIntValue());
-    }
+        type = "int";
+    } // yeah yeah we'll add more later
     else {
         lexer.log_err("Expected a number");
         return make_unique<ErrorExpr>();
     }
 
-    return make_unique<VarDeclareExpr>(VAR_MUTABILITY_VAR);
+    return make_unique<VarDeclareExpr>(VAR_MUTABILITY_VAR, var_name, value, type);
 }

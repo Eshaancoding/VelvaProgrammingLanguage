@@ -7,7 +7,7 @@ execute_process (
 )
 message(STATUS "Prefix path: $ENV{CMAKE_PREFIX_PATH}")
 execute_process (
-    COMMAND bash list_files.sh
+    COMMAND bash ../list_files.sh
 )
 
 message (STATUS "File path: $ENV{VELVA_FILE_PATH}")
@@ -15,7 +15,6 @@ message (STATUS "File path: $ENV{VELVA_FILE_PATH}")
 find_package(LLVM REQUIRED CONFIG) #Make sure that LLVM is in your CMAKE_PREFIX_PATH
 
 # Assert LLVM version
-
 
 set(COMPILER_NAME "veld")
 
@@ -26,11 +25,6 @@ endif()
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 message(STATUS "LLVM include dirs: ${LLVM_INCLUDE_DIRS}")
-
-# Apparently we have to manually list out every cpp file that we want to compile. Although it is simple for now, I think it's bad code design if we manually list out every single cpp file in the src folder because it would be way too complex
-# So maybe we need another CmakeLists under the src/ folder, and let this main Cmake call that CmakeList 
-# and then repeat that for every subdirectory if we need to. This was done in LLVM's directory
-# Idk maybe we could do this or something different. Not sure
 
 #In the future we can prob create a bash script to look through the dir automatically
 add_executable(${COMPILER_NAME} $ENV{VELVA_FILE_PATH}) 
