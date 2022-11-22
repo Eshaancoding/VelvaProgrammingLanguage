@@ -44,5 +44,5 @@ variant<unique_ptr<VarDeclareExpr>, unique_ptr<ErrorExpr>> Parser::ParseVariable
         return make_unique<ErrorExpr>();
     }
 
-    return make_unique<VarDeclareExpr>(VAR_MUTABILITY_VAR, var_name, value, type);
+    return make_unique<VarDeclareExpr>(VAR_MUTABILITY_VAR, var_name, std::move(value), type);
 }

@@ -10,24 +10,24 @@ public:
     Token () : token_id(0) {};
     
     // check 
-    virtual bool isEOF() { return false; };
-    virtual bool isErr() { return false; };
-    virtual bool isIntIdent() { return false; };
-    virtual bool isFloatIdent() { return false; };
-    virtual bool isIdent() { return false; };
-    virtual bool isChar() { return false; };
+    virtual bool isEOF();
+    virtual bool isErr();
+    virtual bool isIntIdent();
+    virtual bool isFloatIdent();
+    virtual bool isIdent();
+    virtual bool isChar();
 
     // print
-    virtual std::string to_str () = 0;
+    virtual std::string to_str ();
 
     // id 
     int return_id ();
 
     // emtpy declaration used in child classes
-    virtual std::string getName() = 0;
-    virtual char getCharacter() = 0;
-    virtual int getIntValue() = 0;
-    virtual float getFloatValue() = 0;
+    virtual std::string getName();
+    virtual char getCharacter();
+    virtual int getIntValue();
+    virtual float getFloatValue();
     
 };
 

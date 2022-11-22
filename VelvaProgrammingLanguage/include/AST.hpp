@@ -1,3 +1,6 @@
+#ifndef AST
+#define AST
+
 #include <map>
 #include <vector>
 #include <string>
@@ -57,8 +60,8 @@ class Expr {
          * @param ctx The compilation context to generate code for.
          * @return Value* Returns the code generated.
          */
-        virtual optional<Value*> codegen(CompilationContext &ctx) = 0;
-        virtual std::optional<Value*> generate_str(CompilationContext &ctx) = 0;
+        virtual optional<Value*> codegen(CompilationContext &ctx);
+        virtual std::optional<Value*> generate_str(CompilationContext &ctx);
 };
 
 /**
@@ -108,7 +111,7 @@ class CallFuncExpr : public Expr {
          * 
          */
         vector<unique_ptr<Expr>> params;
-        CallFuncExpr(string name, vector<unique_ptr<Expr>> params) : functionName(name), params(params) {};
+        CallFuncExpr(string name, vector<unique_ptr<Expr>> params) : functionName(name), params(std::move(params)) {};
         std::optional<Value*> codegen(CompilationContext &ctx) override;
 };
 
@@ -138,7 +141,7 @@ class DeclareFunctionExpr {
          * This is nullopt when there the return type is void.
          */
         optional<std::string> returnType;
-        DeclareFunctionExpr(bool isPure, string name, vector<tuple<string, string> > params, optional<string> returnType) : isPure(isPure), name(name), params(params), returnType(returnType) {} ;
+        DeclareFunctionExpr(bool isPure, string name, vector<tuple<string, string> > params, optional<string> returnType) : isPure(isPure), name(name), params(std::move(params)), returnType(returnType) {} ;
         optional<Function*> codegen(CompilationContext &ctx);
 };
 
@@ -164,7 +167,7 @@ class StringExpr: public Expr {
         */
         vector<variant<string, unique_ptr<Expr>>> text;
         StringExpr(string t); // Defined in  AST.cpp
-        StringExpr(vector<variant<string, unique_ptr<Expr>>> t) : text(t) {}            
+        StringExpr(vector<variant<string, unique_ptr<Expr>>> t) : text(std::move(t)) {}            
         optional<Value*> codegen(CompilationContext &ctx) override;    
 };
 
@@ -203,8 +206,12 @@ typedef enum {
 /**
  * @brief An AST node that represents a variable declaration
  * 
- */
-class VarDeclareExpr {
+ *
+
+you know what daniel. Great job. Stupendous job.
+it's kidna cool you know a little bit about phsyciology though.
+*/
+class VarDeclareExpr : public Expr { 
     public:
         /**
          * @brief Represents the mutability protections of the variable
@@ -212,12 +219,12 @@ class VarDeclareExpr {
          */
         VarMutability mutType;
         /**
-         * @brief The type; if nullopt, then use type inference/
+         * @brief The type; if nullopt, then use type inference.
          * 
          */
         optional<string> type;
         /**
-         * @brief The name of the variable to be declared/.
+         * @brief The name of the variable to be declared.
          * 
          */
         string name;
@@ -226,8 +233,10 @@ class VarDeclareExpr {
          * 
          */
         unique_ptr<Expr> value;
-        VarDeclareExpr(VarMutability mutType, string name, unique_ptr<Expr> value, optional<string> type = nullopt) : mutType(mutType), name(name), value(move(value)), type(type) {};
+
+        VarDeclareExpr(VarMutability mutType, string name, unique_ptr<Expr> value, optional<string> type) : mutType(mutType), name(name), value(std::move(value)), type(type) {};
         void alloc(CompilationContext &ctx);
+        optional<Value*> codegen(CompilationContext &ctx) override;
 };
 
 /**
@@ -249,3 +258,5 @@ class AssignExpr {
         AssignExpr(string name, unique_ptr<Expr> value) : varName(name), value(move(value)) {};
         optional<Value*> codegen(CompilationContext &ctx);
 };
+
+#endif

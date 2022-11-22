@@ -17,7 +17,7 @@ public:
     Parser (char* filename); 
     variant<unique_ptr<VarDeclareExpr>, unique_ptr<ErrorExpr>> ParseVariableDeclaration(bool is_floating_point);
     unique_ptr<Expr> ParsePrintDeclaration(); 
-    unique_ptr<Expr> MainParser (); 
+    optional<unique_ptr<Expr>> MainParser ();
 };
 
 #endif

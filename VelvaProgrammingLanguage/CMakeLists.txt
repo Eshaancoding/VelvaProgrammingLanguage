@@ -13,9 +13,10 @@ execute_process (
 message(STATUS "Prefix path: $ENV{CMAKE_PREFIX_PATH}")
 execute_process (
     COMMAND bash ../list_files.sh
+    OUTPUT_VARIABLE VELVA_FILE_PATH
 )
 
-message (STATUS "File path: $ENV{VELVA_FILE_PATH}")
+message (STATUS "File path: ${VELVA_FILE_PATH}")
 # Find path
 find_package(LLVM REQUIRED CONFIG) #Make sure that LLVM is in your CMAKE_PREFIX_PATH
 
@@ -32,13 +33,14 @@ message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 message(STATUS "LLVM include dirs: ${LLVM_INCLUDE_DIRS}")
 
 #In the future we can prob create a bash script to look through the dir automatically
-add_executable(${COMPILER_NAME} $ENV{VELVA_FILE_PATH}) 
+add_executable(${COMPILER_NAME} ../src/AST/AST.cpp;../src/Lexer/Lexer.cpp;../src/Lexer/Token.cpp;../src/Parser/MainParser.cpp;../src/Parser/PrintDeclaration.cpp;../src/Parser/VariableDeclaration.cpp;) 
+# add_executable(${COMPILER_NAME} ${VELVA_FILE_PATH}) 
 set_property(TARGET ${COMPILER_NAME} PROPERTY CXX_STANDARD 17) #We can set this to 20 in the future
 
-add_executable(TestInstantiator tests/TestMain.cpp)
+# add_executable(TestInstantiator ../src/Driver/compiler.cpp)
 # idk what libraries to link
-add_test(NAME TestInstantiator
-            COMMAND TestInstantiator)
+# add_test(NAME TestInstantiator
+#             COMMAND TestInstantiator) // we are adding tests later okay
 include_directories(${LLVM_INCLUDE_DIRS} include)
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 add_definitions(${LLVM_DEFINITIONS_LIST})
