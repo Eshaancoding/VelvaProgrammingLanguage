@@ -29,6 +29,7 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx)
     if (calleeF->arg_size() != params.size())
     {
         // WE NEED ERROR HANDLING HERE AHHHHHHHHHHHHHHHHHHHHHHH CAN'T USE LEXER
+        //Honestly this should be an assertion — an error like this should be caught in the parser, not here////////
         return {};
     }
 
@@ -126,12 +127,11 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
     return F;
 }
 
-// optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
-// {
-    // We probably DON'T want to declare a global variable called NamedValue, so for now I am going to comment this out;
-    // optional<Value *> V = NamedValues[var];
-    // return ctx.builder.CreateLoad(V, name.c_str());
-// }
+optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
+{
+    optional<Value *> V = NamedValues[var];
+    return ctx.builder.CreateLoad(V, name.c_str());
+}
 
 void VarDeclareExpr::alloc(CompilationContext &ctx)
 {
@@ -150,3 +150,6 @@ void VarDeclareExpr::alloc(CompilationContext &ctx)
 // need to add scope for vardeclare and test
 // need to add assignment allocation
 // probably move variable memory allocation to new file
+
+// error stuff literally just dummy functions because it has to override shit
+

@@ -53,7 +53,7 @@ struct CompilationContext {
  */
 class Expr {
     public:
-        virtual ~Expr();
+        virtual ~Expr() = default;
         /**
          * @brief This function generates code for the AST node.
          * 
@@ -153,6 +153,8 @@ class ErrorExpr: public Expr {
     public:     
         int line;
         string file;
+        optional<Value*> codegen(CompilationContext &ctx) override;
+        
 };
 
 /**
@@ -256,7 +258,8 @@ class AssignExpr {
          */
         unique_ptr<Expr> value;
         AssignExpr(string name, unique_ptr<Expr> value) : varName(name), value(move(value)) {};
-        optional<Value*> codegen(CompilationContext &ctx);
+        optional<Value*> codegen(CompilationContext &ctx) override;
+        optional<Value*> generate_str(CompilationContext &ctx) override;
 };
 
 #endif
