@@ -53,7 +53,7 @@ struct CompilationContext {
  */
 class Expr {
     public:
-        virtual ~Expr() = default;
+        // ~Expr() = default; // Why do we needs a deconstructor for EXPR????
         /**
          * @brief This function generates code for the AST node.
          * 
@@ -61,7 +61,7 @@ class Expr {
          * @return Value* Returns the code generated.
          */
         virtual optional<Value*> codegen(CompilationContext &ctx);
-        virtual std::optional<Value*> generate_str(CompilationContext &ctx);
+        // virtual std::optional<Value*> generate_str(CompilationContext &ctx);
 };
 
 /**
@@ -151,10 +151,8 @@ class DeclareFunctionExpr {
  */
 class ErrorExpr: public Expr {
     public:     
-        int line;
-        string file;
+        ErrorExpr() {}; 
         optional<Value*> codegen(CompilationContext &ctx) override;
-        
 };
 
 /**
@@ -168,7 +166,7 @@ class StringExpr: public Expr {
         * 
         */
         vector<variant<string, unique_ptr<Expr>>> text;
-        StringExpr(string t); // Defined in  AST.cpp
+        StringExpr(string t) { text.push_back(t); } // Defined in  AST.cpp
         StringExpr(vector<variant<string, unique_ptr<Expr>>> t) : text(std::move(t)) {}            
         optional<Value*> codegen(CompilationContext &ctx) override;    
 };
@@ -235,7 +233,6 @@ class VarDeclareExpr : public Expr {
          * 
          */
         unique_ptr<Expr> value;
-
         VarDeclareExpr(VarMutability mutType, string name, unique_ptr<Expr> value, optional<string> type) : mutType(mutType), name(name), value(std::move(value)), type(type) {};
         void alloc(CompilationContext &ctx);
         optional<Value*> codegen(CompilationContext &ctx) override;
@@ -258,8 +255,8 @@ class AssignExpr {
          */
         unique_ptr<Expr> value;
         AssignExpr(string name, unique_ptr<Expr> value) : varName(name), value(move(value)) {};
-        optional<Value*> codegen(CompilationContext &ctx) override;
-        optional<Value*> generate_str(CompilationContext &ctx) override;
+        optional<Value*> codegen(CompilationContext &ctx);
+        optional<Value*> generate_str(CompilationContext &ctx);
 };
 
 #endif

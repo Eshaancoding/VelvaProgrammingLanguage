@@ -7,6 +7,10 @@ bool Token::isIntIdent() {return false;}
 bool Token::isFloatIdent() {return false;}
 bool Token::isIdent() {return false;}
 bool Token::isChar() {return false;}
+std::string Token::getName() {return ""; }
+char Token::getCharacter() {return ' '; }
+int Token::getIntValue() {return 0;}
+float Token::getFloatValue() {return 0.0;}
 
 // is_value true
 bool EOFToken::isEOF() {return true;}

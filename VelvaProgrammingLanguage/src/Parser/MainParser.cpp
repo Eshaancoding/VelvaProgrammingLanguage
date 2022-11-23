@@ -18,7 +18,6 @@ std::optional<unique_ptr<Expr>> Parser::MainParser () {
         if (currentToken->isIdent()) {
             std::string name = currentToken->getName();
             if (name == "int") {
-                // okay daniel I am kind of inspired by you so now I am going to study french while you fix linker err because I fixed compile err
                 auto result = ParseVariableDeclaration(false);
                 if (std::holds_alternative<unique_ptr<VarDeclareExpr>>(result)) {
                     // suceeds!

@@ -9,13 +9,13 @@ protected:
 public: 
     Token () : token_id(0) {};
     
-    // check 
-    virtual bool isEOF() { return false; };
-    virtual bool isErr() { return false; };
-    virtual bool isIntIdent() { return false; };
-    virtual bool isFloatIdent() { return false; };
-    virtual bool isIdent() { return false; };
-    virtual bool isChar() { return false; };
+    // check, already declared!
+    virtual bool isEOF();
+    virtual bool isErr();
+    virtual bool isIntIdent();
+    virtual bool isFloatIdent();
+    virtual bool isIdent();
+    virtual bool isChar();
 
     // print
     virtual std::string to_str ();

@@ -33,8 +33,7 @@ message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 message(STATUS "LLVM include dirs: ${LLVM_INCLUDE_DIRS}")
 
 #In the future we can prob create a bash script to look through the dir automatically
-add_executable(${COMPILER_NAME} ../src/AST/AST.cpp;../src/Lexer/Lexer.cpp;../src/Lexer/Token.cpp;../src/Parser/MainParser.cpp;../src/Parser/PrintDeclaration.cpp;../src/Parser/VariableDeclaration.cpp;) 
-# add_executable(${COMPILER_NAME} ${VELVA_FILE_PATH}) 
+add_executable(${COMPILER_NAME} ${VELVA_FILE_PATH}) 
 set_property(TARGET ${COMPILER_NAME} PROPERTY CXX_STANDARD 17) #We can set this to 20 in the future
 
 # add_executable(TestInstantiator ../src/Driver/compiler.cpp)

@@ -46,8 +46,6 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx)
     return ctx.builder->CreateCall(calleeF, argv, "calltmp");
 }
 
-// I am commenting all of this out because I have no idea how to fix. Honestly, I have no idea what all of this even means. Like what does this mean daniel. What does this mean. Please. Help me. Please 
-
 // - Beshaan Barkataki, 2022, procrastinate 5 homework assigments and 8 tests day next week 
 // optional<Value *> StringExpr::codegen(CompilationContext &ctx)
 // {
@@ -129,8 +127,9 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 
 optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 {
-    optional<Value *> V = NamedValues[var];
-    return ctx.builder.CreateLoad(V, name.c_str());
+    optional<Value *> V = ctx.namedValues[var];
+    // return ctx.builder->CreateLoad(V, var.c_str()); // why do we need to create load???
+    return V;
 }
 
 void VarDeclareExpr::alloc(CompilationContext &ctx)
@@ -152,4 +151,6 @@ void VarDeclareExpr::alloc(CompilationContext &ctx)
 // probably move variable memory allocation to new file
 
 // error stuff literally just dummy functions because it has to override shit
-
+optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
+    return nullopt; // for now, we are going to declare it nullopt until we actually define the IR lol
+};  
