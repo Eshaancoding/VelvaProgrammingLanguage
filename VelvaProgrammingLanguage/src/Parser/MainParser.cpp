@@ -5,46 +5,51 @@ Parser::Parser (char* filename) {
     this->currentToken = lexer.getToken();
 }
 
-std::optional<unique_ptr<Expr>> Parser::MainParser () {
+bool Parser::MainParser () {
     // Main parser, which will iterate through until there's an EOF token 
-    int iterations = 0; //**************** <============== DELETE THIS LATER OBV THIS IS FOR TESTING
-    while (iterations < 100 && (!currentToken->isEOF() && !currentToken->isErr())) {
-        printf("Current Token: %s\n", currentToken->to_str().c_str());
+    while (!currentToken->isEOF()) {
+        if (currentToken->isErr())
+            return false;
         
         // it's an identifier
         if (currentToken->isIdent()) {
             std::string name = currentToken->getName();
             if (name == "int") {
                 auto result = ParseVariableDeclaration(false);
-                if(auto output = std::get_if<unique_ptr<VarDeclareExpr>>(&result)) {
-                    return std::move(*output);
+                if (auto output = std::get_if<unique_ptr<VarDeclareExpr>>(&result)) {
+                    printf("AST: %s\n", (*output)->debug_info().c_str());
+                    // return std::move(*output);
                 }
-                else  {
-                    return nullopt;
+                else {
+                    return false;
                 }
             }
             else if (name == "float") {
                 auto result = ParseVariableDeclaration(true);
-                if(auto output = std::get_if<unique_ptr<VarDeclareExpr>>(&result)) {
-                    return std::move(*output);
+                if (auto output = std::get_if<unique_ptr<VarDeclareExpr>>(&result)) {
+                    printf("AST: %s\n", (*output)->debug_info().c_str());
                 }
                 else {
-                    return nullopt;
+                    return false;
                 }
             }
             else if (name == "print") {
-                return ParsePrintDeclaration();
+                printf("AST: %s\n", ParsePrintDeclaration()->debug_info().c_str());
             }
             else {
                 lexer.log_err("Undefined identifier");
-                return make_unique<ErrorExpr>();
+                return false;
             } 
         }
+        else if (currentToken->isChar()) {
+            if (currentToken->getCharacter() == ';') {
+                currentToken = lexer.getToken();
+                continue;
+            }
+        }
         currentToken = lexer.getToken();
-        iterations++;
     }
 
-    // If it terminates suddendly, then there must be something wrong with the error token or that there's nothing in the file.
-    lexer.log_err("Parser error or end of file");
-    return make_unique<ErrorExpr>();
+    // parses correctly
+    return true;
 }

@@ -168,6 +168,18 @@ class ErrorExpr: public Expr {
 };
 
 /**
+ * @brief Represents a print statement for AST
+ * 
+ */
+class PrintExpr : public Expr {
+    public: 
+        unique_ptr<Expr> expression;
+        PrintExpr (unique_ptr<Expr> a) : expression(std::move(a)) {};
+        optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
+};
+
+/**
  * @brief Represents a string literal
  * 
  */

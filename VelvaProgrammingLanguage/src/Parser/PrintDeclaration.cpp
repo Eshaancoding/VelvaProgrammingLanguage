@@ -3,31 +3,31 @@
 /**
  * @brief Parses a statement with keyword `print`
  */
-unique_ptr<Expr> Parser::ParsePrintDeclaration() {
+unique_ptr<PrintExpr> Parser::ParsePrintDeclaration() {
     // todo: eventually this'll be used for different functions :)
 
-    Token* printToken = lexer.getToken(); //eat print
-    if (!printToken->isIdent()) {
-        lexer.log_err("Expected identifier");
-    } else if (printToken->getName() != "print") {
-        lexer.log_err("Undefined identifier");
-    }
-    Token* leftParenToken = lexer.getToken(); //eat '('
-    if (!leftParenToken->isChar()) {
+    currentToken = lexer.getToken(); // eat print, get char (
+    if (!currentToken->isChar()) {
         lexer.log_err("Expected '('");
-    } else if (leftParenToken->getName() != "(") {
+    } else if (currentToken->getCharacter() != '(') {
         lexer.log_err("Expected '('");
     }
-    Token* argToken = lexer.getToken(); //eat arg variable
-    if (!argToken->isIntIdent() && !argToken->isFloatIdent()) {
-        lexer.log_err("Expected int or float value");
+
+    // we will implement actual parse expressions and strings later
+    unique_ptr<VarUseExpr> argExpr;
+    currentToken = lexer.getToken(); //eat (, get identifier 
+    if (currentToken->isIdent()) {
+        argExpr = make_unique<VarUseExpr>(currentToken->getName());
     }
-    auto argExpr = std::make_unique<VarUseExpr>(argToken->getName()); //make VarUseExpr from token
-    Token* rightParenToken = lexer.getToken(); //eat ')'
-    if (!rightParenToken->isChar()) {
-        lexer.log_err("Expected ')'");
-    } else if (rightParenToken->getName() != ")") {
+    else {
+        lexer.log_err("Expected identifier"); 
+    }
+
+    currentToken = lexer.getToken(); // eat identifier, get '('
+    if (!currentToken->isChar()) {
+        lexer.log_err("Expected char ')'");
+    } else if (currentToken->getCharacter() != ')') {
         lexer.log_err("Expected ')'");
     }
-    return argExpr;
+    return make_unique<PrintExpr>(std::move(argExpr));
 }

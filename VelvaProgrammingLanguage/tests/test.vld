@@ -1,2 +1,4 @@
 int i = 3;
 print(i)
+float v = 5.0;
+print(v)
