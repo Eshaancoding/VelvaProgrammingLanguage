@@ -1,38 +1,35 @@
 #include "Parser.hpp"
 
-Parser::Parser () {
-    this->currentToken = lexer.getToken();
-}
-
 Parser::Parser (char* filename) {
-    lexer = Lexer(filename);
+    this->lexer = Lexer(filename);
     this->currentToken = lexer.getToken();
 }
 
 std::optional<unique_ptr<Expr>> Parser::MainParser () {
     // Main parser, which will iterate through until there's an EOF token 
-    while (!currentToken->isEOF() && !currentToken->isErr()) {
-        printf("%s\n", currentToken->to_str().c_str());
+    int iterations = 0; //**************** <============== DELETE THIS LATER OBV THIS IS FOR TESTING
+    while (iterations < 100 && (!currentToken->isEOF() && !currentToken->isErr())) {
+        printf("Current Token: %s\n", currentToken->to_str().c_str());
         
         // it's an identifier
         if (currentToken->isIdent()) {
             std::string name = currentToken->getName();
             if (name == "int") {
                 auto result = ParseVariableDeclaration(false);
-                if (std::holds_alternative<unique_ptr<VarDeclareExpr>>(result)) {
-                    // suceeds!
-                    return std::get<unique_ptr<VarDeclareExpr>> (ParseVariableDeclaration(false));
-                } else {
-                    return std::nullopt; // yeah ik you could return {} whatevs
+                if(auto output = std::get_if<unique_ptr<VarDeclareExpr>>(&result)) {
+                    return std::move(*output);
+                }
+                else  {
+                    return nullopt;
                 }
             }
             else if (name == "float") {
                 auto result = ParseVariableDeclaration(true);
-                if (std::holds_alternative<unique_ptr<VarDeclareExpr>>(result)) {
-                    // suceeds!
-                    return std::get<unique_ptr<VarDeclareExpr>> (ParseVariableDeclaration(false));
-                } else {
-                    return std::nullopt;
+                if(auto output = std::get_if<unique_ptr<VarDeclareExpr>>(&result)) {
+                    return std::move(*output);
+                }
+                else {
+                    return nullopt;
                 }
             }
             else if (name == "print") {
@@ -44,6 +41,7 @@ std::optional<unique_ptr<Expr>> Parser::MainParser () {
             } 
         }
         currentToken = lexer.getToken();
+        iterations++;
     }
 
     // If it terminates suddendly, then there must be something wrong with the error token or that there's nothing in the file.

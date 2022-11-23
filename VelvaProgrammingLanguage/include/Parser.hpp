@@ -13,7 +13,6 @@ private:
     Token* currentToken;
     Lexer lexer;
 public: 
-    Parser ();
     Parser (char* filename); 
     variant<unique_ptr<VarDeclareExpr>, unique_ptr<ErrorExpr>> ParseVariableDeclaration(bool is_floating_point);
     unique_ptr<Expr> ParsePrintDeclaration(); 

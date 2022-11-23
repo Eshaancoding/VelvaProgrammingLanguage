@@ -31,6 +31,7 @@ Token *Lexer::getToken() {
 
     //***************** Parse Integers & Floats *****************
     if (isdigit(LastChar)) {
+        start_char_idx = char_idx;
         bool is_floating_point = false;
         std::string NumStr;
         while (true) {
@@ -53,6 +54,7 @@ Token *Lexer::getToken() {
     //***************** Parse Comments *****************
     if (LastChar == '/')
     {
+        start_char_idx = char_idx;
         // Check if the next char is another forward slash
         LastChar = getchar();
         if (LastChar == '/') {
@@ -75,6 +77,7 @@ Token *Lexer::getToken() {
 
 
     //***************** Return char *****************
+    start_char_idx = char_idx;
     int ThisChar = LastChar;
     LastChar = getChar();
     return new CharacterToken(ThisChar);

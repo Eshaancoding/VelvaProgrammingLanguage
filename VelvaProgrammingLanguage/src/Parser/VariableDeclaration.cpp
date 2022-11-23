@@ -16,7 +16,7 @@ variant<unique_ptr<VarDeclareExpr>, unique_ptr<ErrorExpr>> Parser::ParseVariable
     currentToken = lexer.getToken(); // eat the identifier
 
     // then parse the =
-    if (!currentToken->isChar() || !(currentToken->getCharacter() != '=')) {
+    if (!currentToken->isChar() || currentToken->getCharacter() != '=') {
         lexer.log_err("Expected = ");
         return make_unique<ErrorExpr>();
     }

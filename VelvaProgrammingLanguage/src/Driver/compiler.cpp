@@ -3,14 +3,16 @@
 #include <fstream>
 #include <ctype.h>
 #include <stdio.h>
-#include "Lexer.hpp"
+#include "Parser.hpp"
 using namespace std;
 
 int main (int argc, char** argv) {
-    Lexer lexer = Lexer(argv[1]); // pass in the file name
-    Token *token = lexer.getToken();
-    while (!token->isEOF() && !token->isErr()) {
-        printf("%s\n", token->to_str().c_str());
-        token = lexer.getToken();
+    Parser parse = Parser(argv[1]);
+    auto result = parse.MainParser();
+    if (result) {
+        printf("AST generates: %s\n", (*result)->debug_info().c_str());
+        printf("Yay!! It works :D\n");
+    } else {
+        printf("Something wrong happened :(\n");
     }
 }

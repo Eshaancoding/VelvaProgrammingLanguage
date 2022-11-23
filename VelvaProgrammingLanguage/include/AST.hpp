@@ -62,6 +62,13 @@ class Expr {
          */
         virtual optional<Value*> codegen(CompilationContext &ctx);
         // virtual std::optional<Value*> generate_str(CompilationContext &ctx);
+
+        /**
+         * @brief A function that returns the information about the AST node itself.
+         *
+         * 
+        */
+        virtual string debug_info (); 
 };
 
 /**
@@ -78,6 +85,7 @@ class IntExpr : public Expr {
         unsigned int numBits;
         IntExpr(int i) : num(i), numBits(32) {}; // defaults to 32 for int
         optional<Value*> codegen(CompilationContext &ctx) override; 
+        string debug_info () override;
 };
 
 /**
@@ -93,6 +101,7 @@ class FloatExpr : public Expr {
         float decimal;
         public: FloatExpr(float d) : decimal(d) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
 };
 
 /**
@@ -113,6 +122,7 @@ class CallFuncExpr : public Expr {
         vector<unique_ptr<Expr>> params;
         CallFuncExpr(string name, vector<unique_ptr<Expr>> params) : functionName(name), params(std::move(params)) {};
         std::optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
 };
 
 /**
@@ -143,6 +153,7 @@ class DeclareFunctionExpr {
         optional<std::string> returnType;
         DeclareFunctionExpr(bool isPure, string name, vector<tuple<string, string> > params, optional<string> returnType) : isPure(isPure), name(name), params(std::move(params)), returnType(returnType) {} ;
         optional<Function*> codegen(CompilationContext &ctx);
+        string debug_info();
 };
 
 /**
@@ -153,6 +164,7 @@ class ErrorExpr: public Expr {
     public:     
         ErrorExpr() {}; 
         optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
 };
 
 /**
@@ -169,6 +181,7 @@ class StringExpr: public Expr {
         StringExpr(string t) { text.push_back(t); } // Defined in  AST.cpp
         StringExpr(vector<variant<string, unique_ptr<Expr>>> t) : text(std::move(t)) {}            
         optional<Value*> codegen(CompilationContext &ctx) override;    
+        string debug_info() override;
 };
 
 /**
@@ -184,6 +197,7 @@ class VarUseExpr : public Expr {
         string var;
         VarUseExpr(string var) : var(var) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
 };
 //didn't we have more mutability types before, we'll add more later.
 /**
@@ -236,6 +250,7 @@ class VarDeclareExpr : public Expr {
         VarDeclareExpr(VarMutability mutType, string name, unique_ptr<Expr> value, optional<string> type) : mutType(mutType), name(name), value(std::move(value)), type(type) {};
         void alloc(CompilationContext &ctx);
         optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
 };
 
 /**
@@ -256,7 +271,8 @@ class AssignExpr {
         unique_ptr<Expr> value;
         AssignExpr(string name, unique_ptr<Expr> value) : varName(name), value(move(value)) {};
         optional<Value*> codegen(CompilationContext &ctx);
-        optional<Value*> generate_str(CompilationContext &ctx);
+        // optional<Value*> generate_str(CompilationContext &ctx);
+        string debug_info();
 };
 
 #endif
