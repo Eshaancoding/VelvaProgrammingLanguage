@@ -49,6 +49,7 @@ string VarDeclareExpr::debug_info() {
         result += "var";
     else
         result += "const";
+    result += " and with value: [" + value->debug_info() + "]";
 
     return result;
 }
