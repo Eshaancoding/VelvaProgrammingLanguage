@@ -45,22 +45,25 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx)
     return ctx.builder->CreateCall(calleeF, argv, "calltmp");
 }
 
-// - Beshaan Barkataki, 2022, procrastinate 5 homework assigments and 8 tests day next week 
-// optional<Value *> StringExpr::codegen(CompilationContext &ctx)
-// {
-//     vector<ConstantInt> charArr;
-//     for (auto &value : text)
-//     {
-//         visit(Overload(
-//                   [&](string &s)
-//                   {
-//                       charArr.push_back(ConstantInt::get(*ctx.context, APInt((int) value)));
-//                   },
-//                   [&](unique_ptr<Expr> &expr)
-//                   { /* TODO */ }),
-//               text);
-//     }
-// }
+optional<Value *> StringExpr::codegen(CompilationContext &ctx)
+{
+    auto i8 = IntegerType::get(*ctx.context, 8);
+    vector<Constant*> chars(text.size());
+    for(int i = 0; i < text.size(); ++i) {
+        chars[i] = ConstantInt::get(i8, text[i]);
+    }
+    chars.push_back(ConstantInt::get(i8, 0));
+
+    auto stringType = ArrayType::get(i8, chars.size());
+
+    auto globalDecl = (GlobalVariable*) mod->getOrInsertGlobal(".str" + to_string(StringExpr::STR_TOTAL), stringType);
+    globalDecl->setInitializer(ConstantArray::get(stringType, chars));
+    globalDecl->setConstant(true);
+    globalDecl->setLinkage(GlobalValue::LinkageTypes::PrivateLinkage);
+    globalDecl->setUnnamedAddr(GlobalValue::UnnamedAddr::Global);
+
+    return ConstantExpr::getBitCast(v, i8->getPointerTo());
+}
 
 optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 {
@@ -73,42 +76,15 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         else if (get<0>(param) == "double") {
             paramTypes.push_back(Type::getDoubleTy(*ctx.context));
         } 
-        // TODO: ADD STRING LATER
+        else if (get<0>(param) == "string") {
+            paramTypes.push_back(Type::getInt8PtrTy(*ctx.context));
+        }
     }
 
-    Type *retType;
-    
-    if (returnType) {
-        if (*returnType == "int") {
-            retType = Type::getInt32Ty(*ctx.context);
-        } 
-        else if (*returnType == "double") {
-            retType = Type::getDoubleTy(*ctx.context);
-        }
-        else {
-            retType = Type::getVoidTy(*ctx.context);
-        }
-        // else if (*returnType == "string") {
-        // TODO: we do this later 
-        // }
-    } else {
-        return {};
-    }
-    // switch (*returnType)
-    // {
-    // case "int":
-    //     retType = Type::getInt32Ty(*ctx.context);
-    //     break;
-    // case "double":
-    //     retType = Type::getDoubleTy(*ctx.context);
-    //     break;
-    // case "string":
-    //     // to be done because complicated
-    //     break;
-    // default:
-    //     retType = Type::getVoidTy(*ctx.context);
-    //     break;
-    // }
+    auto retType = retType == "int" ? Type::getInt32Ty(*ctx.context)
+            : retType == "double" ? Type::getDoubleTy(*ctx.context)
+            : retType == "string" ? Type::getInt8PtrTy(*ctx.context)
+            : Type::getVoidTy(*ctx.context);
 
     FunctionType *FT = FunctionType::get(retType, paramTypes, false);
 

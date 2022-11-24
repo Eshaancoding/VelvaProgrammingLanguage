@@ -197,12 +197,14 @@ class PrintExpr : public Expr {
  * 
  */
 class StringExpr: public Expr {
+    private:
+        static int STR_TOTAL = 0;
     public:
         /**
         * @brief This is a list of variants of either a string literal, or a format value inserted with the ${} syntax.
         * 
         */
-        vector<variant<string, unique_ptr<Expr>>> text;
+        string text;
         StringExpr(string t) { text.push_back(t); } // Defined in  AST.cpp
         StringExpr(vector<variant<string, unique_ptr<Expr>>> t) : text(std::move(t)) {}            
         optional<Value*> codegen(CompilationContext &ctx) override;    
