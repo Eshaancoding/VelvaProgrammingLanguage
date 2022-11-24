@@ -43,6 +43,9 @@ class TestSuite {
                     return 0;
                 }));
             }
+            for (auto &f : results) {
+                f.get();
+            }
         }
 }
 
