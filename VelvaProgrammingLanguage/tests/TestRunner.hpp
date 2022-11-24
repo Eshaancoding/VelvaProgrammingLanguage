@@ -20,15 +20,37 @@ struct TestCase {
     string name;
 };
 
+/**
+ * @brief This is the only public class exposed by the testing framework. This represents a single component of the test.
+ * 
+ */
 class TestSuite {
     private:
         vector<TestCase> cases;
         string name;
     public:
+        /**
+         * @brief Construct a new Test Suite
+         * 
+         * @param name The name that you would like to give to your test suite
+         */
         TestSuite(string name) : name(name) {};
+        /**
+         * @brief Add a single case to your test.
+         * 
+         * @param fn The lambda to execute when calling your test.
+         * @param name The name of your test case
+         */
         void add(function<void()> fn, string name) const noexcept {
             cases.push_back(TestCase {fn, name});
         }
+        /**
+         * @brief Executes the test suite, printing results in the console.
+         * Console output has three symbols:
+         * ✅ — Test succeeded
+         * ❌ — Test failed, with error message provided
+         * ☢️ — Test threw an exception (crashed), with error message provided
+         */
         void run() const {
             vector<future<int>> results;
             cout << name << ":" << endl;
@@ -51,6 +73,12 @@ class TestSuite {
         }
 }
 
+/**
+ * @brief Asserts if something is true. If it's false, the test fails.
+ * 
+ * @param e The boolean.
+ * @param error_msg Message if false
+ */
 void assert(bool e, string error_msg) {
     if(!e) throw TestError(msg);
 }
