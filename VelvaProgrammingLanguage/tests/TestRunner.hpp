@@ -1,0 +1,48 @@
+using namespace std;
+#include <error>
+#include <vector>
+#include <future>
+#include <tuple>
+
+class TestError : public exception {
+    private:
+        string msg;
+    public:
+        TestError() : msg(msg) {}
+
+        virtual const char *what() const noexcept {
+            return msg.c_str();
+        }
+};
+
+struct TestCase {
+    function<void()> fn;
+    string name;
+};
+
+class TestSuite {
+    private:
+        vector<TestCase> cases;
+    public:
+        TestSuite();
+        void add(function<void()> fn, string name) const noexcept {
+            cases.push_back(TestCase {fn, name});
+        }
+        void run() const noexcept {
+            vector<future<int>> results;
+            for (auto &_case: cases) {
+                results.push_back(async([=]() {
+                    try {
+                        _case.fn();
+                        cout << _case.name << ": ✅" << endl;
+                    } catch(TestError &e) {
+                        cout << _case.name << ": ❌" << endl << "\t" << e.what() << endl;
+                    } catch(exception &e) {
+                        cout << _case.name << ": ☢️" << endl << "\t" << e.what() << endl;
+                    }
+                    return 0;
+                }));
+            }
+        }
+}
+
