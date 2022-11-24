@@ -19,12 +19,17 @@ string CallFuncExpr::debug_info() {
 }
 
 string DeclareFunctionExpr::debug_info() {
-    string result = "Declare Function Expr with isPure: " + std::to_string(isPure) + " name: " + name + " and ";
+    string result = "Declare Function Expr with isPure: " + std::to_string(isPure) + " isExternal: " + std::to_string(isExternal) + " name: " + name + " and ";
     int num = 1;
     for (auto &f : params) {
         result += "Param " + to_string(num) + " with type " + get<0>(f) + " and name " + get<1>(f) + ", ";
         num++;
     }
+    if (returnType)
+        result += " return type: " + *returnType;
+    else
+        result += " return type: none!";
+
     return result;
 }
 

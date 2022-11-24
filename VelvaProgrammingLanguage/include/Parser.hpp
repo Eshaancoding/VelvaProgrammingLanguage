@@ -19,6 +19,9 @@ public:
     optional<unique_ptr<VarDeclareExpr>> ParseVariableDeclaration(bool is_floating_point);
     optional<unique_ptr<PrintExpr>> ParsePrintDeclaration(); 
     optional<unique_ptr<DeclareFunctionExpr>> ParseDeclareFunctionExpr (bool isPure);
+    optional<unique_ptr<AssignExpr>> ParseAssignExpr (string varName);
+    optional<unique_ptr<CallFuncExpr>> ParseCallExpr (string funcName);
+    optional<unique_ptr<StringExpr>> ParseString (); 
     bool MainParser ();
 };
 

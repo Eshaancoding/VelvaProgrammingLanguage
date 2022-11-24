@@ -17,40 +17,45 @@ bool Parser::MainParser () {
             // Variable Declaration
             if (name == "int") {
                 auto result = ParseVariableDeclaration(false);
-                if (result) {
+                if (result)
                     printf("AST: %s\n", (*result)->debug_info().c_str());
-                } else {
-                    return false; 
-                }
             }
             else if (name == "float") {
                 auto result = ParseVariableDeclaration(true);
-                if (result) {
+                if (result)
                     printf("AST: %s\n", (*result)->debug_info().c_str());
-                } 
             }
             // Print Declaration
             else if (name == "print") {
-                printf("AST: %s\n", (*ParsePrintDeclaration())->debug_info().c_str());
+                auto result = ParsePrintDeclaration();
+                if (result) 
+                    printf("AST: %s\n", (*result)->debug_info().c_str());
             }
             else if (name == "func") {
                 auto result = ParseDeclareFunctionExpr(false);
                 if (result)
                     printf("AST: %s\n", (*result)->debug_info().c_str());
-                else
-                    printf("AST parse dec func undefined\n");
             }
             else if (name == "pure") {
                 auto result = ParseDeclareFunctionExpr(true);
                 if (result)
                     printf("AST: %s\n", (*result)->debug_info().c_str());
-                else
-                    printf("AST parse dec func undefined\n");
-
             }
             else {
-                lexer.log_err("Undefined identifier");
-                return false;
+                // could be an assign expr or a declare function expr, we will decide from here
+                currentToken = lexer.getToken();
+                if (currentToken->getCharacter() == '(') {
+                    // could be call expr 
+                    auto result = ParseCallExpr(name);
+                    if (result)
+                        printf("AST: %s\n", (*result)->debug_info().c_str());
+                }
+                else if (currentToken->getCharacter() == '=') {
+                    // assign expr 
+                    auto result = ParseAssignExpr(name);
+                    if (result)
+                        printf("AST: %s\n", (*result)->debug_info().c_str());
+                }
             } 
         }
         else if (currentToken->isChar()) {

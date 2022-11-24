@@ -25,7 +25,7 @@ optional<unique_ptr<VarDeclareExpr>> Parser::ParseVariableDeclaration(bool is_fl
     // Eat the number
     // cannot declare int i = 3.0;
     if (!is_floating_point && currentToken->isFloatIdent()) {
-        lexer.log_err("Expected = ");
+        lexer.log_err("Can't declare a float with an int declaration.");
         return nullopt;
     }
 
