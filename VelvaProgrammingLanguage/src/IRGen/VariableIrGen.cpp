@@ -125,6 +125,3 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
     ctx.builder.CreateStore(rhs, inst);
 };  
 
-optional<Value*> PrintExpr::codegen (CompilationContext &ctx) {
-    return nullopt; // we need to evaluate the expression, and then we need to print somehow
-}
