@@ -14,27 +14,27 @@ bool Parser::MainParser () {
         // it's an identifier
         if (currentToken->isIdent()) {
             std::string name = currentToken->getName();
+            // Variable Declaration
             if (name == "int") {
                 auto result = ParseVariableDeclaration(false);
-                if (auto output = std::get_if<unique_ptr<VarDeclareExpr>>(&result)) {
-                    printf("AST: %s\n", (*output)->debug_info().c_str());
-                    // return std::move(*output);
-                }
-                else {
-                    return false;
+                if (result) {
+                    printf("AST: %s\n", (*result)->debug_info().c_str());
+                } else {
+                    return false; 
                 }
             }
             else if (name == "float") {
                 auto result = ParseVariableDeclaration(true);
-                if (auto output = std::get_if<unique_ptr<VarDeclareExpr>>(&result)) {
-                    printf("AST: %s\n", (*output)->debug_info().c_str());
-                }
-                else {
-                    return false;
-                }
+                if (result) {
+                    printf("AST: %s\n", (*result)->debug_info().c_str());
+                } 
             }
+            // Print Declaration
             else if (name == "print") {
-                printf("AST: %s\n", ParsePrintDeclaration()->debug_info().c_str());
+                printf("AST: %s\n", (*ParsePrintDeclaration())->debug_info().c_str());
+            }
+            else if (name == "func") {
+                printf("AST: %s\n", (*ParseDeclareFunctionExpr())->debug_info().c_str());
             }
             else {
                 lexer.log_err("Undefined identifier");

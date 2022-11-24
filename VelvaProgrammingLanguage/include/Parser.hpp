@@ -6,6 +6,7 @@
 #include "Token.hpp"
 #include <string>
 #include <memory.h>
+#include <map>
 #include <variant>
 
 class Parser {
@@ -14,8 +15,9 @@ private:
     Lexer lexer;
 public: 
     Parser (char* filename); 
-    variant<unique_ptr<VarDeclareExpr>, unique_ptr<ErrorExpr>> ParseVariableDeclaration(bool is_floating_point);
-    unique_ptr<PrintExpr> ParsePrintDeclaration(); 
+    optional<unique_ptr<VarDeclareExpr>> ParseVariableDeclaration(bool is_floating_point);
+    optional<unique_ptr<PrintExpr>> ParsePrintDeclaration(); 
+    optional<unique_ptr<DeclareFunctionExpr>> ParseDeclareFunctionExpr ();
     bool MainParser ();
 };
 
