@@ -12,7 +12,7 @@ execute_process (
 )
 message(STATUS "Prefix path: $ENV{CMAKE_PREFIX_PATH}")
 execute_process (
-    COMMAND bash ../list_files.sh
+    COMMAND bash ./list_files.sh
     OUTPUT_VARIABLE VELVA_FILE_PATH
 )
 
