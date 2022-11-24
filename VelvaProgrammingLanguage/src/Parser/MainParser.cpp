@@ -6,6 +6,9 @@ Parser::Parser (char* filename) {
 }
 
 bool Parser::MainParser () {
+    CompilationContext ctx;
+    auto fn = make_unique<DeclareFunctionExpr>(false, false, "__main__", {}, nullopt);
+
     // Main parser, which will iterate through until there's an EOF token 
     while (!currentToken->isEOF()) {
         if (currentToken->isErr())
@@ -18,6 +21,7 @@ bool Parser::MainParser () {
             if (name == "int") {
                 auto result = ParseVariableDeclaration(false);
                 if (result) {
+                    fn->body.push_back(result);
                     printf("AST: %s\n", (*result)->debug_info().c_str());
                 } else {
                     return false; 
@@ -26,24 +30,30 @@ bool Parser::MainParser () {
             else if (name == "float") {
                 auto result = ParseVariableDeclaration(true);
                 if (result) {
+                    fn->body.push_back(result);
                     printf("AST: %s\n", (*result)->debug_info().c_str());
                 } 
             }
             // Print Declaration
             else if (name == "print") {
+                fn->body.push_back(result);
                 printf("AST: %s\n", (*ParsePrintDeclaration())->debug_info().c_str());
             }
             else if (name == "func") {
                 auto result = ParseDeclareFunctionExpr(false);
-                if (result)
+                if (result) {
+                    fn->body.push_back(result);
                     printf("AST: %s\n", (*result)->debug_info().c_str());
+                }
                 else
                     printf("AST parse dec func undefined\n");
             }
             else if (name == "pure") {
                 auto result = ParseDeclareFunctionExpr(true);
-                if (result)
+                if (result) {
+                    fn->body.push_back(result);
                     printf("AST: %s\n", (*result)->debug_info().c_str());
+                }
                 else
                     printf("AST parse dec func undefined\n");
 
@@ -62,6 +72,9 @@ bool Parser::MainParser () {
         currentToken = lexer.getToken();
     }
 
+
     // parses correctly
+
+    fn->codegen(ctx);
     return true;
 }

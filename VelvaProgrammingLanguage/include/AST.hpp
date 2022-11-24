@@ -45,7 +45,6 @@ struct CompilationContext {
         std::unique_ptr<Module> mod;
         map<string, AllocaInst*> namedValues;
         unique_ptr<KaleidoscopeJIT> jit;
-        map<string, void*> ffiFunctions { {"cos", (void*) &_cos}, {"sin", (void*) &_sin} };
         CompilationContext();
 };
 
@@ -161,10 +160,12 @@ class DeclareFunctionExpr {
          * This is nullopt when there the return type is void.
          */
         optional<std::string> returnType;
+        optional<vector<Expr>> body;
         DeclareFunctionExpr(bool isExternal, bool isPure, string name, vector<tuple<string, string> > params, optional<string> returnType) : isPure(isPure), name(name), params(std::move(params)), returnType(returnType), isExternal(isExternal) {} ;
         optional<Function*> codegen(CompilationContext &ctx);
         string debug_info();
 };
+
 
 /**
  * @brief Error Expr for errors on code 
