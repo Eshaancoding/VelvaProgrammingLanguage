@@ -102,24 +102,11 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 
 optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 {
-    optional<Value *> V = ctx.namedValues[var];
+    Value *v = ctx.namedValues[var];
     // return ctx.builder->CreateLoad(V, var.c_str()); // why do we need to create load???
-    return V;
+    return ctx.builder.CreateLoad(v);
 }
 
-void VarDeclareExpr::alloc(CompilationContext &ctx)
-{
-    // needs scope declarations to add the memory allocation for the right areas
-    // for now just adding to the global builder
-    Type *t;
-    if (type == "int") 
-        t = Type::getInt32Ty(*ctx.context);
-    else if (type == "float")
-        t = Type::getDoubleTy(*ctx.context);
-    
-    auto alloca = ctx.builder->CreateAlloca(t, 0, name.c_str());
-    ctx.namedValues[name] = alloca;
-}
 
 // need to add scope for vardeclare and test
 // need to add assignment allocation
@@ -127,7 +114,15 @@ void VarDeclareExpr::alloc(CompilationContext &ctx)
 
 // error stuff literally just dummy functions because it has to override shit
 optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
-    return nullopt; // for now, we are going to declare it nullopt until we actually define the IR lol
+    AllocaInst *inst = ctx.builder.CreateAlloca(type == "int" ? Type::getInt32Ty(*ctx.context)
+            : type == "double" ? Type::getDoubleTy(*ctx.context)
+            : type == "string" ? Type::getInt8PtrTy(*ctx.context)
+            : Type::getVoidTy(*ctx.context),
+            0,
+            name.c_str());
+    namedValues[name] = inst;
+    Value *rhs = value->codegen();
+    ctx.builder.CreateStore(rhs, inst);
 };  
 
 optional<Value*> PrintExpr::codegen (CompilationContext &ctx) {
