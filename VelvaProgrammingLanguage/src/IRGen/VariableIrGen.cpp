@@ -94,21 +94,10 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
     } else {
         return {};
     }
-    // switch (*returnType)
-    // {
-    // case "int":
-    //     retType = Type::getInt32Ty(*ctx.context);
-    //     break;
-    // case "double":
-    //     retType = Type::getDoubleTy(*ctx.context);
-    //     break;
-    // case "string":
-    //     // to be done because complicated
-    //     break;
-    // default:
-    //     retType = Type::getVoidTy(*ctx.context);
-    //     break;
-    // }
+    auto retType = retType == "int" ? Type::getInt32Ty(*ctx.context)
+              : retType == "double" ? Type::getDoubleTy(*ctx.context)
+              : retType == "string" ? /* TODO */ Type::getVoidTy(*ctx.context)
+              : Type::getVoidTy(*ctx.context);
 
     FunctionType *FT = FunctionType::get(retType, paramTypes, false);
 
