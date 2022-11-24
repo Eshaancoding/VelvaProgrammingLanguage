@@ -8,7 +8,7 @@ class TestError : public exception {
     private:
         string msg;
     public:
-        TestError() : msg(msg) {}
+        TestError(string msg) : msg(msg) {}
 
         virtual const char *what() const noexcept {
             return msg.c_str();
@@ -49,3 +49,6 @@ class TestSuite {
         }
 }
 
+void assert(bool e, string error_msg) {
+    if(!e) throw TestError(msg);
+}
