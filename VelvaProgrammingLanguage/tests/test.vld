@@ -1,5 +1,5 @@
 int i = 3;
-print(i)
+printi(i)
 float v = 5.0;
-print(v)
+printd(v)
 func addToResult (int a, int b) -> int {}
