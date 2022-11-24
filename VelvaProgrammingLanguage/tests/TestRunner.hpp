@@ -23,13 +23,15 @@ struct TestCase {
 class TestSuite {
     private:
         vector<TestCase> cases;
+        string name;
     public:
-        TestSuite();
+        TestSuite(string name) : name(name) {};
         void add(function<void()> fn, string name) const noexcept {
             cases.push_back(TestCase {fn, name});
         }
-        void run() const noexcept {
+        void run() const {
             vector<future<int>> results;
+            cout << name << ":" << endl;
             for (auto &_case: cases) {
                 results.push_back(async([=]() {
                     try {
