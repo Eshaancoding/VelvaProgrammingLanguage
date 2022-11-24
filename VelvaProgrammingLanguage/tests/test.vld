@@ -2,3 +2,4 @@ int i = 3;
 print(i)
 float v = 5.0;
 print(v)
+func addToResult (int a, int b) -> int {}

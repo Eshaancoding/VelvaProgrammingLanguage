@@ -25,7 +25,6 @@ optional<Value *> FloatExpr::codegen(CompilationContext &ctx)
 std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx)
 {
     Function *calleeF = ctx.mod->getFunction(functionName);
-    assert(calleeF);
     if (calleeF->arg_size() != params.size())
     {
         // WE NEED ERROR HANDLING HERE AHHHHHHHHHHHHHHHHHHHHHHH CAN'T USE LEXER

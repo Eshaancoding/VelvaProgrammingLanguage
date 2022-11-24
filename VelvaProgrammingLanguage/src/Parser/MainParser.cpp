@@ -34,7 +34,19 @@ bool Parser::MainParser () {
                 printf("AST: %s\n", (*ParsePrintDeclaration())->debug_info().c_str());
             }
             else if (name == "func") {
-                printf("AST: %s\n", (*ParseDeclareFunctionExpr())->debug_info().c_str());
+                auto result = ParseDeclareFunctionExpr(false);
+                if (result)
+                    printf("AST: %s\n", (*result)->debug_info().c_str());
+                else
+                    printf("AST parse dec func undefined\n");
+            }
+            else if (name == "pure") {
+                auto result = ParseDeclareFunctionExpr(true);
+                if (result)
+                    printf("AST: %s\n", (*result)->debug_info().c_str());
+                else
+                    printf("AST parse dec func undefined\n");
+
             }
             else {
                 lexer.log_err("Undefined identifier");

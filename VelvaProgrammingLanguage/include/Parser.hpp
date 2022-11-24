@@ -8,7 +8,8 @@
 #include <memory.h>
 #include <map>
 #include <variant>
-
+#include <cmath>
+#include <tuple>
 class Parser {
 private:
     Token* currentToken;
@@ -17,7 +18,7 @@ public:
     Parser (char* filename); 
     optional<unique_ptr<VarDeclareExpr>> ParseVariableDeclaration(bool is_floating_point);
     optional<unique_ptr<PrintExpr>> ParsePrintDeclaration(); 
-    optional<unique_ptr<DeclareFunctionExpr>> ParseDeclareFunctionExpr ();
+    optional<unique_ptr<DeclareFunctionExpr>> ParseDeclareFunctionExpr (bool isPure);
     bool MainParser ();
 };
 

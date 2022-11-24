@@ -24,8 +24,13 @@
 #include "llvm/IR/Value.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Module.h"
+#include <cmath>
 using namespace std;
 using namespace llvm;
+
+extern "C" double velva_sin(double d) { return sin(d); }
+extern "C" double velva_cos(double d) { return cos(d); }
+
 
 // IR generation variables
 
@@ -39,7 +44,7 @@ struct CompilationContext {
         std::unique_ptr<IRBuilder<>> builder;
         std::unique_ptr<Module> mod;
         map<string, AllocaInst*> namedValues;
-        
+        map<string, void*> ffiFunctions { {"cos", (void*) &_cos}, {"sin", (void*) &_sin} };
         CompilationContext() {
             context = std::make_unique<LLVMContext>();
             mod = std::make_unique<Module>("mod", *context);
@@ -131,6 +136,14 @@ class CallFuncExpr : public Expr {
  */
 class DeclareFunctionExpr {
     public:
+        static map<string, DeclareFunctionExpr> ffiFunctions {
+            {"sin", DeclareFunctionExpr(true, false, "sin", make_tuple("double", "d"), "double")},
+            {"cos", DeclareFunctionExpr(true, false, "cos", make_tuple("double", "d"), "double")}
+        };
+        /**
+         * @brief Whether or not the function is from FFI (external functions declared in C++ but can be used in our lang) or not .
+         */
+        bool isExternal;
         /**
          * @brief Whether the function is pure or not.
          * This is true when the function is declared with the pure keyword, and false when declared with the func keyword.
@@ -151,7 +164,7 @@ class DeclareFunctionExpr {
          * This is nullopt when there the return type is void.
          */
         optional<std::string> returnType;
-        DeclareFunctionExpr(bool isPure, string name, vector<tuple<string, string> > params, optional<string> returnType) : isPure(isPure), name(name), params(std::move(params)), returnType(returnType) {} ;
+        DeclareFunctionExpr(bool isExternal, bool isPure, string name, vector<tuple<string, string> > params, optional<string> returnType) : isPure(isPure), name(name), params(std::move(params)), returnType(returnType), isExternal(isExternal) {} ;
         optional<Function*> codegen(CompilationContext &ctx);
         string debug_info();
 };
