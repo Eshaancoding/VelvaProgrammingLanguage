@@ -8,7 +8,7 @@ bool Token::isFloatIdent() {return false;}
 bool Token::isIdent() {return false;}
 bool Token::isChar() {return false;}
 std::string Token::getName() {return ""; }
-char Token::getCharacter() {return ' '; }
+string Token::getCharacters() {return " "; }
 int Token::getIntValue() {return 0;}
 float Token::getFloatValue() {return 0.0;}
 
@@ -27,7 +27,7 @@ std::string ERRToken::to_str() {return "Error Token";}
 std::string IntegerToken::to_str() {return "Int Identifier Token with value: " + std::to_string(value);}
 std::string FloatToken::to_str() {return "Float Identifier Token with value: " + std::to_string(value);}
 std::string IdentifierToken::to_str() {return "Identifier Token with name: " + name;}
-std::string CharacterToken::to_str() {return std::string("Character toekn with char: ") + character;}
+std::string CharacterToken::to_str() {return std::string("Character toekn with char: ") + characters;}
 
 // Constructors
 EOFToken::EOFToken () { token_id = -1; }
@@ -47,13 +47,13 @@ IdentifierToken::IdentifierToken(std::string name) {
     this->name = name;
 }
 
-CharacterToken::CharacterToken (char character) {
+CharacterToken::CharacterToken (std::string characters) {
     token_id = -6;
-    this->character = character;
+    this->characters = characters;
 }
 
 // Accessor methods
 int IntegerToken::getIntValue () { return value; }
 float FloatToken::getFloatValue () { return value; }
 std::string IdentifierToken::getName () { return name; }
-char CharacterToken::getCharacter () { return character; }
+string CharacterToken::getCharacters () { return characters; }

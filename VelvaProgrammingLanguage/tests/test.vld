@@ -1,7 +1,2 @@
 int i = 3;
-print(i)
-float v = 5.0;
-print(v)
-func addToResult (int a, float b) -> float {}
-v = 3.0
-addToResult(3.0, 2)
+i = 4 * 3 + 2 + 2/3 > 1

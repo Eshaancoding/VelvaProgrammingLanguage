@@ -12,7 +12,7 @@ optional<unique_ptr<Expr>> Parser::ParsePrimary () {
         return move(val);
     }
     else if (currentToken->isChar()) {
-        if (currentToken->getCharacter() == '"') {
+        if (currentToken->getCharacters() == "\"") {
             auto val = ParseString();
             currentToken = lexer.getToken();
             return move(val);
@@ -30,7 +30,7 @@ optional<unique_ptr<Expr>> Parser::ParsePrimary () {
         } else {
             string name = currentToken->getName();
             currentToken = lexer.getToken();
-            if (currentToken->getCharacter() == '(') {
+            if (currentToken->getCharacters() == "(") {
                 // call expr 
                 return ParseCallExpr(name);
             }

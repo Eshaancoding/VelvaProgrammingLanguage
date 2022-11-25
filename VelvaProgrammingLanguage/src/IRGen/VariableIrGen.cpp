@@ -33,6 +33,9 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx)
     return ctx.builder->CreateCall(calleeF, argv, "calltmp");
 }
 
+optional<Value *> StringExpr::codegen(CompilationContext &ctx) {
+    return nullopt; // to be implemented later lol
+}
 // - Beshaan Barkataki, 2022, procrastinate 5 homework assigments and 8 tests day next week 
 // optional<Value *> StringExpr::codegen(CompilationContext &ctx)
 // {

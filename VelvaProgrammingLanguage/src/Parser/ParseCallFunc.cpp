@@ -18,8 +18,8 @@ optional<unique_ptr<CallFuncExpr>> Parser::ParseCallExpr (string funcName) {
         }
 
         currentToken = lexer.getToken();  // get char
-        if (currentToken->getCharacter() == ')') break;
-        else if (currentToken->getCharacter() != ',') {
+        if (currentToken->getCharacters() == ")") break;
+        else if (currentToken->getCharacters() != ",") {
             lexer.log_err("Expected character ) or ,");
             return nullopt;
         }

@@ -2,66 +2,78 @@
 
 pair<int, string> Parser::ParseOperation () {
     if (currentToken->isChar()) {
-        char character = currentToken->getCharacter();
+        string characters = currentToken->getCharacters();
         currentToken = lexer.getToken();
-        char nextCharacter = currentToken->getCharacter();
         
         // double char operations    
-        if (character == '=' && nextCharacter == '=') {
-            currentToken = lexer.getToken();
-            return {10, "=="};
-        }
-        else if (character == '>' && nextCharacter == '=') {
-            currentToken = lexer.getToken();
-            return {10, ">="};
-        }
-        else if (character == '<' && nextCharacter == '=') {
-            currentToken = lexer.getToken();
-            return {10, "<="}
-        }
-        else if (character == '+') { return {20, "+"}; }
-        else if (character == '-') { return {20, "-"}; }
-        else if (character == '/') { return {30, "/"}; }
-        else if (character == '*') { return {30, "*"}; }
-        else return -1;
+        if (characters == "==") { return {10, characters}; }
+        else if (characters == ">=") { return {10, characters}; }
+        else if (characters == "<=") { return {10, characters}; }
+        else if (characters == "+") { return {20, characters}; }
+        else if (characters == "-") { return {20, characters}; }
+        else if (characters == "/") { return {30, characters}; }
+        else if (characters == "*") { return {30, characters}; }
+        else if (characters == ">") { return {10, characters}; }
+        else if (characters == "<") { return {10, characters}; }
+        else return {-1, ""};
     }
-    else return -1;
+    else return {-1, ""};
 }
 
 optional<unique_ptr<Expr>> Parser::ParseExpression () {
+    should_stop_parsing_expr = false;
     auto LHS = ParsePrimary();
     if (!LHS) return nullopt;
 
     return ParseBinaryOp(move(*LHS));
 }
 
-optional<unique_ptr<Expr>> Parser::ParseBinaryOp (unique_ptr<Expr> LHS, int ExprPrec) {
-    pair<int, string> operation = ParseOperation();
-    int precendence = get<0>(operation);
-    string operation = get<1>(operation);
-    while (true) {
-        // if precendence is -1 (invalid operation) or, in the case of expression: b * c + d, it parsed the + but since the previous operation is a * (higher precendence), it would return the b * c, before parsing the + operation
-        if (precendence < ExprPrec) return LHS;
+optional<unique_ptr<Expr>> Parser::ParseBinaryOp (unique_ptr<Expr> LHS, optional<pair<int, string>> operationParse) {
+    // get Operation
+    int precedence;
+    string op_str;
+    if (!operationParse) {
+        auto operation = ParseOperation();
+        precedence = get<0>(operation);
+        op_str = get<1>(operation);
+    } else {
+        precedence = get<0>(*operationParse);
+        op_str = get<1>(*operationParse);
+    }
 
-        // Parse the RHS
+    // if next operation resulted in an error, just return the combined RHS and LHS
+    if (precedence == -1)
+        return std::move(LHS);
+
+    while (true) {
+        // get RHS 
         auto RHS = ParsePrimary();
         if (!RHS) return nullopt;
 
-        // if there's another operation at the right of the RHS, and the operation has higher precendence than the current precendence, then create RHS before going here. 
-        // in the case of expr: a * b + c, where the next operation (+) has lower precendence the current operation (*), it would just repeat and go back to if(precendence < ExprPrec)
-        pair<int, string> nextOperation = ParseOperation()
-        int nextPrecendence = get<0>(nextOperation);
-        string nextOperation = get<1>(nextOperation);
-        if (precendence < nextPrecendence) {
-            RHS = ParseBinaryOp(std::move(RHS), precendence+1); // parse the next RHS
-            if (!RHS) return nullopt;
+        // get next operation
+        auto nextOperation = ParseOperation();
+        int nextPrecedence = get<0>(nextOperation);
+        string next_op_str = get<1>(nextOperation);
+
+        // if next operation resulted in an error, just return the combined RHS and LHS
+        if (nextPrecedence == -1) {
+            should_stop_parsing_expr = true;
+            return make_unique<BinaryOpExpr>(op_str, move(LHS), move(*RHS));
         }
 
-        // merge LHS/RHS
-        LHS = make_unique<BinaryOpExpr>(operation, move(LHS), move(RHS));
+        // compare precendence of next operation and before operation
+        if (nextPrecedence > precedence) {
+            RHS = ParseBinaryOp(move(*RHS), nextOperation);
+            if (!RHS) return nullopt;
+        } 
 
-        // set precendence to nextPrecendence
-        precendence = nextPrecendence;
-        operation = nextOperaton;  
+        LHS = make_unique<BinaryOpExpr>(op_str, move(LHS), move(*RHS));
+
+        if (should_stop_parsing_expr) return LHS;
+         
+        // set
+        precedence = nextPrecedence;
+        op_str = next_op_str;
     }
+
 }

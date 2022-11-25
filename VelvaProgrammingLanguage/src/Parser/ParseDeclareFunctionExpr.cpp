@@ -18,7 +18,7 @@ optional<unique_ptr<DeclareFunctionExpr>> Parser::ParseDeclareFunctionExpr (bool
     
     string func_name = currentToken->getName();    
     currentToken = lexer.getToken(); // eat func_name, get (
-    if (!currentToken->isChar() || currentToken->getCharacter() != '(') {
+    if (currentToken->getCharacters() != "(") {
         lexer.log_err("Expected (");
         return nullopt;
     }
@@ -54,11 +54,11 @@ optional<unique_ptr<DeclareFunctionExpr>> Parser::ParseDeclareFunctionExpr (bool
         params.push_back((tuple<string, string>)make_tuple(var_type, var_name));
         
         // End of function
-        char character = currentToken->getCharacter();
-        if (character == ')') {
+        string character = currentToken->getCharacters();
+        if (character == ")") {
             break;
         } 
-        else if (character != ',') {
+        else if (character != ",") {
             lexer.log_err("Expected character , or )");
             return nullopt;
         }
@@ -68,22 +68,22 @@ optional<unique_ptr<DeclareFunctionExpr>> Parser::ParseDeclareFunctionExpr (bool
     // get return type, if there is any
     currentToken = lexer.getToken(); // eat ), get char  
     optional<std::string> returnType = nullopt;
-    if (currentToken->getCharacter() == '-') {
+    if (currentToken->getCharacters() == "-") {
         // means we are returning the type
         currentToken = lexer.getToken();   
-        if (currentToken->getCharacter() != '>') {
+        if (currentToken->getCharacters() != ">") {
             lexer.log_err("Expected >");
             return nullopt;
         }
         currentToken = lexer.getToken();   
         returnType = currentToken->getName();
         currentToken = lexer.getToken();   
-        if (currentToken->getCharacter() != '{') {
+        if (currentToken->getCharacters() != "{") {
             lexer.log_err("Expected {");
             return nullopt;
         }
     } 
-    else if (currentToken->getCharacter() != '{') {
+    else if (currentToken->getCharacters() != "{") {
         lexer.log_err("Expected { or -");
         return nullopt;
     }
@@ -92,7 +92,7 @@ optional<unique_ptr<DeclareFunctionExpr>> Parser::ParseDeclareFunctionExpr (bool
     
     // for now we are just going to parse in an empty function
     currentToken = lexer.getToken();
-    if (currentToken->getCharacter() != '}') {
+    if (currentToken->getCharacters() != "}") {
         lexer.log_err("Expected character }");
         return nullopt;
     }

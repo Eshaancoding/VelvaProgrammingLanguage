@@ -13,6 +13,7 @@
 
 /****** TODO ******
  * Add paranthesis parser, and add to probably ParsePrimary
+ * Add comment parser
  * Fix bugs (param bugs)
  * Test everything!
  * Organize functions based on general info (e.i multiple function declaration of Parser class into one .cpp file)
@@ -23,6 +24,7 @@ private:
     Token* currentToken;
     Lexer lexer;
     vector<string> keywords;
+    int should_stop_parsing_expr;
 
     /** 
      * @brief Get's token precendence from currentToken. Does assign the next token to a non-operation token afterwards. Defined in ParseExpressions.cpp.
@@ -31,6 +33,10 @@ private:
     pair<int, string> ParseOperation ();
 
 public: 
+    /**
+     * @brief Initializes Parser. Declared in MainParser.cpp
+     * @param filename the path to the filename that it should be parsing.
+    */
     Parser (char* filename); 
 
     /**
@@ -48,7 +54,7 @@ public:
     optional<unique_ptr<StringExpr>> ParseString (); 
 
     /**
-     * @brief Parses variable uses, integers, strings, call expr, or flaot. This is a helper function for parse expressions.
+     * @brief Parses variable uses, integers, strings, call expr, or float. This is a helper function for parse expressions.
      * @returns a general expression. Could be a variety of child classes from Expr, such as IntExpr, FloatExpr, CallFuncExpr, or StringExpr (calls ParseString)
     */
     optional<unique_ptr<Expr>> ParsePrimary ();
@@ -56,10 +62,9 @@ public:
     /**
      * @brief Parses binary expression based upon precendence (see private variable BinaryOpPrecedence). Helper function for ParsePrimary, and it is declared in ParseExpression.cpp.
      * @param LHS The left hand side of the operation
-     * @param ExprPrec the minimum precedence of the operation being parsed. If the operation being parsed has a higher precedence, then that would be parsed first before the lower precendence operation. Defaults to 0.
      * @return Returns an expr, which could be from ParsePrimary (no binary operation found) or an actual Binary Expression
     */
-    optional<unique_ptr<Expr>> ParseBinaryOp (std::unique_ptr<Expr> LHS, int ExprPrec=0);
+    optional<unique_ptr<Expr>> ParseBinaryOp (std::unique_ptr<Expr> LHS, optional<pair<int, string>> operationParse = {});
 
     /**
      * @brief Parses complex expressions such as (`x + y + 2 + "sdf"`)

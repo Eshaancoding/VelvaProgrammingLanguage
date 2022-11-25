@@ -217,7 +217,6 @@ class StringExpr: public Expr {
         * 
         */
         vector<variant<string, unique_ptr<Expr>>> text;
-        StringExpr() {};
         StringExpr(string t) { text.push_back(t); } // Defined in  AST.cpp
         StringExpr(vector<variant<string, unique_ptr<Expr>>> t) : text(std::move(t)) {}            
         optional<Value*> codegen(CompilationContext &ctx) override;    

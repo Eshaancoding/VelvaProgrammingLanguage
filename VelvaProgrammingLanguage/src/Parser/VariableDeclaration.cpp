@@ -16,7 +16,7 @@ optional<unique_ptr<VarDeclareExpr>> Parser::ParseVariableDeclaration(bool is_fl
     currentToken = lexer.getToken(); // eat the identifier
 
     // then parse the =
-    if (!currentToken->isChar() || currentToken->getCharacter() != '=') {
+    if (currentToken->getCharacters() != "=") {
         lexer.log_err("Expected = ");
         return nullopt;
     }
