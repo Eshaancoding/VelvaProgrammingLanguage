@@ -1,6 +1,7 @@
 #ifndef AST
 #define AST
 
+#include <iostream>
 #include <map>
 #include <vector>
 #include <string>
@@ -9,6 +10,7 @@
 #include <optional>
 #include <functional>
 #include <variant>
+#include "Utils.hpp"
 #include "llvm-c/Core.h"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
@@ -121,6 +123,27 @@ class CallFuncExpr : public Expr {
          */
         vector<unique_ptr<Expr>> params;
         CallFuncExpr(string name, vector<unique_ptr<Expr>> params) : functionName(name), params(std::move(params)) {};
+        std::optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
+};
+
+/**
+ * @brief An Binary Operation node representing +, /, -, etc. operations between various types
+ * 
+ */
+class BinaryOpExpr : public Expr {
+    public: 
+        /**
+         * @brief operation used. Could be <= or >= as well (that's why represented as string)
+        */
+        string op; 
+
+        /**
+         * @brief Left hand side and right hand side of the operation represented as Expr
+        */
+        unique_ptr<Expr> LHS, RHS;
+
+        BinaryOpExpr (string op, unique_ptr<Expr> LHS, unique_ptr<Expr> RHS) : op(op), LHS(move(LHS)), RHS(move(RHS)) {}
         std::optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
 };

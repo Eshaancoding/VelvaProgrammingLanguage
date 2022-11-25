@@ -5,8 +5,9 @@ string IntExpr::debug_info() { return "Int Expr with value: " + to_string(num) +
 string FloatExpr::debug_info() { return "Float Expr with value: " + to_string(decimal); } 
 string VarUseExpr::debug_info() { return "Variable Use Expr with variable name " + var; }
 string AssignExpr::debug_info() { return "Assign Expr with variable name " + varName + " and value " + value->debug_info(); }
-string ErrorExpr::debug_info() { return "Error Expr!"; }
+string BinaryOpExpr::debug_info() { return "Binary Operation expr with LHS [" + LHS->debug_info() + "] and RHS [" + RHS->debug_info() + "]"; }
 string PrintExpr::debug_info() { return "Print Expr with expression [" + expression->debug_info() + "]"; }
+string ErrorExpr::debug_info() { return "Error Expr!"; }
 
 string CallFuncExpr::debug_info() { 
     string result = "Call Func Expr with function name " + functionName + " and ";

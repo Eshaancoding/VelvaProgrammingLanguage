@@ -1,16 +1,4 @@
 #include "AST.hpp"
-#include "Utils.hpp"
-#include <iostream>
-#include <variant>
-#include <tuple>
-using namespace llvm;
-using namespace std;
-
-// HI help me fix errors
-// btw the C++14 "optional is not a template" are gone I changed my .vscode_settings
-// uhh we should be using 17
-
-// Yeah I know wait follow me for a se
 
 optional<Value *> IntExpr::codegen(CompilationContext &ctx)
 {

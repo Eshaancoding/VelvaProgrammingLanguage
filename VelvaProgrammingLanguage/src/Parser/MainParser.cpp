@@ -3,6 +3,7 @@
 Parser::Parser (char* filename) {
     this->lexer = Lexer(filename);
     this->currentToken = lexer.getToken();
+    this->keywords = {"int","float", "print", "func", "pure"};
 }
 
 bool Parser::MainParser () {
