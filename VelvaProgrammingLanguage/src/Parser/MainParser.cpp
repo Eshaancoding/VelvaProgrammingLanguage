@@ -75,6 +75,7 @@ bool Parser::MainParser () {
 
     // parses correctly
 
-    fn->codegen(ctx);
+    fn->codegen(ctx)->print(errs());
+
     return true;
 }
