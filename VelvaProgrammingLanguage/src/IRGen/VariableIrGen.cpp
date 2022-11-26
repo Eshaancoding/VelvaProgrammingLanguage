@@ -1,16 +1,4 @@
 #include "AST.hpp"
-#include "Utils.hpp"
-#include <iostream>
-#include <variant>
-#include <tuple>
-using namespace llvm;
-using namespace std;
-
-// HI help me fix errors
-// btw the C++14 "optional is not a template" are gone I changed my .vscode_settings
-// uhh we should be using 17
-
-// Yeah I know wait follow me for a se
 
 optional<Value *> IntExpr::codegen(CompilationContext &ctx)
 {
@@ -45,6 +33,9 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx)
     return ctx.builder->CreateCall(calleeF, argv, "calltmp");
 }
 
+optional<Value *> StringExpr::codegen(CompilationContext &ctx) {
+    return nullopt; // to be implemented later lol
+}
 // - Beshaan Barkataki, 2022, procrastinate 5 homework assigments and 8 tests day next week 
 // optional<Value *> StringExpr::codegen(CompilationContext &ctx)
 // {

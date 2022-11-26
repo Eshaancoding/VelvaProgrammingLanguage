@@ -10,7 +10,7 @@ optional<unique_ptr<PrintExpr>> Parser::ParsePrintDeclaration() {
     if (!currentToken->isChar()) {
         lexer.log_err("Expected '('");
         return nullopt;
-    } else if (currentToken->getCharacter() != '(') {
+    } else if (currentToken->getCharacters() != "(") {
         lexer.log_err("Expected '('");
         return nullopt;
     }
@@ -30,7 +30,7 @@ optional<unique_ptr<PrintExpr>> Parser::ParsePrintDeclaration() {
     if (!currentToken->isChar()) {
         lexer.log_err("Expected char ')'");
         return nullopt;
-    } else if (currentToken->getCharacter() != ')') {
+    } else if (currentToken->getCharacters() != ")") {
         lexer.log_err("Expected ')'");
         return nullopt;
     }
