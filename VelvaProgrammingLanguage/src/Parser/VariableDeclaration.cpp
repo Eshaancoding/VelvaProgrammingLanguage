@@ -22,27 +22,9 @@ optional<unique_ptr<VarDeclareExpr>> Parser::ParseVariableDeclaration(bool is_fl
     }
     currentToken = lexer.getToken(); // eat the =
 
-    // Eat the number
-    // cannot declare int i = 3.0;
-    if (!is_floating_point && currentToken->isFloatIdent()) {
-        lexer.log_err("Can't declare a float with an int declaration.");
-        return nullopt;
-    }
+    // parse expression
+    auto value = ParseExpression();
+    if (!value) return nullopt;
 
-    unique_ptr<Expr> value; 
-    std::string type;
-    if (currentToken->isFloatIdent()) {
-        value = make_unique<FloatExpr>(currentToken->getFloatValue());
-        type = "float";
-    } 
-    else if (currentToken->isIntIdent()) {
-        value = make_unique<IntExpr>(currentToken->getIntValue());
-        type = "int";
-    } // yeah yeah we'll add more later
-    else {
-        lexer.log_err("Expected a number");
-        return nullopt;
-    }
-
-    return make_unique<VarDeclareExpr>(VAR_MUTABILITY_VAR, var_name, std::move(value), type);
+    return make_unique<VarDeclareExpr>(VAR_MUTABILITY_VAR, var_name, std::move(*value), nullopt); // later we would not do nullopt;
 }

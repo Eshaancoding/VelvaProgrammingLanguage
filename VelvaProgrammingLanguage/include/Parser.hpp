@@ -14,6 +14,7 @@
 /****** TODO ******
  * Add paranthesis parser, and add to probably ParsePrimary
  * Add comment parser
+ * Add type attribute in ParseExpression
  * Fix bugs (param bugs)
  * Test everything!
  * Organize functions based on general info (e.i multiple function declaration of Parser class into one .cpp file)
@@ -41,7 +42,6 @@ public:
 
     /**
      * @brief Parses variable declaration (ex: `int a = 3` or `double a = 5.0`). Called from MainParser
-     * @bug does not parse from expression yet, just assumes double
      * @returns A variable declare expr node, declared in AST.hpp
     */    
     optional<unique_ptr<VarDeclareExpr>> ParseVariableDeclaration(bool is_floating_point);
@@ -85,7 +85,6 @@ public:
     /**
      * @brief Parses assign expression varaibles (ex: `a = 3`). Does not check if variable is floating point or not (doesn't know any information of the variable name). 
      * @param varName the variable name for parsing assign expr
-     * @bug Does not parse expression yet!
     */ 
     optional<unique_ptr<AssignExpr>> ParseAssignExpr (string varName);
 

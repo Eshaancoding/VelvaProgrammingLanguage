@@ -15,3 +15,12 @@ int main (int argc, char** argv) {
         printf("Something wrong happened :(\n");
     }
 }
+
+// int main (int argc, char** argv) {
+//     Lexer lex = Lexer(argv[1]);
+//     Token* currentToken = lex.getToken(); 
+//     while (!currentToken->isEOF()) {
+//         printf("Current token: %s\n", currentToken->to_str().c_str());
+//         currentToken = lex.getToken(); 
+//     }
+// }

@@ -20,8 +20,6 @@ message (STATUS "File path: ${VELVA_FILE_PATH}")
 # Find path
 find_package(LLVM REQUIRED CONFIG) #Make sure that LLVM is in your CMAKE_PREFIX_PATH
 
-# Assert LLVM version
-
 set(COMPILER_NAME "veld")
 
 if (NOT ${LLVM_PACKAGE_VERSION} VERSION_GREATER_EQUAL "15.0.0")

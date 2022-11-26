@@ -1,16 +1,16 @@
 #include "Parser.hpp"
 
 optional<unique_ptr<Expr>> Parser::ParsePrimary () {
-    if (currentToken->isFloatIdent()) {
+    if (currentToken->isIntIdent()) {
+        auto val = make_unique<IntExpr>(currentToken->getIntValue());
+        currentToken = lexer.getToken();
+        return move(val);
+    }
+    else if (currentToken->isFloatIdent()) {
         auto val = make_unique<FloatExpr>(currentToken->getFloatValue());
         currentToken = lexer.getToken();
         return move(val);
     } 
-    else if (currentToken->isIntIdent()) {
-        auto val = make_unique<FloatExpr>(currentToken->getIntValue());
-        currentToken = lexer.getToken();
-        return move(val);
-    }
     else if (currentToken->isChar()) {
         if (currentToken->getCharacters() == "\"") {
             auto val = ParseString();

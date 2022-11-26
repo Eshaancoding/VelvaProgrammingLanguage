@@ -3,18 +3,17 @@
 pair<int, string> Parser::ParseOperation () {
     if (currentToken->isChar()) {
         string characters = currentToken->getCharacters();
-        currentToken = lexer.getToken();
         
         // double char operations    
         if (characters == "==") { return {10, characters}; }
         else if (characters == ">=") { return {10, characters}; }
         else if (characters == "<=") { return {10, characters}; }
+        else if (characters == ">") { return {10, characters}; }
+        else if (characters == "<") { return {10, characters}; }
         else if (characters == "+") { return {20, characters}; }
         else if (characters == "-") { return {20, characters}; }
         else if (characters == "/") { return {30, characters}; }
         else if (characters == "*") { return {30, characters}; }
-        else if (characters == ">") { return {10, characters}; }
-        else if (characters == "<") { return {10, characters}; }
         else return {-1, ""};
     }
     else return {-1, ""};
@@ -34,6 +33,7 @@ optional<unique_ptr<Expr>> Parser::ParseBinaryOp (unique_ptr<Expr> LHS, optional
     string op_str;
     if (!operationParse) {
         auto operation = ParseOperation();
+        currentToken = lexer.getToken(); 
         precedence = get<0>(operation);
         op_str = get<1>(operation);
     } else {
@@ -60,6 +60,8 @@ optional<unique_ptr<Expr>> Parser::ParseBinaryOp (unique_ptr<Expr> LHS, optional
             should_stop_parsing_expr = true;
             return make_unique<BinaryOpExpr>(op_str, move(LHS), move(*RHS));
         }
+
+        currentToken = lexer.getToken(); 
 
         // compare precendence of next operation and before operation
         if (nextPrecedence > precedence) {
