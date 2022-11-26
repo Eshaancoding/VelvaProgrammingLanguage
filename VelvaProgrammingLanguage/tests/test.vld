@@ -1,2 +1,4 @@
-func a (int a, int b) { }
+print(3)
 a(3+3, 5+6*3)
+a = 3 * 33
+b = 33 * x

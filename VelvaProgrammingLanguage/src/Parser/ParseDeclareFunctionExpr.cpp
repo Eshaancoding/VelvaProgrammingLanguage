@@ -88,8 +88,6 @@ optional<unique_ptr<DeclareFunctionExpr>> Parser::ParseDeclareFunctionExpr (bool
         return nullopt;
     }
 
-    // parse body inside the function, but we don't even have expressions yet lololol
-    
     // for now we are just going to parse in an empty function
     currentToken = lexer.getToken();
     if (currentToken->getCharacters() != "}") {
@@ -97,5 +95,6 @@ optional<unique_ptr<DeclareFunctionExpr>> Parser::ParseDeclareFunctionExpr (bool
         return nullopt;
     }
 
+    currentToken = lexer.getToken();
     return make_unique<DeclareFunctionExpr>(false, isPure, func_name, params, returnType);
 }

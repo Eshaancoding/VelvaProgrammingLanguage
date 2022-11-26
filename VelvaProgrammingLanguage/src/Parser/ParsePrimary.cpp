@@ -30,14 +30,8 @@ optional<unique_ptr<Expr>> Parser::ParsePrimary () {
         } else {
             string name = currentToken->getName();
             currentToken = lexer.getToken();
-            if (currentToken->getCharacters() == "(") {
-                // call expr 
-                return ParseCallExpr(name);
-            }
-            else {
-                lexer.log_err("Invalid character for expression! Expected call function syntax.");
-                return nullopt;
-            } 
+            if (currentToken->getCharacters() == "(") return ParseCallExpr(name);
+            else return make_unique<VarUseExpr>(name);
         }
     }
     else {

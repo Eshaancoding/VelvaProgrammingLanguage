@@ -195,18 +195,6 @@ class ErrorExpr: public Expr {
 };
 
 /**
- * @brief Represents a print statement for AST
- * 
- */
-class PrintExpr : public Expr {
-    public: 
-        unique_ptr<Expr> expression;
-        PrintExpr (unique_ptr<Expr> a) : expression(std::move(a)) {};
-        optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
-};
-
-/**
  * @brief Represents a string literal
  * 
  */
@@ -296,7 +284,7 @@ class VarDeclareExpr : public Expr {
  * @brief An AST node representing variable assignment.
  * 
  */
-class AssignExpr {
+class AssignExpr : public Expr {
     public:
         /**
          * @brief The name of the variable to be changed.
@@ -309,9 +297,8 @@ class AssignExpr {
          */
         unique_ptr<Expr> value;
         AssignExpr(string name, unique_ptr<Expr> value) : varName(name), value(move(value)) {};
-        optional<Value*> codegen(CompilationContext &ctx);
-        // optional<Value*> generate_str(CompilationContext &ctx);
-        string debug_info();
+        optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
 };
 
 #endif

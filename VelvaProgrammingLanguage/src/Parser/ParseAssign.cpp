@@ -6,5 +6,4 @@ optional<unique_ptr<AssignExpr>> Parser::ParseAssignExpr (string varName) {
     auto result = ParseExpression(); 
     if (!result) return nullopt;
     return make_unique<AssignExpr>(varName, move(*result));
-
 }

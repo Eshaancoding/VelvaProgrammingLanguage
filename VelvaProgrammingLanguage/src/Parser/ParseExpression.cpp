@@ -33,17 +33,18 @@ optional<unique_ptr<Expr>> Parser::ParseBinaryOp (unique_ptr<Expr> LHS, optional
     string op_str;
     if (!operationParse) {
         auto operation = ParseOperation();
-        currentToken = lexer.getToken(); 
         precedence = get<0>(operation);
         op_str = get<1>(operation);
+
+        // if next operation resulted in an error, just return LHS
+        if (precedence == -1)
+            return std::move(LHS);
+         
+        currentToken = lexer.getToken(); 
     } else {
         precedence = get<0>(*operationParse);
         op_str = get<1>(*operationParse);
     }
-
-    // if next operation resulted in an error, just return the combined RHS and LHS
-    if (precedence == -1)
-        return std::move(LHS);
 
     while (true) {
         // get RHS 

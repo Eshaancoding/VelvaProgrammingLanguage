@@ -12,9 +12,12 @@
 #include <tuple>
 
 /****** TODO ******
+ * finish string parser
  * Add paranthesis parser, and add to probably ParsePrimary
  * Add comment parser
+ * Fix can't parse if new line at the end.
  * Add type attribute in ParseExpression
+ * Add if statement parser
  * Fix bugs (param bugs)
  * Test everything!
  * Organize functions based on general info (e.i multiple function declaration of Parser class into one .cpp file)
@@ -22,8 +25,6 @@
 
 class Parser {
 private:
-    Token* currentToken;
-    Lexer lexer;
     vector<string> keywords;
     int should_stop_parsing_expr;
 
@@ -34,11 +35,23 @@ private:
     pair<int, string> ParseOperation ();
 
 public: 
+    Token* currentToken;
+    Lexer lexer;
     /**
-     * @brief Initializes Parser. Declared in MainParser.cpp
+     * @brief Initializes Parser. Declared in ParserInit.cpp
      * @param filename the path to the filename that it should be parsing.
     */
     Parser (char* filename); 
+
+    /**
+     * @brief Helper function to print the current token. Declared in ParserInit.cpp
+    */
+    void printCurrentToken ();
+
+    /**
+     * @brief Helper function to advance to next token. Declared in ParserInit.cpp
+    */
+    void getNextToken ();
 
     /**
      * @brief Parses variable declaration (ex: `int a = 3` or `double a = 5.0`). Called from MainParser
@@ -72,9 +85,6 @@ public:
     */
     optional<unique_ptr<Expr>> ParseExpression ();
 
-    /// @brief Will be deleted!! This is suppose to be part of the FFI functions in ParseCallExpr and in the CallFuncExpr AST node.
-    optional<unique_ptr<PrintExpr>> ParsePrintDeclaration(); 
-
     /**
      * @brief Parses declare functions.
      * @param isPure adds if the function is pure or not by keyword: pure
@@ -96,12 +106,22 @@ public:
     optional<unique_ptr<CallFuncExpr>> ParseCallExpr (string funcName);
 
     /**
-     * @brief The main parser, which would go though the file and return the AST Expr nodes. 
-     * @return a boolean that indicates whether it successfully parsed the file or something went wrong (ex: syntax error)
-     * @bug This will have an entire while loop in it, but what we want is just to parse just lines or expressions. We should also return an optional<unique_ptr<Expr>>. The reason being is because when we call ParseDeclareFunctionExpr, we could cal the MainParser to construct the BODY of the actual function itself.
-     * @bug doesn't actually generate the IR.
+     * @brief Parse regular statements. Assumes that the token starts on the first token on the line (will end on the first token of the second line). Used by MainParser. Defined in ParseGeneral.cpp
+     * @return Returns an unique_ptr expression 
     */
-    bool MainParser ();
+    optional<unique_ptr<Expr>> parseStatement (); 
+
+    /**
+     * @brief Parse function declaration. Defined in ParseGeneral.cpp
+     * @return returns a declare function expr, which is unique since the codegen() returns a function class rather than a value class (like the other expressions)
+    */
+    optional<unique_ptr<DeclareFunctionExpr>> parseFunction ();
+
+    /**
+     * @brief Defines which type of code is in the current line of the parser. Defined in ParseGeneral.cpp
+     * @return returns an integer. 0 if it is a statement, 1 if it is a function, and 2 if it is a class
+    */
+    int getTypeCode ();
 };
 
 #endif

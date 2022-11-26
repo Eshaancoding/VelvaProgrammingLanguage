@@ -17,5 +17,6 @@ optional<unique_ptr<CallFuncExpr>> Parser::ParseCallExpr (string funcName) {
         currentToken = lexer.getToken();  // get next in sequence
     }
 
+    currentToken = lexer.getToken();
     return make_unique<CallFuncExpr>(funcName, std::move(params));
 }
