@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 3.13.4)
 project(Velva)
 
 # Check if both files exist
-if (NOT EXISTS "../cmake_pre.bash") 
+if (NOT EXISTS "cmake_pre.bash") 
 	message (FATAL_ERROR "Requires cmake_pre.bash file")
 endif()
 
 # Run bash file to set CMAKE_PREFIX_PATH
 execute_process (
-    COMMAND bash ../cmake_pre.bash
+    COMMAND bash cmake_pre.bash
 )
 message(STATUS "Prefix path: $ENV{CMAKE_PREFIX_PATH}")
 execute_process (
