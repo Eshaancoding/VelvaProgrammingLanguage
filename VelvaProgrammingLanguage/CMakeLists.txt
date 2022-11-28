@@ -12,15 +12,13 @@ execute_process (
 )
 message(STATUS "Prefix path: $ENV{CMAKE_PREFIX_PATH}")
 execute_process (
-    COMMAND bash ./list_files.sh
+    COMMAND bash ../list_files.sh
     OUTPUT_VARIABLE VELVA_FILE_PATH
 )
 
 message (STATUS "File path: ${VELVA_FILE_PATH}")
 # Find path
 find_package(LLVM REQUIRED CONFIG) #Make sure that LLVM is in your CMAKE_PREFIX_PATH
-
-# Assert LLVM version
 
 set(COMPILER_NAME "veld")
 

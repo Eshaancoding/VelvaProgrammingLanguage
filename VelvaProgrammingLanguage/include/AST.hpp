@@ -1,6 +1,7 @@
 #ifndef AST
 #define AST
 
+#include <iostream>
 #include <map>
 #include <vector>
 #include <string>
@@ -9,6 +10,7 @@
 #include <optional>
 #include <functional>
 #include <variant>
+#include "Utils.hpp"
 #include "llvm-c/Core.h"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
@@ -28,10 +30,6 @@
 using namespace std;
 using namespace llvm;
 
-extern "C" double velva_sin(double d) { return sin(d); }
-extern "C" double velva_cos(double d) { return cos(d); }
-
-
 // IR generation variables
 
 /**
@@ -44,7 +42,6 @@ struct CompilationContext {
         std::unique_ptr<IRBuilder<>> builder;
         std::unique_ptr<Module> mod;
         map<string, AllocaInst*> namedValues;
-        map<string, void*> ffiFunctions { {"cos", (void*) &_cos}, {"sin", (void*) &_sin} };
         CompilationContext() {
             context = std::make_unique<LLVMContext>();
             mod = std::make_unique<Module>("mod", *context);
@@ -131,15 +128,32 @@ class CallFuncExpr : public Expr {
 };
 
 /**
+ * @brief An Binary Operation node representing +, /, -, etc. operations between various types
+ * 
+ */
+class BinaryOpExpr : public Expr {
+    public: 
+        /**
+         * @brief operation used. Could be <= or >= as well (that's why represented as string)
+        */
+        string op; 
+
+        /**
+         * @brief Left hand side and right hand side of the operation represented as Expr
+        */
+        unique_ptr<Expr> LHS, RHS;
+
+        BinaryOpExpr (string op, unique_ptr<Expr> LHS, unique_ptr<Expr> RHS) : op(op), LHS(move(LHS)), RHS(move(RHS)) {}
+        std::optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
+};
+
+/**
  * @brief An AST node representing a function prototype.
  * 
  */
 class DeclareFunctionExpr {
     public:
-        static map<string, DeclareFunctionExpr> ffiFunctions {
-            {"sin", DeclareFunctionExpr(true, false, "sin", make_tuple("double", "d"), "double")},
-            {"cos", DeclareFunctionExpr(true, false, "cos", make_tuple("double", "d"), "double")}
-        };
         /**
          * @brief Whether or not the function is from FFI (external functions declared in C++ but can be used in our lang) or not .
          */
@@ -164,7 +178,7 @@ class DeclareFunctionExpr {
          * This is nullopt when there the return type is void.
          */
         optional<std::string> returnType;
-        DeclareFunctionExpr(bool isExternal, bool isPure, string name, vector<tuple<string, string> > params, optional<string> returnType) : isPure(isPure), name(name), params(std::move(params)), returnType(returnType), isExternal(isExternal) {} ;
+        DeclareFunctionExpr(bool isExternal, bool isPure, string name, vector<tuple<string, string> > params, optional<string> returnType) : isPure(isPure), name(name), params(params), returnType(returnType), isExternal(isExternal) {} ;
         optional<Function*> codegen(CompilationContext &ctx);
         string debug_info();
 };
@@ -176,18 +190,6 @@ class DeclareFunctionExpr {
 class ErrorExpr: public Expr {
     public:     
         ErrorExpr() {}; 
-        optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
-};
-
-/**
- * @brief Represents a print statement for AST
- * 
- */
-class PrintExpr : public Expr {
-    public: 
-        unique_ptr<Expr> expression;
-        PrintExpr (unique_ptr<Expr> a) : expression(std::move(a)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
 };
@@ -284,7 +286,7 @@ class VarDeclareExpr : public Expr {
  * @brief An AST node representing variable assignment.
  * 
  */
-class AssignExpr {
+class AssignExpr : public Expr {
     public:
         /**
          * @brief The name of the variable to be changed.
@@ -297,9 +299,8 @@ class AssignExpr {
          */
         unique_ptr<Expr> value;
         AssignExpr(string name, unique_ptr<Expr> value) : varName(name), value(move(value)) {};
-        optional<Value*> codegen(CompilationContext &ctx);
-        // optional<Value*> generate_str(CompilationContext &ctx);
-        string debug_info();
+        optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
 };
 
 #endif

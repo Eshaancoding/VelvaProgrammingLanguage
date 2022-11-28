@@ -1,5 +1,4 @@
-int i = 3;
-printi(i)
-float v = 5.0;
-printd(v)
-func addToResult (int a, int b) -> int {}
+print(3)
+a(3+3, 5+6*3)
+a = 3 * 33
+b = 33 * x

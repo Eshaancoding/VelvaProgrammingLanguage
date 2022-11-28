@@ -2,6 +2,7 @@
 #define TOKEN
 
 #include <string>
+using namespace std;
 
 class Token {
 protected:
@@ -25,7 +26,7 @@ public:
 
     // emtpy declaration used in child classes
     virtual std::string getName();
-    virtual char getCharacter();
+    virtual string getCharacters();
     virtual int getIntValue();
     virtual float getFloatValue();
     
@@ -77,12 +78,12 @@ public:
 
 class CharacterToken : public Token {
 private:
-    char character; 
+    string characters;  // we might need to store multiple grouped characters
 public:
-    CharacterToken(char character);
+    CharacterToken(string characters);
     bool isChar () override;
     std::string to_str() override;
-    char getCharacter() override;
+    string getCharacters() override;
 };
 
 #endif
