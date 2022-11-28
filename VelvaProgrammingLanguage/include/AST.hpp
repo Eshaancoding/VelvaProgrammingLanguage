@@ -42,11 +42,9 @@ struct CompilationContext {
         std::unique_ptr<IRBuilder<>> builder;
         std::unique_ptr<Module> mod;
         map<string, AllocaInst*> namedValues;
-        CompilationContext() {
-            context = std::make_unique<LLVMContext>();
-            mod = std::make_unique<Module>("mod", *context);
-            builder = std::make_unique<IRBuilder<>>(*context);
-        };
+        unique_ptr<KaleidoscopeJIT> jit;
+        map<string, void*> ffiFunctions { {"cos", (void*) &_cos}, {"sin", (void*) &_sin} };
+        CompilationContext();
 };
 
 /**

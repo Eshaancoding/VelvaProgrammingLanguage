@@ -1,5 +1,21 @@
 #include "AST.hpp"
 
+CompilationContext::CompilationContext() {
+    context = std::make_unique<LLVMContext>();
+    mod = std::make_unique<Module>("mod", *context);
+    builder = std::make_unique<IRBuilder<>>(*context);
+    jit = make_unique<KaleidoscopeJIT>();
+
+// Yeah I know wait follow me for a se
+
+CompilationContext::CompilationContext() {
+    context = std::make_unique<LLVMContext>();
+    mod = std::make_unique<Module>("mod", *context);
+    builder = std::make_unique<IRBuilder<>>(*context);
+    jit = make_unique<KaleidoscopeJIT>();
+
+    mod->setDataLayout(jit->getTargetMachine().createDataLayout());
+}
 optional<Value *> IntExpr::codegen(CompilationContext &ctx)
 {
     return ConstantInt::get(*ctx.context, APInt(numBits, num));
