@@ -17,7 +17,9 @@ int main (int argc, char** argv) {
         } 
         else if (code == 1) {
             auto statement = parser.parseFunction();
-            if (statement) printf("Function AST: %s\n", (*statement)->debug_info().c_str());
+            if (statement) {
+                printf("Function AST: %s\n", (*statement)->debug_info().c_str());
+            }
             else printf("Something went wrong!!\n");
         }
         parser.printCurrentToken();

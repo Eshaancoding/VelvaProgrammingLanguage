@@ -15,6 +15,7 @@
  * finish string parser
  * Add paranthesis parser, and add to probably ParsePrimary
  * Add comment parser
+ * Add return parser
  * Fix can't parse if new line at the end.
  * Add type attribute in ParseExpression
  * Add if statement parser

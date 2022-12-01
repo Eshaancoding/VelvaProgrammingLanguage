@@ -62,6 +62,8 @@ optional<Value *> StringExpr::codegen(CompilationContext &ctx) {
 
 optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 {
+    // TODO: Later we have to check if the function has already been declared or not, and check if it has an empty body (if not, we give error)
+
     std::vector<Type *> paramTypes(params.size());
     for (auto &param : params)
     {
@@ -92,21 +94,23 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         Idx++;
     }
 
-    if(body) {
+    if (body) {
         BasicBlock *bb = BasicBlock::Create(*ctx.context, name, F);
-        ctx.builder.SetInsertPoint(bb);
+        ctx.builder->SetInsertPoint(bb);
         
-        namedValues.clear() ; //Functions need to be declared before any vars ; we should prob do a scoping thing in the future
-        for(auto &arg : f->args()) {
-            namedValues[arg.getName()] = &arg;
-        }
-        for(auto &expr: body) {
-            expr->codegen(ctx);
-        }
-        //For now no returns because again, we're lazy
-        ctx.builder.CreateRet(UndefValue::get(Type::getVoidTy(*ctx.context)));
+        // ctx.namedValues.clear() ; // Functions need to be declared before any vars ; we should prob do a scoping thing in the future
+        // for(auto &arg : F->args()) {
+        //     ctx.namedValues[arg.getName().str()] = &arg;
+        // }
+    
+        // codegen through all expressions
+        for (int i = 0; i < (*body).size(); i++) { (*body)[i]->codegen(ctx); }
 
-        verifyFunction(*f);
+        // if we do not return anything, then we just return nothing. However if we do return, then we have the return statement handle that (parsed by runner and created by AST)
+        if (!returnType)
+            ctx.builder->CreateRet(UndefValue::get(Type::getVoidTy(*ctx.context)));
+
+        verifyFunction(*F);
     }
 
     return F;

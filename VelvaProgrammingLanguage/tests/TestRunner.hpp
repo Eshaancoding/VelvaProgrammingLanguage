@@ -1,8 +1,8 @@
-using namespace std;
 #include <error>
 #include <vector>
 #include <future>
 #include <tuple>
+using namespace std;
 
 class TestError : public exception {
     private:
