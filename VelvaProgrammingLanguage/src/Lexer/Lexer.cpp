@@ -9,13 +9,14 @@ char Lexer::getChar () {
         line += LastChar;
         char_idx += 1;
     }
-    return file_read.get();
+    LastChar = file_read.get();
+    return LastChar;
 }
 
 Token *Lexer::getToken() {
     //***************** Skip Whitespace *****************
     while (isspace(LastChar))
-        LastChar = getChar();
+        getChar();
 
     //***************** Parse Identifiers *****************
     // basically any keyword
@@ -23,7 +24,7 @@ Token *Lexer::getToken() {
         start_char_idx = char_idx;
         std::string IdentifierStr = "";
         IdentifierStr += LastChar;
-        while (isalnum((LastChar = getChar())))
+        while (isalnum((getChar())))
             IdentifierStr += LastChar;
 
         return new IdentifierToken(IdentifierStr);
@@ -36,7 +37,7 @@ Token *Lexer::getToken() {
         std::string NumStr;
         while (true) {
             NumStr += LastChar;
-            LastChar = getChar();
+            getChar();
             if (LastChar == '.') is_floating_point = true;
             else if (!isdigit(LastChar)) break;
         }
@@ -51,36 +52,24 @@ Token *Lexer::getToken() {
         }
     }
 
-    //***************** Parse Comments *****************
-    if (LastChar == '/')
-    {
-        start_char_idx = char_idx;
-        // Check if the next char is another forward slash
-        LastChar = getchar();
-        if (LastChar == '/') {
-            // skip till the next line
-            do
-                LastChar = getChar();
-            while (LastChar != EOF && LastChar != '\n' && LastChar != '\r');
-
-            if (LastChar != EOF)
-                return getToken();
-        } else {
-            log_err("Expected //, not /");
-            return new ERRToken();
-        }
-    }
-
     //***************** Parse EOF *****************
     if (LastChar == EOF)
         return new EOFToken();
 
+    //***************** Parse Characters *****************
+    if (!isalpha(LastChar) && !isdigit(LastChar) && !isspace(LastChar)) {
+        std::string starting_char_str = "";
+        starting_char_str += LastChar;
+        while (true) {
+            getChar();
+            if (isalpha(LastChar) || isdigit(LastChar) || isspace(LastChar)) break;
+            starting_char_str += LastChar;
+        }
+        return new CharacterToken(starting_char_str);
+    }
 
-    //***************** Return char *****************
-    start_char_idx = char_idx;
-    int ThisChar = LastChar;
-    LastChar = getChar();
-    return new CharacterToken(ThisChar);
+    //***************** Parse Characters *****************
+    log_err("Invalid character: " + LastChar);
 }
 
 void Lexer::log_err (std::string error_msg) {

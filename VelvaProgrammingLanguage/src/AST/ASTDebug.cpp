@@ -5,8 +5,9 @@ string IntExpr::debug_info() { return "Int Expr with value: " + to_string(num) +
 string FloatExpr::debug_info() { return "Float Expr with value: " + to_string(decimal); } 
 string VarUseExpr::debug_info() { return "Variable Use Expr with variable name " + var; }
 string AssignExpr::debug_info() { return "Assign Expr with variable name " + varName + " and value " + value->debug_info(); }
+string BinaryOpExpr::debug_info() { return "Binary Operation expr with LHS [" + LHS->debug_info() + "] and RHS [" + RHS->debug_info() + "] with operation: " + op; }
+string StringExpr::debug_info() { return "String Expr with text: " + text; }
 string ErrorExpr::debug_info() { return "Error Expr!"; }
-string PrintExpr::debug_info() { return "Print Expr with expression [" + expression->debug_info() + "]"; }
 
 string CallFuncExpr::debug_info() { 
     string result = "Call Func Expr with function name " + functionName + " and ";
@@ -19,24 +20,17 @@ string CallFuncExpr::debug_info() {
 }
 
 string DeclareFunctionExpr::debug_info() {
-    string result = "Declare Function Expr with isPure: " + std::to_string(isPure) + " name: " + name + " and ";
+    string result = "Declare Function Expr with isPure: " + std::to_string(isPure) + " isExternal: " + std::to_string(isExternal) + " name: " + name + " and ";
     int num = 1;
     for (auto &f : params) {
         result += "Param " + to_string(num) + " with type " + get<0>(f) + " and name " + get<1>(f) + ", ";
         num++;
     }
-    return result;
-}
+    if (returnType)
+        result += " return type: " + *returnType;
+    else
+        result += " return type: none!";
 
-string StringExpr::debug_info() {
-    string result = "String Expr of value ";
-    for (auto &f : text) {
-        if (auto output = std::get_if<std::unique_ptr<Expr>>(&f)) {
-            result += "[" + (*output)->debug_info(); + "] ";
-        } else {
-            result += std::get<string>(f) + " ";
-        }
-    }
     return result;
 }
 

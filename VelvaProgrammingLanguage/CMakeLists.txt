@@ -3,7 +3,7 @@ project(Velva)
 
 # Check if both files exist
 if (NOT EXISTS "../cmake_pre.bash") 
-	message (FATAL_ERROR "Requires cmake_pre.bash file")
+	message (FATAL_ERROR "Requires ../cmake_pre.bash file")
 endif()
 
 # Run bash file to set CMAKE_PREFIX_PATH
@@ -12,15 +12,13 @@ execute_process (
 )
 message(STATUS "Prefix path: $ENV{CMAKE_PREFIX_PATH}")
 execute_process (
-    COMMAND bash ./list_files.sh
+    COMMAND bash ../list_files.sh
     OUTPUT_VARIABLE VELVA_FILE_PATH
 )
 
 message (STATUS "File path: ${VELVA_FILE_PATH}")
 # Find path
 find_package(LLVM REQUIRED CONFIG) #Make sure that LLVM is in your CMAKE_PREFIX_PATH
-
-# Assert LLVM version
 
 set(COMPILER_NAME "veld")
 
