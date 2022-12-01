@@ -92,6 +92,23 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         Idx++;
     }
 
+    if(body) {
+        BasicBlock *bb = BasicBlock::Create(*ctx.context, name, F);
+        ctx.builder.SetInsertPoint(bb);
+        
+        namedValues.clear() ; //Functions need to be declared before any vars ; we should prob do a scoping thing in the future
+        for(auto &arg : f->args()) {
+            namedValues[arg.getName()] = &arg;
+        }
+        for(auto &expr: body) {
+            expr->codegen(ctx);
+        }
+        //For now no returns because again, we're lazy
+        ctx.builder.CreateRet(UndefValue::get(Type::getVoidTy(*ctx.context)));
+
+        verifyFunction(*f);
+    }
+
     return F;
 }
 
@@ -119,3 +136,4 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
 optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {
     return nullopt;
 }
+

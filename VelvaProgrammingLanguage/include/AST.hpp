@@ -176,10 +176,12 @@ class DeclareFunctionExpr {
          * This is nullopt when there the return type is void.
          */
         optional<std::string> returnType;
+        optional<vector<Expr>> body;
         DeclareFunctionExpr(bool isExternal, bool isPure, string name, vector<tuple<string, string> > params, optional<string> returnType) : isPure(isPure), name(name), params(params), returnType(returnType), isExternal(isExternal) {} ;
         optional<Function*> codegen(CompilationContext &ctx);
         string debug_info();
 };
+
 
 /**
  * @brief Error Expr for errors on code 
