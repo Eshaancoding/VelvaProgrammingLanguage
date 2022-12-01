@@ -4,17 +4,6 @@ CompilationContext::CompilationContext() {
     context = std::make_unique<LLVMContext>();
     mod = std::make_unique<Module>("mod", *context);
     builder = std::make_unique<IRBuilder<>>(*context);
-    jit = make_unique<KaleidoscopeJIT>();
-
-// Yeah I know wait follow me for a se
-
-CompilationContext::CompilationContext() {
-    context = std::make_unique<LLVMContext>();
-    mod = std::make_unique<Module>("mod", *context);
-    builder = std::make_unique<IRBuilder<>>(*context);
-    jit = make_unique<KaleidoscopeJIT>();
-
-    mod->setDataLayout(jit->getTargetMachine().createDataLayout());
 }
 optional<Value *> IntExpr::codegen(CompilationContext &ctx)
 {
@@ -29,13 +18,6 @@ optional<Value *> FloatExpr::codegen(CompilationContext &ctx)
 std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx)
 {
     Function *calleeF = ctx.mod->getFunction(functionName);
-    if (calleeF->arg_size() != params.size())
-    {
-        // WE NEED ERROR HANDLING HERE AHHHHHHHHHHHHHHHHHHHHHHH CAN'T USE LEXER
-        //Honestly this should be an assertion — an error like this should be caught in the parser, not here////////
-        return {};
-    }
-
     vector<Value *> argv;
 
     for (int i = 0; i != params.size(); ++i)
@@ -49,24 +31,33 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx)
     return ctx.builder->CreateCall(calleeF, argv, "calltmp");
 }
 
-optional<Value *> StringExpr::codegen(CompilationContext &ctx)
-{
-    auto i8 = IntegerType::get(*ctx.context, 8);
-    vector<Constant*> chars(text.size());
-    for(int i = 0; i < text.size(); ++i) {
-        chars[i] = ConstantInt::get(i8, text[i]);
-    }
-    chars.push_back(ConstantInt::get(i8, 0));
+// optional<Value *> StringExpr::codegen(CompilationContext &ctx)
+// {
+//     auto i8 = IntegerType::get(*ctx.context, 8);
+//     vector<Constant*> chars(text.size());
+//     for(int i = 0; i < text.size(); ++i) {
+//         chars[i] = ConstantInt::get(i8, text[i]);
+//     }
+//     chars.push_back(ConstantInt::get(i8, 0));
 
-    auto stringType = ArrayType::get(i8, chars.size());
+//     auto stringType = ArrayType::get(i8, chars.size());
 
-    auto globalDecl = (GlobalVariable*) mod->getOrInsertGlobal(".str" + to_string(StringExpr::STR_TOTAL), stringType);
-    globalDecl->setInitializer(ConstantArray::get(stringType, chars));
-    globalDecl->setConstant(true);
-    globalDecl->setLinkage(GlobalValue::LinkageTypes::PrivateLinkage);
-    globalDecl->setUnnamedAddr(GlobalValue::UnnamedAddr::Global);
+//     auto globalDecl = (GlobalVariable*) ctx.mod->getOrInsertGlobal(".str" + to_string(StringExpr::STR_TOTAL), stringType);
+//     globalDecl->setInitializer(ConstantArray::get(stringType, chars));
+//     globalDecl->setConstant(true);
+//     globalDecl->setLinkage(GlobalValue::LinkageTypes::PrivateLinkage);
+//     globalDecl->setUnnamedAddr(GlobalValue::UnnamedAddr::Global);
 
-    return ConstantExpr::getBitCast(v, i8->getPointerTo());
+//     return ConstantExpr::getBitCast(v, i8->getPointerTo());
+// }
+optional<Value *> StringExpr::codegen(CompilationContext &ctx) {
+    return nullopt; // the original function has bugs :/
+
+    // plus, string might be a little bit weird to implement. For example, we might have to redeclare/declare our string
+    // See here: https://mapping-high-level-constructs-to-llvm-ir.readthedocs.io/en/latest/appendix-a-how-to-implement-a-string-type-in-llvm/index.html?highlight=string#how-to-implement-a-string-type-in-llvm
+
+    // also, why are you setting initializerconstant linkage? Is that mandatory
+    // Plus parser doesn't implement string anyway :shrug:
 }
 
 optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
@@ -85,9 +76,9 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         }
     }
 
-    auto retType = retType == "int" ? Type::getInt32Ty(*ctx.context)
-            : retType == "double" ? Type::getDoubleTy(*ctx.context)
-            : retType == "string" ? Type::getInt8PtrTy(*ctx.context)
+    auto retType = returnType == "int" ? Type::getInt32Ty(*ctx.context)
+            : returnType == "double" ? Type::getDoubleTy(*ctx.context)
+            : returnType == "string" ? Type::getInt8PtrTy(*ctx.context)
             : Type::getVoidTy(*ctx.context);
 
     FunctionType *FT = FunctionType::get(retType, paramTypes, false);
@@ -106,25 +97,25 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 
 optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 {
-    Value *v = ctx.namedValues[var];
-    // return ctx.builder->CreateLoad(V, var.c_str()); // why do we need to create load???
-    return ctx.builder.CreateLoad(v);
+    auto v = ctx.namedValues[var];
+    return ctx.builder->CreateLoad(v->getType(), v, var.c_str());
 }
-
-
-// need to add scope for vardeclare and test
-// need to add assignment allocation
-// probably move variable memory allocation to new file
 
 // error stuff literally just dummy functions because it has to override shit
 optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
-    AllocaInst *inst = ctx.builder.CreateAlloca(type == "int" ? Type::getInt32Ty(*ctx.context)
+    AllocaInst *inst = ctx.builder->CreateAlloca(type == "int" ? Type::getInt32Ty(*ctx.context)
             : type == "double" ? Type::getDoubleTy(*ctx.context)
             : type == "string" ? Type::getInt8PtrTy(*ctx.context)
             : Type::getVoidTy(*ctx.context),
             0,
             name.c_str());
-    namedValues[name] = inst;
-    Value *rhs = value->codegen();
-    ctx.builder.CreateStore(rhs, inst);
+    ctx.namedValues[name] = inst;
+    auto rhs = value->codegen(ctx);
+    if (!rhs)
+        return {};
+    ctx.builder->CreateStore(*rhs, inst);
 };  
+
+optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {
+    return nullopt;
+}

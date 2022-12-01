@@ -10,6 +10,7 @@
 #include <optional>
 #include <functional>
 #include <variant>
+#include "Functions.hpp"
 #include "Utils.hpp"
 #include "llvm-c/Core.h"
 #include "llvm/ADT/APFloat.h"
@@ -42,8 +43,7 @@ struct CompilationContext {
         std::unique_ptr<IRBuilder<>> builder;
         std::unique_ptr<Module> mod;
         map<string, AllocaInst*> namedValues;
-        unique_ptr<KaleidoscopeJIT> jit;
-        map<string, void*> ffiFunctions { {"cos", (void*) &_cos}, {"sin", (void*) &_sin} };
+        map<string, void*> ffiFunctions { {"cos", (void*) &FFI_Functions::cos_v}, {"sin", (void*) &FFI_Functions::sin_v} };
         CompilationContext();
 };
 
@@ -197,16 +197,13 @@ class ErrorExpr: public Expr {
  * 
  */
 class StringExpr: public Expr {
-    private:
-        static int STR_TOTAL = 0;
     public:
         /**
         * @brief This is a list of variants of either a string literal, or a format value inserted with the ${} syntax.
         * 
         */
         string text;
-        StringExpr(string t) { text.push_back(t); } // Defined in  AST.cpp
-        StringExpr(vector<variant<string, unique_ptr<Expr>>> t) : text(std::move(t)) {}            
+        StringExpr(string t) : text(t) {} // Defined in  AST.cpp
         optional<Value*> codegen(CompilationContext &ctx) override;    
         string debug_info() override;
 };

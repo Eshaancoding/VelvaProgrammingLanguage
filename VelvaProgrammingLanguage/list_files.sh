@@ -1,1 +1,1 @@
-find src -name \*.cpp -print | xargs -I {} printf {}\;
+find ../src -name \*.cpp -print | xargs -I {} printf {}\;

@@ -6,6 +6,7 @@ string FloatExpr::debug_info() { return "Float Expr with value: " + to_string(de
 string VarUseExpr::debug_info() { return "Variable Use Expr with variable name " + var; }
 string AssignExpr::debug_info() { return "Assign Expr with variable name " + varName + " and value " + value->debug_info(); }
 string BinaryOpExpr::debug_info() { return "Binary Operation expr with LHS [" + LHS->debug_info() + "] and RHS [" + RHS->debug_info() + "] with operation: " + op; }
+string StringExpr::debug_info() { return "String Expr with text: " + text; }
 string ErrorExpr::debug_info() { return "Error Expr!"; }
 
 string CallFuncExpr::debug_info() { 
@@ -30,18 +31,6 @@ string DeclareFunctionExpr::debug_info() {
     else
         result += " return type: none!";
 
-    return result;
-}
-
-string StringExpr::debug_info() {
-    string result = "String Expr of value ";
-    for (auto &f : text) {
-        if (auto output = std::get_if<std::unique_ptr<Expr>>(&f)) {
-            result += "[" + (*output)->debug_info(); + "] ";
-        } else {
-            result += std::get<string>(f) + " ";
-        }
-    }
     return result;
 }
 
