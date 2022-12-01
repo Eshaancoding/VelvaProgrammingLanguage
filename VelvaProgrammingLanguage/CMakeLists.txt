@@ -45,3 +45,6 @@ add_definitions(${LLVM_DEFINITIONS_LIST})
 llvm_map_components_to_libnames(llvm_libs support core irreader)
 
 target_link_libraries(${COMPILER_NAME} ${llvm_libs})
+
+enable_testing()
+add_test()
