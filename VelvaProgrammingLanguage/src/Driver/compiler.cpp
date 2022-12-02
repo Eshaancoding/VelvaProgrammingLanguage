@@ -12,7 +12,9 @@ int main (int argc, char** argv) {
         int code = parser.getTypeCode();
         if (code == 0) {
             auto statement = parser.parseStatement();
-            if (statement) printf("Statement AST: %s\n", (*statement)->debug_info().c_str());
+            if (statement) {
+                
+            }
             else printf("Something went wrong!!\n");
         } 
         else if (code == 1) {

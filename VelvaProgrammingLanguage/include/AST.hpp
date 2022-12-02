@@ -68,7 +68,7 @@ class Expr {
          *
          * 
         */
-        virtual string debug_info (); 
+        virtual string debug_info(); 
 };
 
 /**
