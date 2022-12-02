@@ -12,7 +12,6 @@ int main (int argc, char** argv) {
     suite.add([]() {
         Parser parse = Parser("test.vld");
         auto result = parse.MainParser();
-        result->
         require(result, "Something wrong happened");
     }, "The Barkshaan Test Case");
     suite.run();

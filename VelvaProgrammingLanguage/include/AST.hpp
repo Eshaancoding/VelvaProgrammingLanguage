@@ -43,7 +43,7 @@ struct CompilationContext {
         std::unique_ptr<IRBuilder<>> builder;
         std::unique_ptr<Module> mod;
         map<string, AllocaInst*> namedValues;
-        map<string, void*> ffiFunctions { {"cos", (void*) &FFI_Functions::cos_v}, {"sin", (void*) &FFI_Functions::sin_v} };
+        
         CompilationContext();
 };
 
