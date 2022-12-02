@@ -259,7 +259,7 @@ class VarDeclareExpr : public Expr {
          */
         VarMutability mutType;
         /**
-         * @brief The type; if nullopt, then use type inference.
+  w       * @brief The type; if nullopt, then use type inference.
          * 
          */
         optional<string> type;
