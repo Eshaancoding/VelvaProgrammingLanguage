@@ -1,4 +1,4 @@
-#include <error>
+#include <error.h>
 #include <vector>
 #include <future>
 #include <tuple>
@@ -79,6 +79,6 @@ class TestSuite {
  * @param e The boolean.
  * @param error_msg Message if false
  */
-void assert(bool e, string error_msg) {
+void require(bool e, string error_msg) {
     if(!e) throw TestError(msg);
 }
