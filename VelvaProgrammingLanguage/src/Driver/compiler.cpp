@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <stdio.h>
 #include "Parser.hpp"
+
+
 using namespace std;
 
 int main (int argc, char** argv) {
@@ -34,7 +36,7 @@ int main (int argc, char** argv) {
         parser.printCurrentToken();
         if (parser.currentToken->isEOF()) break;
     }
-    (*main_fn->codegen(ctx))->print(errs());
+    (*main_fn->codegen(ctx))->print(errs()); 
 }
 
 // Token code

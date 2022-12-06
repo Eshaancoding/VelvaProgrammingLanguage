@@ -5,7 +5,7 @@ string IntExpr::debug_info() { return "Int Expr with value: " + to_string(num) +
 string FloatExpr::debug_info() { return "Float Expr with value: " + to_string(decimal); } 
 string VarUseExpr::debug_info() { return "Variable Use Expr with variable name " + var; }
 string AssignExpr::debug_info() { return "Assign Expr with variable name " + varName + " and value " + value->debug_info(); }
-string BinaryOpExpr::debug_info() { return "Binary Operation expr with LHS [" + LHS->debug_info() + "] and RHS [" + RHS->debug_info() + "] with operation: " + op; }
+string BinaryOpExpr::debug_info() { return "Binary Operation expr with LHS [" + LHS->debug_info() + "] and RHS [" + RHS->debug_info() + "] with operation: " + op + " and with result type: " + result_type; }
 string StringExpr::debug_info() { return "String Expr with text: " + text; }
 string ErrorExpr::debug_info() { return "Error Expr!"; }
 

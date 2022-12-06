@@ -38,6 +38,7 @@ private:
 public: 
     Token* currentToken;
     Lexer lexer;
+
     /**
      * @brief Initializes Parser. Declared in ParserInit.cpp
      * @param filename the path to the filename that it should be parsing.
@@ -69,9 +70,9 @@ public:
 
     /**
      * @brief Parses variable uses, integers, strings, call expr, or float. This is a helper function for parse expressions.
-     * @returns a general expression. Could be a variety of child classes from Expr, such as IntExpr, FloatExpr, CallFuncExpr, or StringExpr (calls ParseString)
+     * @returns a general expression. Could be a variety of child classes from Expr, such as IntExpr, FloatExpr, CallFuncExpr, or StringExpr (calls ParseString). It also returns a string that specifies the type
     */
-    optional<unique_ptr<Expr>> ParsePrimary ();
+    optional<pair<unique_ptr<Expr>, string>> ParsePrimary ();
 
     /**
      * @brief Parses binary expression based upon precendence (see private variable BinaryOpPrecedence). Helper function for ParsePrimary, and it is declared in ParseExpression.cpp.

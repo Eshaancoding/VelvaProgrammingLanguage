@@ -1,6 +1,14 @@
 #include "AST.hpp"
 
-CompilationContext::CompilationContext() {
+#include "llvm/MC/TargetRegistry.h"
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/Host.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
+
+CompilationContext::CompilationContext(bool createOFile) {
     context = std::make_unique<LLVMContext>();
     mod = std::make_unique<Module>("mod", *context);
     builder = std::make_unique<IRBuilder<>>(*context);

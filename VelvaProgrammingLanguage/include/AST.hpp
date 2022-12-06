@@ -44,7 +44,7 @@ struct CompilationContext {
         std::unique_ptr<Module> mod;
         map<string, AllocaInst*> namedValues;
         
-        CompilationContext();
+        CompilationContext(bool createOFile = true);
 };
 
 /**
@@ -141,7 +141,12 @@ class BinaryOpExpr : public Expr {
         */
         unique_ptr<Expr> LHS, RHS;
 
-        BinaryOpExpr (string op, unique_ptr<Expr> LHS, unique_ptr<Expr> RHS) : op(op), LHS(move(LHS)), RHS(move(RHS)) {}
+        /**
+         * @brief stores the type information (string, int, char, double, int, etc.)
+         */
+        string result_type;
+
+        BinaryOpExpr (string op, unique_ptr<Expr> LHS, unique_ptr<Expr> RHS, string result_type) : op(op), LHS(move(LHS)), RHS(move(RHS)), result_type(result_type) {}
         std::optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
 };
@@ -260,7 +265,7 @@ class VarDeclareExpr : public Expr {
          */
         VarMutability mutType;
         /**
-  w       * @brief The type; if nullopt, then use type inference.
+         * @brief The type; if nullopt, then use type inference.
          * 
          */
         optional<string> type;
