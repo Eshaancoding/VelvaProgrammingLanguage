@@ -5,6 +5,7 @@ optional<unique_ptr<Expr>> Parser::parseStatement () {
         std::string name = currentToken->getName();
         if (name == "int") return ParseVariableDeclaration(false);
         else if (name == "float") return ParseVariableDeclaration(true);
+        else if (name == "if") return ParseBranch();
         else {
             currentToken = lexer.getToken();
             if (currentToken->getCharacters() == "(") return ParseCallExpr(name);

@@ -1,2 +1,10 @@
-int a = 3 * 33
-int b = 27 * a
+int a = (1 == 0 ? 3 : 9) 
+int b = a * 33
+
+if x == 9 {
+    x = x * 3
+} else if x <= 10 {
+    x = x * 5
+} else {
+    x = x * 9
+}

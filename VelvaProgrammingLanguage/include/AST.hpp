@@ -306,4 +306,28 @@ class AssignExpr : public Expr {
         string debug_info() override;
 };
 
+class BranchExpr: public Expr {
+    public:
+        /**
+        * @brief first argument in the map is the conditional statement (if it's null, then it's an else statement)
+        * the other argument: vector<Expr> is the body of the if statement 
+        */
+        map<optional<unique_ptr<Expr>>, vector<unique_ptr<Expr>>> ifMap;
+
+        BranchExpr(map<optional<Expr>, vector<Expr>> ifmaps) : ifMap(ifmaps) {};
+        optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
+}
+
+
+// ex: i == 3 ? 0 : 1
+class TernaryExpr: public Expr {
+    public:
+        unique_ptr<Expr> _if, then, _else;
+
+        TernaryExpr(unique_ptr<Expr> _if, unique_ptr<Expr> then, unique_ptr<Expr> _else) : _if(_if), then(then), _else(_else) {};
+        optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
+}
+
 #endif

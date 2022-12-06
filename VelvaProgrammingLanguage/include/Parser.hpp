@@ -38,7 +38,6 @@ private:
 public: 
     Token* currentToken;
     Lexer lexer;
-
     /**
      * @brief Initializes Parser. Declared in ParserInit.cpp
      * @param filename the path to the filename that it should be parsing.
@@ -106,6 +105,11 @@ public:
      * @bug does not parse expression as part of the parameters YET!!
     */  
     optional<unique_ptr<CallFuncExpr>> ParseCallExpr (string funcName);
+
+    /** 
+    * @brief Parses if, else if, or else statements 
+    */
+    optional<unique_ptr<BranchExpr>> ParseBranch (); 
 
     /**
      * @brief Parse regular statements. Assumes that the token starts on the first token on the line (will end on the first token of the second line). Used by MainParser. Defined in ParseGeneral.cpp
