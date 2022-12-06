@@ -9,27 +9,28 @@ using namespace std;
 int main (int argc, char** argv) {
     Parser parser = Parser(argv[1]);
     CompilationContext ctx;
-    auto main_fn = make_unique<DeclareFunctionExpr>(false, false, "__main", vector<tuple<string, string>>({}),  nullopt);
+    auto main_fn = make_unique<DeclareFunctionExpr>(false, false, "__main", vector<tuple<string, string>>({}), nullopt);
     while (true) {
         int code = parser.getTypeCode();
         if (code == 0) {
             auto statement = parser.parseStatement();
             if (statement) {
-                main_fn->body->push_back(move(*statement));
                 printf("Statement AST: %s\n", (*statement)->debug_info().c_str());
+                main_fn->body.push_back(move(*statement));
             }
             else {
                 printf("Something went wrong!!\n");
             }
         } 
-        else if (code == 1) {
-            auto statement = parser.parseFunction();
-            if (statement) {
-                // main_fn->body->push_back(move(*statement));
-                printf("Function AST: %s\n", (*statement)->debug_info().c_str());
-            }
-            else printf("Something went wrong!!\n");
-        }
+        // else if (code == 1) {
+        //     auto statement = parser.parseFunction();
+        //     if (statement) {
+        //         cout << "Function AST: " << (*statement)->debug_info() << endl;
+        //         //printf("Function AST: %s\n", (*statement)->debug_info().c_str());
+        //         main_fn->body.push_back(move(*statement));
+        //     }
+        //     else printf("Something went wrong!!\n");
+        // }
         parser.printCurrentToken();
         if (parser.currentToken->isEOF()) break;
     }

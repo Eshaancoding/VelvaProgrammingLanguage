@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.13.4)
 project(Velva)
 
+# For cmake flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address")
+
 # Check if both files exist
 if (NOT EXISTS "../cmake_pre.bash") 
 	message (FATAL_ERROR "Requires ../cmake_pre.bash file")

@@ -9,6 +9,8 @@ string BinaryOpExpr::debug_info() { return "Binary Operation expr with LHS [" + 
 string StringExpr::debug_info() { return "String Expr with text: " + text; }
 string ErrorExpr::debug_info() { return "Error Expr!"; }
 
+// hi daniel you want me to compile it for you?
+
 string CallFuncExpr::debug_info() { 
     string result = "Call Func Expr with function name " + functionName + " and ";
     int num = 1;

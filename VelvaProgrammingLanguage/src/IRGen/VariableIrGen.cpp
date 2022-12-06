@@ -93,25 +93,26 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         Arg.setName(get<1>(params[Idx]));
         Idx++;
     }
-
-    if (body) {
-        BasicBlock *bb = BasicBlock::Create(*ctx.context, name, F);
-        ctx.builder->SetInsertPoint(bb);
-        
-        // ctx.namedValues.clear() ; // Functions need to be declared before any vars ; we should prob do a scoping thing in the future
-        // for(auto &arg : F->args()) {
-        //     ctx.namedValues[arg.getName().str()] = &arg;
-        // }
+    BasicBlock *bb = BasicBlock::Create(*ctx.context, name, F);
+    ctx.builder->SetInsertPoint(bb);
     
-        // codegen through all expressions
-        for (int i = 0; i < (*body).size(); i++) { (*body)[i]->codegen(ctx); }
+    // ctx.namedValues.clear() ; // Functions need to be declared before any vars ; we should prob do a scoping thing in the future
+    // for(auto &arg : F->args()) {
+    //     ctx.namedValues[arg.getName().str()] = &arg;
+    // }
 
-        // if we do not return anything, then we just return nothing. However if we do return, then we have the return statement handle that (parsed by runner and created by AST)
-        if (!returnType)
-            ctx.builder->CreateRet(UndefValue::get(Type::getVoidTy(*ctx.context)));
-
-        verifyFunction(*F);
+    // codegen through all expressions
+    
+    for (auto &expr: body) { 
+        auto v = expr->codegen(ctx); 
+        
     }
+
+    // if we do not return anything, then we just return nothing. However if we do return, then we have the return statement handle that (parsed by runner and created by AST)
+    if (!returnType)
+        ctx.builder->CreateRet(UndefValue::get(Type::getVoidTy(*ctx.context)));
+
+    verifyFunction(*F);
 
     return F;
 }
@@ -124,20 +125,20 @@ optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 
 // error stuff literally just dummy functions because it has to override shit
 optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
-    AllocaInst *inst = ctx.builder->CreateAlloca(type == "int" ? Type::getInt32Ty(*ctx.context)
+    AllocaInst *inst = ctx.builder->CreateAlloca(/*type == "int" ? Type::getInt32Ty(*ctx.context)
             : type == "double" ? Type::getDoubleTy(*ctx.context)
             : type == "string" ? Type::getInt8PtrTy(*ctx.context)
-            : Type::getVoidTy(*ctx.context),
+            : Type::getInt32Ty(*ctx.context)*/ Type::getInt32Ty(*ctx.context),
             0,
             name.c_str());
     ctx.namedValues[name] = inst;
     auto rhs = value->codegen(ctx);
     if (!rhs)
         return {};
-    ctx.builder->CreateStore(*rhs, inst);
+    return ctx.builder->CreateStore(*rhs, inst);
 };  
 
 optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {
-    return nullopt;
+    return ctx.builder->CreateStore(*(value->codegen(ctx)), ctx.namedValues[varName]);
 }
 
