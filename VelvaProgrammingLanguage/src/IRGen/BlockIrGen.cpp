@@ -8,7 +8,7 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
     string thenName = condPrefix + "then1", elseName = condPrefix + "else1";
     BasicBlock *thenBB = BasicBlock::Create(*ctx, thenName, f);
     BasicBlock *elseBB = BasicBlock::Create(*ctx, thenName, f);
-    vector<BasicBlock*> blocks;
+    vector<BasicBlock*> blocks({ifBB});
     for(auto const &block: ifMap) {
         if (block.first) {
             blocks.push_back(thenBB);
@@ -20,8 +20,9 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
             for(auto &expr: builder.second) {
                 expr->codegen(ctx);
             }
-            thenBB = elseBB;
-            elseBB = BasicBlock::Create(*ctx, thenName, f);
+            ifBB = elseBB;
+            thenBB = BasicBlock::Create(*ctx, thenName, f);
+            elseBB = BasicBlock::Create(*ctx, elseName + "1", f);
         } else {
             ctx.builder.SetInsertPoint(ifBB);
             ctx.builder.CreateBr(elseBB);
@@ -39,7 +40,7 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
         ctx.builder.SetInsertPoint(block);
         ctx.builder.CreateBr(mergeBB);
     }
-    condPrefix += "1";
+    condPrefix += "a";
     return nullopt;
 }
 
