@@ -9,13 +9,13 @@ using namespace std;
 int main (int argc, char** argv) {
     Parser parser = Parser(argv[1]);
     CompilationContext ctx;
-    unique_ptr<DeclareFunctionExpr> main_fn(false, false, "__main", {}, nullopt);
+    auto main_fn = make_unique<DeclareFunctionExpr>(false, false, "__main", vector<tuple<string, string>>({}),  nullopt);
     while (true) {
         int code = parser.getTypeCode();
         if (code == 0) {
             auto statement = parser.parseStatement();
             if (statement) {
-                main_fn->(*body).push_back(move(*statement));
+                main_fn->body->push_back(move(*statement));
                 printf("Statement AST: %s\n", (*statement)->debug_info().c_str());
             }
             else {
@@ -25,7 +25,7 @@ int main (int argc, char** argv) {
         else if (code == 1) {
             auto statement = parser.parseFunction();
             if (statement) {
-                main_fn->(*body).push_back(move(*statement));
+                // main_fn->body->push_back(move(*statement));
                 printf("Function AST: %s\n", (*statement)->debug_info().c_str());
             }
             else printf("Something went wrong!!\n");
@@ -33,7 +33,7 @@ int main (int argc, char** argv) {
         parser.printCurrentToken();
         if (parser.currentToken->isEOF()) break;
     }
-    main_fn->codegen(ctx)->print(errs());
+    (*main_fn->codegen(ctx))->print(errs());
 }
 
 // Token code
