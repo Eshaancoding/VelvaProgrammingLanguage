@@ -1,13 +1,9 @@
 #include "Parser.hpp"
 
 // Helper function, this is where it's going to get type inference and finally return the binary op expr
-unique_ptr<BinaryOpExpr> makeBinaryOp (string op_str, pair<unique_ptr<Expr>, string>> LHS, pair<unique_ptr<Expr>, string> RHS) {
-    // Type ane expr
-    unique_ptr<Expr> LHS_expr(move(get<0>(LHS)));
-    string LHS_type = get<1>(LHS)
-    unique_ptr<Expr> RHS_expr(move(get<1>(RHS)));    
-    string RHS_type = get<1>(RHS);
-    
+unique_ptr<BinaryOpExpr> makeBinaryOp (string op_str, unique_ptr<Expr> LHS, unique_ptr<Expr> RHS) {
+    string RHS_type = LHS->return_type(); 
+    string LHS_type = RHS->return_type();
     // find result type
     string result_type = "";
     map<string, int> typePrecendence ({
@@ -16,13 +12,13 @@ unique_ptr<BinaryOpExpr> makeBinaryOp (string op_str, pair<unique_ptr<Expr>, str
         {"char", 2},
         {"string", 3},
     });
-    if (typePrecendence[RHS_type] > typePrecedence[LHS_type]) {
+    if (typePrecendence[RHS_type] > typePrecendence[LHS_type]) {
         result_type = RHS_type;
     }
     else {
         result_type = RHS_type;
     }
-    return make_unique<BinaryOpExpr>(op_str, move(LHS_expr), move(RHS_type), result_type);
+    return make_unique<BinaryOpExpr>(op_str, move(LHS), move(RHS), result_type);
 }
 
 pair<int, string> Parser::ParseOperation () {
@@ -52,7 +48,7 @@ optional<unique_ptr<Expr>> Parser::ParseExpression () {
     return ParseBinaryOp(move(*LHS));
 }
 
-optional<unique_ptr<Expr>> Parser::ParseBinaryOp (pair<unique_ptr<Expr>, string> LHS, optional<pair<int, string>> operationParse) {
+optional<unique_ptr<Expr>> Parser::ParseBinaryOp (unique_ptr<Expr> LHS, optional<pair<int, string>> operationParse) {
     // get Operation
     int precedence;
     string op_str;
@@ -84,7 +80,7 @@ optional<unique_ptr<Expr>> Parser::ParseBinaryOp (pair<unique_ptr<Expr>, string>
         // if next operation resulted in an error, just return the combined RHS and LHS
         if (nextPrecedence == -1) {
             should_stop_parsing_expr = true;
-            return makeBinaryOp(op_str, LHS, *RHS);
+            return makeBinaryOp(op_str, move(LHS), move(*RHS));
         }
 
         currentToken = lexer.getToken(); 
@@ -95,7 +91,6 @@ optional<unique_ptr<Expr>> Parser::ParseBinaryOp (pair<unique_ptr<Expr>, string>
             if (!RHS) return nullopt;
         } 
 
-        LHS = make_unique<BinaryOpExpr>(op_str, move(LHS), move(*RHS));
         LHS = makeBinaryOp(op_str, move(LHS), move(*RHS)); 
 
         if (should_stop_parsing_expr) return LHS;
