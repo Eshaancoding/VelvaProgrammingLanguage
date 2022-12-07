@@ -1,11 +1,11 @@
 #include "AST.hpp"
 
-static string condPrefix = "1";
 
 optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
     Function *f = ctx.builder.GetInsertBlock()->getParent();
     BasicBlock *ifBB = ctx.builder.GetInsertBlock();
-    string thenName = condPrefix + "then1", elseName = condPrefix + "else1";
+    string thenName = ctx.names.use_name("then");
+    string elseName = ctx.names.use_name("else");
     BasicBlock *thenBB = BasicBlock::Create(*ctx, thenName, f);
     BasicBlock *elseBB = BasicBlock::Create(*ctx, thenName, f);
     vector<BasicBlock*> blocks({ifBB});
@@ -21,8 +21,8 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
                 expr->codegen(ctx);
             }
             ifBB = elseBB;
-            thenBB = BasicBlock::Create(*ctx, thenName, f);
-            elseBB = BasicBlock::Create(*ctx, elseName + "1", f);
+            thenBB = BasicBlock::Create(*ctx, ctx.names.use_name("then"), f);
+            elseBB = BasicBlock::Create(*ctx, ctx.names.use_name("else"), f);
         } else {
             ctx.builder.SetInsertPoint(ifBB);
             ctx.builder.CreateBr(elseBB);
@@ -32,15 +32,12 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
                 expr->codegen(ctx);
             }
         }
-        thenName += "1";
-        elseName += "1";
     }
-    BasicBlock *mergeBB = BasicBlock::Create(*ctx, condPrefix + "merge", f);
+    BasicBlock *mergeBB = BasicBlock::Create(*ctx, ctx.names.use_name("merge"), f);
     for(auto const &block: blocks) {
         ctx.builder.SetInsertPoint(block);
         ctx.builder.CreateBr(mergeBB);
     }
-    condPrefix += "a";
     return nullopt;
 }
 

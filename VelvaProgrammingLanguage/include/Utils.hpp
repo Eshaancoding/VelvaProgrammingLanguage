@@ -133,6 +133,19 @@ struct Overload : Ts ... {
 };
 template<class... Ts> Overload(Ts...) -> Overload<Ts...>; 
 
+
+class NameRegistry {
+    private:
+        map<string, int> names;
+    public:
+        NameRegistry();
+        string use_name(const string &prefix);
+}
+
+string NameRegistry::use_name(const string &prefix) {
+    names[prefix] = names.count(prefix) ? ++names[prefix] : 0;
+    return prefix + "_" + names[prefix];
+}
 #endif
 
  

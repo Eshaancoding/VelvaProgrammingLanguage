@@ -28,6 +28,7 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Module.h"
 #include <cmath>
+#include "Utils.hpp"
 using namespace std;
 using namespace llvm;
 
@@ -43,7 +44,8 @@ struct CompilationContext {
         std::unique_ptr<IRBuilder<>> builder;
         std::unique_ptr<Module> mod;
         map<string, AllocaInst*> namedValues;
-        
+        NameRegistry names;
+
         CompilationContext(bool createOFile = true);
 };
 

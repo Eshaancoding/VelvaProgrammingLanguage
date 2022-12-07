@@ -26,11 +26,37 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
     // These operators don't short circuit yet because I'm lazy 
     else if (op == "&&") {
         // expr1 ? expr2 : false
-        return ctx.builder->CreateSelect(*(LHS->codegen(ctx)), *(RHS->codegen(ctx)), ConstantInt::get(0));
+        auto F = ctx.builder.GetInsertBlock()->getParent();
+        BasicBlock *lbb = BasicBlock::Create(*ctx, ctx.names.use_name("or_lhs"), F);
+        ctx.builder->SetInsertPoint(lbb);
+        auto lhs = *(LHS->codegen(ctx));
+        BasicBlock *rbb = BasicBlock::Create(*ctx, ctx.names.use_name("or_rhs"), F);
+        BasicBlock *merge = BasicBlock::Create(*ctx, ctx.names.use_name("or_merge"), F);
+        ctx.builder->CreateCondBr(lhs, rbb, merge);
+        ctx.builder->SetInsertPoint(rbb);
+        auto rhs = *(RHS->codegen(ctx));
+        ctx.builder->SetInsertPoint(merge);
+
+        auto pn = ctx.builder->CreatePHI(Type::getInt8Ty(), 2, ctx.names.use("or_phi"));
+        pn->addIncoming(ConstantInt::get(0), lbb);
+        pn->addIncoming(rhs, rbb);
+        return pn;
     } else if (op == "||") {
-        // expr1 ? true : (expr2 ? true : false)
-        return ctx.builder->CreateSelect(*(LHS->codegen(ctx)), ConstantInt::get(1),
-            ctx.builder->CreateSelect(*(RHS->codegen(ctx)), ConstantInt::get(1), ConstantInt::get(0)));
+        auto F = ctx.builder.GetInsertBlock()->getParent();
+        BasicBlock *lbb = BasicBlock::Create(*ctx, ctx.names.use_name("or_lhs"), F);
+        ctx.builder->SetInsertPoint(lbb);
+        auto lhs = *(LHS->codegen(ctx));
+        BasicBlock *rbb = BasicBlock::Create(*ctx, ctx.names.use_name("or_rhs"), F);
+        BasicBlock *merge = BasicBlock::Create(*ctx, ctx.names.use_name("or_merge"), F);
+        ctx.builder->CreateCondBr(lhs, merge, rbb);
+        ctx.builder->SetInsertPoint(rbb);
+        auto rhs = *(RHS->codegen(ctx));
+        ctx.builder->SetInsertPoint(merge);
+
+        auto pn = ctx.builder->CreatePHI(Type::getInt8Ty(), 2, ctx.names.use("or_phi"));
+        pn->addIncoming(ConstantInt::get(1), lbb);
+        pn->addIncoming(rhs, rbb);
+        return pn;
     }
     else {
         return nullopt;
