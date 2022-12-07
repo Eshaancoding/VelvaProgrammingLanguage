@@ -7,9 +7,9 @@ optional<unique_ptr<Expr>> Parser::parseStatement () {
         else if (name == "float") return ParseVariableDeclaration(true);
         else if (name == "if") return ParseBranch();
         else if (name == "while") return ParseWhile();
-        else if (name == "for") return ParseFor();
+        // else if (name == "for") return ParseFor();
         else {
-            currentToken = lexer.getToken();
+            currentToken = move(lexer.getToken());
             if (currentToken->getCharacters() == "(") return ParseCallExpr(name);
             else if (currentToken->getCharacters() == "=") return ParseAssignExpr(name);
             else {

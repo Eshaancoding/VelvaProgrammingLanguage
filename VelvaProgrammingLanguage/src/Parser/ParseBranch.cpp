@@ -5,7 +5,7 @@ optional<vector<unique_ptr<Expr>>> Parser::ParseBlock (char end_char) {
     vector<unique_ptr<Expr>> list = {};
     while (true) {
         if (currentToken->getCharacters() == to_string(end_char)) {
-            currentToken = lexer.getToken();
+            currentToken = move(lexer.getToken());
             break;
         }
         optional<unique_ptr<Expr>> statement = parseStatement();
@@ -23,24 +23,24 @@ optional<unique_ptr<BranchExpr>> Parser::ParseBranch () {
 
         // check conditional
         if (currentToken->getName() == "if") {
-            currentToken = lexer.getToken(); 
+            currentToken = move(lexer.getToken()); 
             conditional = ParseExpression();
             if (currentToken->getCharacters() != "{") {
                 lexer.log_err("Expected {");
                 return nullopt;
             }
-            currentToken = lexer.getToken(); 
+            currentToken = move(lexer.getToken()); 
         } 
         else if (currentToken->getName() == "else") {
-            currentToken = lexer.getToken();
+            currentToken = move(lexer.getToken());
             if (currentToken->getName() == "if") {
                 conditional = ParseExpression();
-            } else currentToken = lexer.getToken();
+            } else currentToken = move(lexer.getToken());
             if (currentToken->getCharacters() != "{") {
                 lexer.log_err("Expected {");
                 return nullopt;
             }
-            currentToken = lexer.getToken(); 
+            currentToken = move(lexer.getToken()); 
         }
         else break;
 

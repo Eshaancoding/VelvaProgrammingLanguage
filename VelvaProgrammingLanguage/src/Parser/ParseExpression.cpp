@@ -61,7 +61,7 @@ optional<unique_ptr<Expr>> Parser::ParseBinaryOp (unique_ptr<Expr> LHS, optional
         if (precedence == -1)
             return std::move(LHS);
          
-        currentToken = lexer.getToken(); 
+        currentToken = move(lexer.getToken()); 
     } else {
         precedence = get<0>(*operationParse);
         op_str = get<1>(*operationParse);
@@ -83,7 +83,7 @@ optional<unique_ptr<Expr>> Parser::ParseBinaryOp (unique_ptr<Expr> LHS, optional
             return makeBinaryOp(op_str, move(LHS), move(*RHS));
         }
 
-        currentToken = lexer.getToken(); 
+        currentToken = move(lexer.getToken()); 
 
         // compare precendence of next operation and before operation
         if (nextPrecedence > precedence) {

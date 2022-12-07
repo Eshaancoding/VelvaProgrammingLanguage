@@ -3,18 +3,18 @@
 optional<unique_ptr<Expr>> Parser::ParsePrimary () {
     if (currentToken->isIntIdent()) {
         auto val = make_unique<IntExpr>(currentToken->getIntValue());
-        currentToken = lexer.getToken();
+        currentToken = move(lexer.getToken());
         return move(val);
     }
     else if (currentToken->isFloatIdent()) {
         auto val = make_unique<FloatExpr>(currentToken->getFloatValue());
-        currentToken = lexer.getToken();
+        currentToken = move(lexer.getToken());
         return move(val);
     } 
     else if (currentToken->isChar()) {
         if (currentToken->getCharacters() == "\"") {
             auto val = ParseString();
-            currentToken = lexer.getToken();
+            currentToken = move(lexer.getToken());
             return move(val);
         }
         else {
@@ -29,7 +29,7 @@ optional<unique_ptr<Expr>> Parser::ParsePrimary () {
             return nullopt;
         } else {
             string name = currentToken->getName();
-            currentToken = lexer.getToken();
+            currentToken = move(lexer.getToken());
             if (currentToken->getCharacters() == "(") return ParseCallExpr(name);
             else return make_unique<VarUseExpr>(name);
         }

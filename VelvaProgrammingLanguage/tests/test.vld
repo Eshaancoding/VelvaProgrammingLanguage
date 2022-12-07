@@ -1,4 +1,6 @@
+int a = 3
 int b = a * 33
+int x = b
 
 if x == 9 {
     x = x * 3

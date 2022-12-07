@@ -13,6 +13,13 @@ char Lexer::getChar () {
     return LastChar;
 }
 
+// BRUH DANIEL 
+// WE HAVE TO REFACTOR LIKE OUR ENTIRE CODEBASE NOW THAT THIS IS A UNIQUE_PTR
+// BECAUSE I CONSTANTLY DO CURRENT_TOKEN = LEXER.GETTOKEN()
+///...D:
+// WHAT DO YOU MEAN .... 
+// just because unique ptr exists doesn't mean we have to use it for everything no?
+
 unique_ptr<Token> Lexer::getToken() {
     //***************** Skip Whitespace *****************
     while (isspace(LastChar))

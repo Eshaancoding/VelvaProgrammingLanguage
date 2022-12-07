@@ -42,7 +42,8 @@ class TestSuite {
          * @param name The name of your test case
          */
         void add(function<void()> fn, string name) const noexcept {
-            cases.push_back(TestCase {fn, name});
+            const TestCase tc = {fn, name};
+            cases.push_back(&tc);
         }
         /**
          * @brief Executes the test suite, printing results in the console.
@@ -71,7 +72,7 @@ class TestSuite {
                 f.get();
             }
         }
-}
+};
 
 /**
  * @brief Asserts if something is true. If it's false, the test fails.
@@ -80,5 +81,5 @@ class TestSuite {
  * @param error_msg Message if false
  */
 void require(bool e, string error_msg) {
-    if(!e) throw TestError(msg);
+    if(!e) throw TestError(error_msg);
 }

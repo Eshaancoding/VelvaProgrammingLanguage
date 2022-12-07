@@ -94,7 +94,7 @@ public:
      * @returns ForExpr AST
      */
 
-    optional<unique_ptr<ForExpr>> ParseFor ();
+    // optional<unique_ptr<ForExpr>> ParseFor (); // no IR generated yet so we are commenting it out for now
 
     /**
      * @brief Parses binary expression based upon precendence (see private variable BinaryOpPrecedence). Helper function for ParsePrimary, and it is declared in ParseExpression.cpp.

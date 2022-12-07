@@ -2,7 +2,7 @@
 
 Parser::Parser (char* filename) {
     this->lexer = Lexer(filename);
-    this->currentToken = lexer.getToken();
+    this->currentToken = move(lexer.getToken());
     this->should_stop_parsing_expr = false;
     this->keywords = {"int","float", "print", "func", "pure", "class", "if"};
 }
@@ -12,5 +12,5 @@ void Parser::printCurrentToken () {
 }
 
 void Parser::getNextToken () {
-    currentToken = lexer.getToken();
+    currentToken = move(lexer.getToken());
 }

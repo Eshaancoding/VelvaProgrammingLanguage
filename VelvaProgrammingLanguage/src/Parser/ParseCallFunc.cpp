@@ -2,7 +2,7 @@
 
 optional<unique_ptr<CallFuncExpr>> Parser::ParseCallExpr (string funcName) {
     vector<unique_ptr<Expr>> params;
-    currentToken = lexer.getToken(); // eat ( start parsing env 
+    currentToken = move(lexer.getToken()); // eat ( start parsing env 
     while (true) {
         // usually we would parse an expression, but for now we are just parsing a bunch of floats
         auto expression = ParseExpression();
@@ -14,9 +14,9 @@ optional<unique_ptr<CallFuncExpr>> Parser::ParseCallExpr (string funcName) {
             lexer.log_err("Expected character ) or ,");
             return nullopt;
         }
-        currentToken = lexer.getToken();  // get next in sequence
+        currentToken = move(lexer.getToken());  // get next in sequence
     }
 
-    currentToken = lexer.getToken();
+    currentToken = move(lexer.getToken());
     return make_unique<CallFuncExpr>(funcName, std::move(params));
 }

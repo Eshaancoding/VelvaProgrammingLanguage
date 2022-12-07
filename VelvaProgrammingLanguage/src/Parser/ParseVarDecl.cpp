@@ -3,7 +3,7 @@
 // Ex: `int i = 3;`
 optional<unique_ptr<VarDeclareExpr>> Parser::ParseVariableDeclaration(bool is_floating_point) {
     // eat the int, float declaration
-    currentToken = lexer.getToken();
+    currentToken = move(lexer.getToken());
     std::string var_name;
     
     // then get the identifier
@@ -13,14 +13,14 @@ optional<unique_ptr<VarDeclareExpr>> Parser::ParseVariableDeclaration(bool is_fl
         lexer.log_err("Expected Identifier");
         return nullopt;
     }
-    currentToken = lexer.getToken(); // eat the identifier
+    currentToken = move(lexer.getToken()); // eat the identifier
 
     // then parse the =
     if (currentToken->getCharacters() != "=") {
         lexer.log_err("Expected = ");
         return nullopt;
     }
-    currentToken = lexer.getToken(); // eat the =
+    currentToken = move(lexer.getToken()); // eat the =
 
     // parse expression
     auto value = ParseExpression();
