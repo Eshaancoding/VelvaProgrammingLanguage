@@ -4,48 +4,48 @@ optional<Value*> ErrorExpr::codegen(CompilationContext &ctx) { return nullopt; }
 
 static string condPrefix = "1";
 
-// optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
-//     Function *f = ctx.builder->GetInsertBlock()->getParent();
-//     BasicBlock *ifBB = ctx.builder->GetInsertBlock();
-//     string thenName = condPrefix + "then1", elseName = condPrefix + "else1";
-//     BasicBlock *thenBB = BasicBlock::Create(*ctx.context, thenName, f);
-//     BasicBlock *elseBB = BasicBlock::Create(*ctx.context, elseName, f);
-//     vector<BasicBlock*> blocks({ifBB});
-//     for(auto const &block: ifMap) {
-//         if (block.first) {
-//             blocks.push_back(thenBB);
-//             ctx.builder->SetInsertPoint(ifBB);
-//             auto condV = (*block.first)->codegen(ctx);
-//             if (!condV) return nullopt;
-//             auto cond = ctx.builder->CreateICmp(*condV, ConstantInt::get(*ctx.context, APInt(32, 0)), "ifcond"); // CreateICmpONE doesn't exist, did you mean CreateICmp
-//             ctx.builder->CreateCondBr(cond, thenBB, elseBB);
-//             ctx.builder->SetInsertPoint(thenBB);
-//             for(auto &expr: block.second) {
-//                 expr->codegen(ctx);
-//             }
-//             ifBB = elseBB;
-//             thenBB = BasicBlock::Create(*ctx.context, thenName, f);
-//             elseBB = BasicBlock::Create(*ctx.context, elseName + "1", f);
-//         } else {
-//             ctx.builder->SetInsertPoint(ifBB);
-//             ctx.builder->CreateBr(elseBB);
-//             blocks.push_back(elseBB);
-//             ctx.builder->SetInsertPoint(elseBB);
-//             for(auto &expr: block.second) {
-//                 expr->codegen(ctx);
-//             }
-//         }
-//         thenName += "1";
-//         elseName += "1";
-//     }
-//     BasicBlock *mergeBB = BasicBlock::Create(*ctx.context, condPrefix + "merge", f);
-//     for(auto const &block: blocks) {
-//         ctx.builder->SetInsertPoint(block);
-//         ctx.builder->CreateBr(mergeBB);
-//     }
-//     condPrefix += "a";
-//     return nullopt;
-// }
+optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
+    Function *f = ctx.builder->GetInsertBlock()->getParent();
+    BasicBlock *ifBB = ctx.builder->GetInsertBlock();
+    string thenName = condPrefix + "then1", elseName = condPrefix + "else1";
+    BasicBlock *thenBB = BasicBlock::Create(*ctx.context, thenName, f);
+    BasicBlock *elseBB = BasicBlock::Create(*ctx.context, elseName, f);
+    vector<BasicBlock*> blocks({ifBB});
+    for(auto const &block: ifMap) {
+        if (block.first) {
+            blocks.push_back(thenBB);
+            ctx.builder->SetInsertPoint(ifBB);
+            auto condV = (*block.first)->codegen(ctx);
+            if (!condV) return nullopt;
+            auto cond = ctx.builder->CreateICmpEQ(*condV, ConstantInt::get(*ctx.context, APInt(32, 0)), "ifcond"); // CreateICmpONE doesn't exist, did you mean CreateICmp
+            ctx.builder->CreateCondBr(cond, thenBB, elseBB);
+            ctx.builder->SetInsertPoint(thenBB);
+            for(auto &expr: block.second) {
+                expr->codegen(ctx);
+            }
+            ifBB = elseBB;
+            thenBB = BasicBlock::Create(*ctx.context, thenName, f);
+            elseBB = BasicBlock::Create(*ctx.context, elseName + "1", f);
+        } else {
+            ctx.builder->SetInsertPoint(ifBB);
+            ctx.builder->CreateBr(elseBB);
+            blocks.push_back(elseBB);
+            ctx.builder->SetInsertPoint(elseBB);
+            for(auto &expr: block.second) {
+                expr->codegen(ctx);
+            }
+        }
+        thenName += "1";
+        elseName += "1";
+    }
+    BasicBlock *mergeBB = BasicBlock::Create(*ctx.context, condPrefix + "merge", f);
+    for(auto const &block: blocks) {
+        ctx.builder->SetInsertPoint(block);
+        ctx.builder->CreateBr(mergeBB);
+    }
+    condPrefix += "a";
+    return nullopt;
+}
 optional<Value*> BranchExpr::codegen (CompilationContext &ctx) {
     return nullopt; // code baove doesn't work  daniel fix plz
 }
