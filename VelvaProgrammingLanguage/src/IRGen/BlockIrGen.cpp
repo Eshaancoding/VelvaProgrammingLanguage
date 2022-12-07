@@ -42,6 +42,7 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
         ctx.builder->SetInsertPoint(block);
         ctx.builder->CreateBr(mergeBB);
     }
+    ctx.builder->SetInsertPoint(mergeBB);
     condPrefix += "a";
     return nullopt;
 }
@@ -71,7 +72,7 @@ optional<Value*> TernaryExpr::codegen(CompilationContext &ctx) {
     auto else_Codegen = _else->codegen(ctx);
     if (!else_Codegen) return nullopt;
 
-    return ctx.builder->CreateSelect(*if_Codegen, *then_Codegen, *else_Codegen);
+    return ctx.builder->CreateSelect(if_Codegen, then_Codegen, else_Codegen);
 }
 
 string TernaryExpr::debug_info() {
