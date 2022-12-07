@@ -1,10 +1,62 @@
 #include "AST.hpp"
 
-CompilationContext::CompilationContext() {
+CompilationContext::CompilationContext(bool compileToObject) {
     context = std::make_unique<LLVMContext>();
     mod = std::make_unique<Module>("mod", *context);
     builder = std::make_unique<IRBuilder<>>(*context);
+    mpm = std::make_unique<ModulePassManager>;
+
+    if (compileToObject) {
+        auto targetTriple = sys::getDefaultTargetTriple();
+        InitializeAllTargetInfos();
+        InitializeAllTargets();
+        InitializeAllTargetMCs();
+        InitializeAllAsmParsers();
+        InitializeAllAsmPrinters();
+        string error;
+        auto target = TargetRegistry::lookupTarget(targetTriple, error);
+        assert(target);
+        auto cpu = "generic";
+        auto features = "";
+
+        TargetOptions out;
+        auto rm = Optional<Reloc::Model>();
+        auto targetMachine = target->createTargetMachine(targetTriple, cpu, features, opt, rm);
+
+        mod->setDataLayout(targetMachine->createDataLayout());
+        mod->setTargetTriple(targetTriple);
+    }
 }
+void CompilationContext::compile() {
+    auto filename = "output.o";
+    error_code ec;
+    raw_fd_ostream dest(filename, ec, sys::fs::OF_None);
+    auto fileType = CGFT_ObjectFile;
+
+    if(targetMachine->addPassesToEmitFile(fpm, dest, nullptr, fileType)) {
+        cerr << "Beshan is dog";
+        return;
+    }
+    fpm.run(*mod);
+    dest.flush();
+}
+
+void CompilationContext::optimize() {
+    // setting up optimization passes
+    std::unique_ptr<FunctionPassManager> fpm;
+
+    // adding passes, more will be added later
+    fpm->addPass(createInstructionCombiningPass()); 
+    fpm->addPass(createReassociatePass());
+    fpm->addPass(createGVNPass());
+    fpm->addPass(createCFGSimplificationPass());
+
+    // add the function pass manager to the module pass manager
+    mpm.addPass(createModuleToFunctionPassAdapter(std::move(fpm)));
+
+    mpm.run();
+}
+
 optional<Value *> IntExpr::codegen(CompilationContext &ctx)
 {
     return ConstantInt::get(*ctx.context, APInt(numBits, num));

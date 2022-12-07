@@ -28,6 +28,16 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Module.h"
 #include <cmath>
+
+
+#include "llvm/MC/TargetRegistry.h"
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/Host.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
+
 using namespace std;
 using namespace llvm;
 
@@ -43,8 +53,12 @@ struct CompilationContext {
         std::unique_ptr<IRBuilder<>> builder;
         std::unique_ptr<Module> mod;
         map<string, AllocaInst*> namedValues;
+        //std::unique_ptr<FunctionPassManager> fpm;
+        std::unique_ptr<ModulePassManager> mpm;
         
-        CompilationContext();
+        CompilationContext(bool compileToObject = true);
+        void compile();
+        void optimize();
 };
 
 /**
