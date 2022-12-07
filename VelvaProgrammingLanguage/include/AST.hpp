@@ -69,6 +69,11 @@ class Expr {
          * 
         */
         virtual string debug_info(); 
+
+        /**
+         * @brief String type that specifies the type of the Expression (will be override)
+        */
+       virtual string return_type (); 
 };
 
 /**
@@ -86,6 +91,7 @@ class IntExpr : public Expr {
         IntExpr(int i) : num(i), numBits(32) {}; // defaults to 32 for int
         optional<Value*> codegen(CompilationContext &ctx) override; 
         string debug_info () override;
+        string return_type () override; // just returns string, declared in AST Constructors.cpp
 };
 
 /**
@@ -102,6 +108,7 @@ class FloatExpr : public Expr {
         public: FloatExpr(float d) : decimal(d) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
+        string return_type () override; 
 };
 
 /**
@@ -123,6 +130,7 @@ class CallFuncExpr : public Expr {
         CallFuncExpr(string name, vector<unique_ptr<Expr>> params) : functionName(name), params(std::move(params)) {};
         std::optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
+        string return_type () override; 
 };
 
 /**
@@ -144,11 +152,12 @@ class BinaryOpExpr : public Expr {
         /**
          * @brief stores the type information (string, int, char, double, int, etc.)
          */
-        string result_type;
+        string rt;
 
-        BinaryOpExpr (string op, unique_ptr<Expr> LHS, unique_ptr<Expr> RHS, string result_type) : op(op), LHS(move(LHS)), RHS(move(RHS)), result_type(result_type) {}
+        BinaryOpExpr (string op, unique_ptr<Expr> LHS, unique_ptr<Expr> RHS, string result_type) : op(op), LHS(move(LHS)), RHS(move(RHS)), rt(result_type) {}
         std::optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
+        string return_type() override;
 };
 
 /**
@@ -186,6 +195,7 @@ class DeclareFunctionExpr {
         DeclareFunctionExpr(bool isExternal, bool isPure, string name, vector<tuple<string, string> > params, optional<string> returnType) : isPure(isPure), name(name), params(params), returnType(returnType), isExternal(isExternal) {} ;
         optional<Function*> codegen(CompilationContext &ctx);
         string debug_info();
+        string return_type (); 
 };
 
 
@@ -214,6 +224,7 @@ class StringExpr: public Expr {
         StringExpr(string t) : text(t) {} // Defined in  AST.cpp
         optional<Value*> codegen(CompilationContext &ctx) override;    
         string debug_info() override;
+        string return_type() override;
 };
 
 /**
@@ -314,10 +325,10 @@ class BranchExpr: public Expr {
         */
         map<optional<unique_ptr<Expr>>, vector<unique_ptr<Expr>>> ifMap;
 
-        BranchExpr(map<optional<Expr>, vector<Expr>> ifmaps) : ifMap(ifmaps) {};
+        BranchExpr(map<optional<unique_ptr<Expr>>, vector<unique_ptr<Expr>>> ifmaps) : ifMap(move(ifmaps)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
-}
+};
 
 
 // ex: i == 3 ? 0 : 1
@@ -325,9 +336,9 @@ class TernaryExpr: public Expr {
     public:
         unique_ptr<Expr> _if, then, _else;
 
-        TernaryExpr(unique_ptr<Expr> _if, unique_ptr<Expr> then, unique_ptr<Expr> _else) : _if(_if), then(then), _else(_else) {};
+        TernaryExpr(unique_ptr<Expr> _if, unique_ptr<Expr> then, unique_ptr<Expr> _else) : _if(move(_if)), then(move(then)), _else(move(_else)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
-}
+};
 
 #endif

@@ -1,21 +1,21 @@
 #include "Parser.hpp"
 
-optional<pair<unique_ptr<Expr>, string>> Parser::ParsePrimary () {
+optional<unique_ptr<Expr>> Parser::ParsePrimary () {
     if (currentToken->isIntIdent()) {
         auto val = make_unique<IntExpr>(currentToken->getIntValue());
         currentToken = lexer.getToken();
-        return make_pair(move(val), string("int"));
+        return move(val);
     }
     else if (currentToken->isFloatIdent()) {
         auto val = make_unique<FloatExpr>(currentToken->getFloatValue());
         currentToken = lexer.getToken();
-        return make_pair(move(val), string("float"));
+        return move(val);
     } 
     else if (currentToken->isChar()) {
         if (currentToken->getCharacters() == "\"") {
             auto val = ParseString();
             currentToken = lexer.getToken();
-            return make_pair(move(val), string("char"));
+            return move(val);
         }
         else {
             lexer.log_err("Invalid character from parse primary!");
@@ -30,8 +30,8 @@ optional<pair<unique_ptr<Expr>, string>> Parser::ParsePrimary () {
         } else {
             string name = currentToken->getName();
             currentToken = lexer.getToken();
-            if (currentToken->getCharacters() == "(") return {ParseCallExpr(name), "callFunc"};
-            else return make_pair(make_unique<VarUseExpr>(name), string("Variable"));
+            if (currentToken->getCharacters() == "(") return ParseCallExpr(name);
+            else return make_unique<VarUseExpr>(name);
         }
     }
     else {

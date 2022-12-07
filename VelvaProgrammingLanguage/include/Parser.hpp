@@ -68,17 +68,26 @@ public:
     optional<unique_ptr<StringExpr>> ParseString (); 
 
     /**
+     * @brief Parses an list of statements until it ends at the end_char. Useful for parsing if statements, while loops, etc. Defined in the ParseBranch.cpp
+     * 
+     * @param end_char the end character where parsing statements should stop
+     * @return * optional<vector<unique_ptr<Expr>>> Returns an list of potiners of Expressions parent class. Optional is if there's exists an error while parsing any of the statements.
+     * @bug Doesn't parses functions declarations!! we might need to apply a map or create a new struct, which is annoying ngl
+     */
+    optional<vector<unique_ptr<Expr>>> ParseBlock (char end_char = '}');
+
+    /**
      * @brief Parses variable uses, integers, strings, call expr, or float. This is a helper function for parse expressions.
-     * @returns a general expression. Could be a variety of child classes from Expr, such as IntExpr, FloatExpr, CallFuncExpr, or StringExpr (calls ParseString). It also returns a string that specifies the type
+     * @returns a general expression. Could be a variety of child classes from Expr, such as IntExpr, FloatExpr, CallFuncExpr, or StringExpr (calls ParseString).
     */
-    optional<pair<unique_ptr<Expr>, string>> ParsePrimary ();
+    optional<unique_ptr<Expr>> ParsePrimary ();
 
     /**
      * @brief Parses binary expression based upon precendence (see private variable BinaryOpPrecedence). Helper function for ParsePrimary, and it is declared in ParseExpression.cpp.
      * @param LHS The left hand side of the operation
-     * @return Returns an expr, which could be from ParsePrimary (no binary operation found) or an actual Binary Expression
+     * @return Returns an expr, which could be from ParsePrimary (no binary operation found) or an actual Binary Expression.
     */
-    optional<unique_ptr<Expr>> ParseBinaryOp (std::unique_ptr<Expr> LHS, optional<pair<int, string>> operationParse = {});
+    optional<unique_ptr<Expr>> ParseBinaryOp (unique_ptr<Expr> LHS, optional<pair<int, string>> operationParse = {});
 
     /**
      * @brief Parses complex expressions such as (`x + y + 2 + "sdf"`)
