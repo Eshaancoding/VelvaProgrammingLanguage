@@ -1,4 +1,5 @@
 #include "Parser.hpp"
+#include <typeinfo>
 
 optional<vector<unique_ptr<Expr>>> Parser::ParseBlock (char end_char) {
     vector<unique_ptr<Expr>> list = {};
@@ -24,7 +25,6 @@ optional<unique_ptr<BranchExpr>> Parser::ParseBranch () {
         if (currentToken->getName() == "if") {
             currentToken = lexer.getToken(); 
             conditional = ParseExpression();
-            currentToken = lexer.getToken(); 
             if (currentToken->getCharacters() != "{") {
                 lexer.log_err("Expected {");
                 return nullopt;
@@ -47,10 +47,10 @@ optional<unique_ptr<BranchExpr>> Parser::ParseBranch () {
         // check parse block
         vector<unique_ptr<Expr>> body = *(ParseBlock('}'));
 
+        printf("extra: %s\n", (*conditional)->debug_info().c_str());
+
         // run
         ifMap[move(conditional)] = move(body);
-
-        printf("extra: %s\n", (*conditional)->debug_info().c_str());
         break;
     }
 

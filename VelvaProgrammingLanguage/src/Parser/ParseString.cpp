@@ -2,4 +2,5 @@
 
 optional<unique_ptr<StringExpr>> Parser::ParseString () {
     currentToken = lexer.getToken(); // eat the "
+    return nullopt;
 }

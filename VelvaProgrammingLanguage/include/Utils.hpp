@@ -5,6 +5,7 @@
 #include <functional>
 #include <iostream>
 #include <type_traits>
+#include <map>
 
 using namespace std;
 
@@ -143,10 +144,6 @@ class NameRegistry {
 
 
 
-string NameRegistry::use(const string &prefix) {
-    names[prefix] = names.count(prefix) ? ++names[prefix] : 0;
-    return prefix + "_" + to_string(names[prefix]);
-}
 #endif
 
  

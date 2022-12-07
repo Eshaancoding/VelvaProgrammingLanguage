@@ -1,5 +1,5 @@
 #include "AST.hpp"
-
+#include "Utils.hpp"
 optional<Value*> ErrorExpr::codegen(CompilationContext &ctx) { return nullopt; }
 
 
@@ -45,13 +45,20 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
 
 string BranchExpr::debug_info() {
     string s;
-    for(auto &thing: ifMap) {
-        s += "Condition: " + (*thing.first)->debug_info() + "\n";
-        s += "Value: ";
-        for (auto &expr: thing.second) {
-            s += expr->debug_info();
+    for(auto &itr : ifMap) {
+        // check if conditional exist
+        if (itr.first) {
+            // conditional does exist
+            s += "Conditional: " + (*itr.first)->debug_info() + "\n";
         }
-        s+= "\n";
+        else {
+            s += "No conditional\n";
+        }
+        /*
+        for (int i = 0; i < itr.second.size(); i++) {
+            s += string("Line ") + to_string(i+1) + " : " + itr.second[i]->debug_info() + "\n"; 
+        }
+        */
     }
     return s;
 }

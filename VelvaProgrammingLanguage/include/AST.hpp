@@ -240,8 +240,7 @@ class VarUseExpr : public Expr {
     public:
         /**
          * @brief The variable used
-         * 
-         */
+         *        */
         string var;
         VarUseExpr(string var) : var(var) {};
         optional<Value*> codegen(CompilationContext &ctx) override;

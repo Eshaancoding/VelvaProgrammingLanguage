@@ -13,7 +13,7 @@ char Lexer::getChar () {
     return LastChar;
 }
 
-Token *Lexer::getToken() {
+unique_ptr<Token> Lexer::getToken() {
     //***************** Skip Whitespace *****************
     while (isspace(LastChar))
         getChar();
@@ -26,8 +26,7 @@ Token *Lexer::getToken() {
         IdentifierStr += LastChar;
         while (isalnum((getChar())))
             IdentifierStr += LastChar;
-
-        return new IdentifierToken(IdentifierStr);
+        return make_unique<IdentifierToken>(IdentifierStr);
     }
 
     //***************** Parse Integers & Floats *****************
@@ -43,18 +42,18 @@ Token *Lexer::getToken() {
         }
         if (is_floating_point) {
             float floatingVal = strtod(NumStr.c_str(), nullptr);
-            return new FloatToken(floatingVal);
+            return make_unique<FloatToken>(floatingVal);
         } 
         else {
             int integerVal;
             sscanf(NumStr.c_str(), "%d", &integerVal); 
-            return new IntegerToken(integerVal);
+            return make_unique<IntegerToken>(integerVal);
         }
     }
 
     //***************** Parse EOF *****************
     if (LastChar == EOF)
-        return new EOFToken();
+        return make_unique<EOFToken>();
 
     //***************** Parse Characters *****************
     if (!isalpha(LastChar) && !isdigit(LastChar) && !isspace(LastChar)) {
@@ -65,11 +64,11 @@ Token *Lexer::getToken() {
             if (isalpha(LastChar) || isdigit(LastChar) || isspace(LastChar)) break;
             starting_char_str += LastChar;
         }
-        return new CharacterToken(starting_char_str);
+        return make_unique<CharacterToken>(starting_char_str);
     }
 
     //***************** Parse Characters *****************
-    log_err("Invalid character: " + LastChar);
+    log_err("Invalid character: " + to_string(LastChar));
 }
 
 void Lexer::log_err (std::string error_msg) {

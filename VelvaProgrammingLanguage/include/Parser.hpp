@@ -36,7 +36,7 @@ private:
     pair<int, string> ParseOperation ();
 
 public: 
-    Token* currentToken;
+    unique_ptr<Token> currentToken;
     Lexer lexer;
     /**
      * @brief Initializes Parser. Declared in ParserInit.cpp

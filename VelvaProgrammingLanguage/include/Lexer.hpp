@@ -39,7 +39,7 @@ public:
         char_idx(1)
     {};
 
-    Token *getToken ();
+    unique_ptr<Token> getToken ();
     void log_err (std::string error_msg); // prints error based upon the character position
  
     // return private vars
