@@ -150,3 +150,6 @@ optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {
     return ctx.builder->CreateStore(*(value->codegen(ctx)), ctx.namedValues[varName]);
 }
 
+optional<Value*> Expr::codegen (CompilationContext &ctx) {
+    return nullopt;
+}

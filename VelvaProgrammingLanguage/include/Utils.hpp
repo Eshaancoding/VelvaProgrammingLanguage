@@ -138,13 +138,14 @@ class NameRegistry {
     private:
         map<string, int> names;
     public:
-        NameRegistry();
         string use(const string &prefix);
-}
+};
+
+
 
 string NameRegistry::use(const string &prefix) {
     names[prefix] = names.count(prefix) ? ++names[prefix] : 0;
-    return prefix + "_" + names[prefix];
+    return prefix + "_" + to_string(names[prefix]);
 }
 #endif
 

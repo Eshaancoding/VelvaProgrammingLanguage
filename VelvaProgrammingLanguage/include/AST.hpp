@@ -55,12 +55,14 @@ struct CompilationContext {
  */
 class Expr {
     public:
+        Expr() {};
+        
         // ~Expr() = default; // Why do we needs a deconstructor for EXPR????
         /**
          * @brief This function generates code for the AST node.
-         * 
-         * @param ctx The compilation context to generate code for.
-         * @return Value* Returns the code generated.
+         * e compilation context to generate code for.
+         * @return Val
+         * @param ctx Thue* Returns the code generated.
          */
         virtual optional<Value*> codegen(CompilationContext &ctx);
         // virtual std::optional<Value*> generate_str(CompilationContext &ctx);
@@ -210,6 +212,7 @@ class ErrorExpr: public Expr {
         ErrorExpr() {}; 
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
+        string return_type () override;
 };
 
 /**
@@ -243,6 +246,7 @@ class VarUseExpr : public Expr {
         VarUseExpr(string var) : var(var) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
+        string return_type() override;
 };
 //didn't we have more mutability types before, we'll add more later.
 /**
@@ -296,6 +300,7 @@ class VarDeclareExpr : public Expr {
         void alloc(CompilationContext &ctx);
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
+        string return_type() override;
 };
 
 /**
@@ -317,6 +322,7 @@ class AssignExpr : public Expr {
         AssignExpr(string name, unique_ptr<Expr> value) : varName(name), value(move(value)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
+        string return_type() override;
 };
 
 class BranchExpr: public Expr {
@@ -330,6 +336,7 @@ class BranchExpr: public Expr {
         BranchExpr(map<optional<unique_ptr<Expr>>, vector<unique_ptr<Expr>>> ifmaps) : ifMap(move(ifmaps)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
+        string return_type() override;
 };
 
 class ForExpr : public Expr {
@@ -353,6 +360,7 @@ class TernaryExpr: public Expr {
         TernaryExpr(unique_ptr<Expr> _if, unique_ptr<Expr> then, unique_ptr<Expr> _else) : _if(move(_if)), then(move(then)), _else(move(_else)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
+        string return_type() override;
 };
 
 class WhileExpr: public Expr {
@@ -360,8 +368,9 @@ class WhileExpr: public Expr {
         unique_ptr<Expr> cond;
         vector<unique_ptr<Expr>> body;
 
-        WhileExpr(unique_ptr<Expr> cond, vector<unique_ptr<Expr>> body) : cond(cond), body(body) {};
+        WhileExpr(unique_ptr<Expr> cond, vector<unique_ptr<Expr>> body) : cond(move(cond)), body(move(body)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
-}
+        string return_type() override;
+};
 #endif
