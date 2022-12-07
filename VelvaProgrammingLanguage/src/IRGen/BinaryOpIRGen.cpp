@@ -27,11 +27,11 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
     else if (op == "&&") {
         // expr1 ? expr2 : false
         auto F = ctx.builder.GetInsertBlock()->getParent();
-        BasicBlock *lbb = BasicBlock::Create(*ctx, ctx.names.use_name("or_lhs"), F);
+        BasicBlock *lbb = BasicBlock::Create(*ctx, ctx.names.use("or_lhs"), F);
         ctx.builder->SetInsertPoint(lbb);
         auto lhs = *(LHS->codegen(ctx));
-        BasicBlock *rbb = BasicBlock::Create(*ctx, ctx.names.use_name("or_rhs"), F);
-        BasicBlock *merge = BasicBlock::Create(*ctx, ctx.names.use_name("or_merge"), F);
+        BasicBlock *rbb = BasicBlock::Create(*ctx, ctx.names.use("or_rhs"), F);
+        BasicBlock *merge = BasicBlock::Create(*ctx, ctx.names.use("or_merge"), F);
         ctx.builder->CreateCondBr(lhs, rbb, merge);
         ctx.builder->SetInsertPoint(rbb);
         auto rhs = *(RHS->codegen(ctx));
@@ -43,11 +43,11 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
         return pn;
     } else if (op == "||") {
         auto F = ctx.builder.GetInsertBlock()->getParent();
-        BasicBlock *lbb = BasicBlock::Create(*ctx, ctx.names.use_name("or_lhs"), F);
+        BasicBlock *lbb = BasicBlock::Create(*ctx, ctx.names.use("or_lhs"), F);
         ctx.builder->SetInsertPoint(lbb);
         auto lhs = *(LHS->codegen(ctx));
-        BasicBlock *rbb = BasicBlock::Create(*ctx, ctx.names.use_name("or_rhs"), F);
-        BasicBlock *merge = BasicBlock::Create(*ctx, ctx.names.use_name("or_merge"), F);
+        BasicBlock *rbb = BasicBlock::Create(*ctx, ctx.names.use("or_rhs"), F);
+        BasicBlock *merge = BasicBlock::Create(*ctx, ctx.names.use("or_merge"), F);
         ctx.builder->CreateCondBr(lhs, merge, rbb);
         ctx.builder->SetInsertPoint(rbb);
         auto rhs = *(RHS->codegen(ctx));

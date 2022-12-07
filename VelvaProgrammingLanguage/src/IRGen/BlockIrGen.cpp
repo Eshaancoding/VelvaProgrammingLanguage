@@ -81,13 +81,16 @@ string TernaryExpr::debug_info() {
 
 optional<Value*> WhileExpr::codegen(CompilationContext &ctx) {
     Function *f = ctx.builder->GetInsertBlock()->getParent();
-    BasicBlock *bodyBB = BasicBlock::Create(*ctx.context, ctx.names.use_name("while"), f);
-    BasicBlock *endBB = BasicBlock::Create(*ctx.context, ctx.names.use_name("while_end"), f);
+    BasicBlock *whileCond = BasicBlock::Create(*ctx.context, ctx.names.use("while_cond"), f);
+    BasicBlock *bodyBB = BasicBlock::Create(*ctx.context, ctx.names.use("while"), f);
+    BasicBlock *endBB = BasicBlock::Create(*ctx.context, ctx.names.use("while_end"), f);
+    ctx.builder->SetInsertPoint(whileCond);
     ctx.builder->CreateCondBr(*(cond->codegen(ctx)), bodyBB, endBB);
     ctx.builder->SetInsertPoint(bodyBB);
     for (auto &expr: body) {
         expr->codegen(ctx);
     }
+    ctx.builder->CreateBr(whileCond);
     ctx.builder->SetInsertPoint(endBB);
     return nullopt;
 }
