@@ -332,6 +332,18 @@ class BranchExpr: public Expr {
         string debug_info() override;
 };
 
+class ForExpr : public Expr {
+    public:
+        optional<unique_ptr<Expr>> Start, End, Step, Body;
+
+        ForExpr(optional<unique_ptr<Expr>> Start, optional<unique_ptr<Expr>> End,
+        optional<unique_ptr<Expr>> Step, optional<vector<unique_ptr<Expr>>> Body) : 
+        Start(move(Start)), End(move(End)), Step(move(Step)), Body(move(Body)) {};
+
+        optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
+}
+
 
 // ex: i == 3 ? 0 : 1
 class TernaryExpr: public Expr {

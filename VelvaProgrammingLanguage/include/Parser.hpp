@@ -83,6 +83,20 @@ public:
     optional<unique_ptr<Expr>> ParsePrimary ();
 
     /**
+     * @brief Parses a while loop function assuming the while keyword ahs already been taken in, begins at taking in the parenthesis for the conditional
+     * @returns AST for WhileExpr including the AST for the conditional created with ParseExpression and the AST for the body created with ParseBlock
+     */
+
+    optional<unique_ptr<WhileExpr>> ParseWhile ();
+
+    /**
+     * @brief Parses a for loop
+     * @returns ForExpr AST
+     */
+
+    optional<unique_ptr<ForExpr>> ParseFor ();
+
+    /**
      * @brief Parses binary expression based upon precendence (see private variable BinaryOpPrecedence). Helper function for ParsePrimary, and it is declared in ParseExpression.cpp.
      * @param LHS The left hand side of the operation
      * @return Returns an expr, which could be from ParsePrimary (no binary operation found) or an actual Binary Expression.
