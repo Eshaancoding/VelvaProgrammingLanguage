@@ -46,9 +46,6 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
     condPrefix += "a";
     return nullopt;
 }
-optional<Value*> BranchExpr::codegen (CompilationContext &ctx) {
-    return nullopt; // code baove doesn't work  daniel fix plz
-}
 
 string BranchExpr::debug_info() {
     string s;
