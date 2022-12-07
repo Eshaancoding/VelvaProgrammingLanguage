@@ -2,7 +2,6 @@
 
 optional<Value*> ErrorExpr::codegen(CompilationContext &ctx) { return nullopt; }
 
-static string condPrefix = "1";
 
 optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
     Function *f = ctx.builder->GetInsertBlock()->getParent();
