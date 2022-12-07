@@ -6,7 +6,6 @@ optional<Value*> ErrorExpr::codegen(CompilationContext &ctx) { return nullopt; }
 optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
     Function *f = ctx.builder->GetInsertBlock()->getParent();
     BasicBlock *ifBB = ctx.builder->GetInsertBlock();
-    string thenName = condPrefix + "then1", elseName = condPrefix + "else1";
     BasicBlock *thenBB = BasicBlock::Create(*ctx.context, thenName, f);
     BasicBlock *elseBB = BasicBlock::Create(*ctx.context, elseName, f);
     vector<BasicBlock*> blocks({ifBB});
@@ -16,15 +15,15 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
             ctx.builder->SetInsertPoint(ifBB);
             auto condV = (*block.first)->codegen(ctx);
             if (!condV) return nullopt;
-            auto cond = ctx.builder->CreateICmpEQ(*condV, ConstantInt::get(*ctx.context, APInt(32, 0)), "ifcond"); // CreateICmpONE doesn't exist, did you mean CreateICmp
+            auto cond = ctx.builder->CreateICmpEQ(*condV, ConstantInt::get(*ctx.context, APInt(32, 0)), ctx.names.use("ifcond")); // CreateICmpONE doesn't exist, did you mean CreateICmp
             ctx.builder->CreateCondBr(cond, thenBB, elseBB);
             ctx.builder->SetInsertPoint(thenBB);
             for(auto &expr: block.second) {
                 expr->codegen(ctx);
             }
             ifBB = elseBB;
-            thenBB = BasicBlock::Create(*ctx.context, thenName, f);
-            elseBB = BasicBlock::Create(*ctx.context, elseName + "1", f);
+            thenBB = BasicBlock::Create(*ctx.context, ctx.names.use("then"), f);
+            elseBB = BasicBlock::Create(*ctx.context, ctx.names.use("else"), f);
         } else {
             ctx.builder->SetInsertPoint(ifBB);
             ctx.builder->CreateBr(elseBB);
@@ -34,16 +33,13 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
                 expr->codegen(ctx);
             }
         }
-        thenName += "1";
-        elseName += "1";
     }
-    BasicBlock *mergeBB = BasicBlock::Create(*ctx.context, condPrefix + "merge", f);
+    BasicBlock *mergeBB = BasicBlock::Create(*ctx.context, ctx.names.use("if_merge"), f);
     for(auto const &block: blocks) {
         ctx.builder->SetInsertPoint(block);
         ctx.builder->CreateBr(mergeBB);
     }
     ctx.builder->SetInsertPoint(mergeBB);
-    condPrefix += "a";
     return nullopt;
 }
 
