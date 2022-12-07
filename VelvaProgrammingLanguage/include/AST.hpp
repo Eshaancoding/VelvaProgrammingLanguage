@@ -343,4 +343,13 @@ class TernaryExpr: public Expr {
         string debug_info() override;
 };
 
+class WhileExpr: public Expr {
+    public:
+        unique_ptr<Expr> cond;
+        vector<unique_ptr<Expr>> body;
+
+        WhileExpr(unique_ptr<Expr> cond, vector<unique_ptr<Expr>> body) : cond(cond), body(body) {};
+        optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
+}
 #endif

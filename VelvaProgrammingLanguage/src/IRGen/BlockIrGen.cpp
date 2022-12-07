@@ -77,3 +77,24 @@ optional<Value*> TernaryExpr::codegen(CompilationContext &ctx) {
 string TernaryExpr::debug_info() {
     return _if->debug_info() + " ? " + then->debug_info() + " : " + _else->debug_info();
 }
+
+optional<Value*> WhileExpr::codegen(CompilationContext &ctx) {
+    Function *f = ctx.builder->GetInsertBlock()->getParent();
+    BasicBlock *bodyBB = BasicBlock::Create(*ctx.context, ctx.names.use_name("while"), f);
+    BasicBlock *endBB = BasicBlock::Create(*ctx.context, ctx.names.use_name("while_end"), f);
+    ctx.builder->CreateCondBr(*(cond->codegen(ctx)), bodyBB, endBB);
+    ctx.builder->SetInsertPoint(bodyBB);
+    for (auto &expr: body) {
+        expr->codegen(ctx);
+    }
+    ctx.builder->SetInsertPoint(endBB);
+    return nullopt;
+}
+
+string WhileExpr::debug_info() {
+    string s = "Cond: " + cond->debug_info() + "\nBody: \n";
+    for(auto &expr: body) {
+        s += "• " + expr->debug_info() + "\n";
+    }
+    return s;
+}
