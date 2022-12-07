@@ -6,8 +6,8 @@ optional<Value*> ErrorExpr::codegen(CompilationContext &ctx) { return nullopt; }
 optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
     Function *f = ctx.builder->GetInsertBlock()->getParent();
     BasicBlock *ifBB = ctx.builder->GetInsertBlock();
-    BasicBlock *thenBB = BasicBlock::Create(*ctx.context, thenName, f);
-    BasicBlock *elseBB = BasicBlock::Create(*ctx.context, elseName, f);
+    BasicBlock *thenBB = BasicBlock::Create(*ctx.context, ctx.names.use("then"), f);
+    BasicBlock *elseBB = BasicBlock::Create(*ctx.context, ctx.names.use("else"), f);
     vector<BasicBlock*> blocks({ifBB});
     for(auto const &block: ifMap) {
         if (block.first) {
