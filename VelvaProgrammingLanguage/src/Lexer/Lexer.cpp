@@ -1,4 +1,5 @@
 #include "Lexer.hpp"
+#include "Token.hpp"
 
 char Lexer::getChar () {
     if (LastChar == '\n' || LastChar == '\r') {
@@ -76,6 +77,7 @@ unique_ptr<Token> Lexer::getToken() {
 
     //***************** Parse Characters *****************
     log_err("Invalid character: " + to_string(LastChar));
+    return make_unique<ERRToken>();
 }
 
 void Lexer::log_err (std::string error_msg) {

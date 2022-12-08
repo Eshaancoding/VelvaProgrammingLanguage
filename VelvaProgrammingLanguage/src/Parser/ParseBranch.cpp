@@ -45,7 +45,9 @@ optional<unique_ptr<BranchExpr>> Parser::ParseBranch () {
         else break;
 
         // check parse block
-        vector<unique_ptr<Expr>> body = *(ParseBlock('}'));
+        auto parseBlock = ParseBlock('}');
+        if (!parseBlock) return nullopt;
+        vector<unique_ptr<Expr>> body = *parseBlock;
 
         printf("extra: %s\n", (*conditional)->debug_info().c_str());
 

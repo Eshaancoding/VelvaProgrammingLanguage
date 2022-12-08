@@ -55,6 +55,7 @@ struct CompilationContext {
  */
 class Expr {
     public:
+        virtual ~Expr() = default;
         Expr() {};
         
         // ~Expr() = default; // Why do we needs a deconstructor for EXPR????
