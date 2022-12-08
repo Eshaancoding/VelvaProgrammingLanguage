@@ -47,7 +47,7 @@ optional<unique_ptr<BranchExpr>> Parser::ParseBranch () {
         // check parse block
         auto parseBlock = ParseBlock('}');
         if (!parseBlock) return nullopt;
-        vector<unique_ptr<Expr>> body = *parseBlock;
+        vector<unique_ptr<Expr>> body = move(*parseBlock);
 
         printf("extra: %s\n", (*conditional)->debug_info().c_str());
 
