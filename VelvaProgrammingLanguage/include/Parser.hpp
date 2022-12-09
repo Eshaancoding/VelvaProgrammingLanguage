@@ -10,6 +10,7 @@
 #include <variant>
 #include <cmath>
 #include <tuple>
+#include <stdio.h>
 
 /****** TODO ******
  * finish string parser
@@ -74,7 +75,7 @@ public:
      * @return * optional<vector<unique_ptr<Expr>>> Returns an list of potiners of Expressions parent class. Optional is if there's exists an error while parsing any of the statements.
      * @bug Doesn't parses functions declarations!! we might need to apply a map or create a new struct, which is annoying ngl
      */
-    optional<vector<unique_ptr<Expr>>> ParseBlock (char end_char = '}');
+    optional<vector<unique_ptr<Expr>>> ParseBlock (string end_char = "}");
 
     /**
      * @brief Parses variable uses, integers, strings, call expr, or float. This is a helper function for parse expressions.

@@ -7,7 +7,7 @@ string IntExpr::return_type() { return "int"; }
 string FloatExpr::return_type() { return "float"; }
 string StringExpr::return_type() { return "string"; }
 string CallFuncExpr::return_type() { return "CallFuncExpr"; } // NEED TO BE IMPLEMENTED D:
-string BinaryOpExpr::return_type() { return rt; }
+string BinaryOpExpr::return_type() { return "int";  }
 string ErrorExpr::return_type() { return "error";}
 string VarUseExpr::return_type() { return "VarUseExpr"; } // NEEDT O BE IMPLEMENTED
 string VarDeclareExpr::return_type() { return "VarDeclareExpr"; } // NEED TO BE IMPLEMENTED

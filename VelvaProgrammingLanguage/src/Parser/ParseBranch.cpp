@@ -1,10 +1,9 @@
 #include "Parser.hpp"
-#include <typeinfo>
 
-optional<vector<unique_ptr<Expr>>> Parser::ParseBlock (char end_char) {
+optional<vector<unique_ptr<Expr>>> Parser::ParseBlock (string end_char) {
     vector<unique_ptr<Expr>> list = {};
     while (true) {
-        if (currentToken->getCharacters() == to_string(end_char)) {
+        if (currentToken->getCharacters() == end_char) {
             currentToken = move(lexer.getToken());
             break;
         }
@@ -34,8 +33,9 @@ optional<unique_ptr<BranchExpr>> Parser::ParseBranch () {
         else if (currentToken->getName() == "else") {
             currentToken = move(lexer.getToken());
             if (currentToken->getName() == "if") {
+                currentToken = move(lexer.getToken());
                 conditional = ParseExpression();
-            } else currentToken = move(lexer.getToken());
+            } 
             if (currentToken->getCharacters() != "{") {
                 lexer.log_err("Expected {");
                 return nullopt;
@@ -45,15 +45,12 @@ optional<unique_ptr<BranchExpr>> Parser::ParseBranch () {
         else break;
 
         // check parse block
-        auto parseBlock = ParseBlock('}');
+        auto parseBlock = ParseBlock("}");
         if (!parseBlock) return nullopt;
         vector<unique_ptr<Expr>> body = move(*parseBlock);
 
-        printf("extra: %s\n", (*conditional)->debug_info().c_str());
-
         // run
         ifMap[move(conditional)] = move(body);
-        break;
     }
 
     return make_unique<BranchExpr>(move(ifMap));

@@ -4,7 +4,7 @@
 unique_ptr<BinaryOpExpr> makeBinaryOp (string op_str, unique_ptr<Expr> LHS, unique_ptr<Expr> RHS) {
     string RHS_type = LHS->return_type(); 
     string LHS_type = RHS->return_type();
-    // find result type
+    // find result types
     string result_type = "";
     map<string, int> typePrecendence ({
         {"int", 0},

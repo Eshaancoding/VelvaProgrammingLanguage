@@ -24,6 +24,9 @@ int main (int argc, char** argv) {
                 printf("Something went wrong!!\n");
             }
         } 
+        else if (code == -1) {
+            break; // there's an error!
+        }
         // else if (code == 1) {
         //     auto statement = parser.parseFunction();
         //     if (statement) {

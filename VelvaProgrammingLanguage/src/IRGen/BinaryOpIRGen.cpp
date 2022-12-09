@@ -22,7 +22,12 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
     } else if (op == "%") {
         return ctx.builder->CreateICmpEQ(*(LHS->codegen(ctx)), *(RHS->codegen(ctx)));
     } else if (op == "==") {
-        return ctx.builder->CreateICmpEQ(*(LHS->codegen(ctx)), *(RHS->codegen(ctx)));
+        cout << "----\n";
+        auto a = *(LHS->codegen(ctx));
+        auto b = *(RHS->codegen(ctx));
+        a->getType()->print(outs());
+        b->getType()->print(outs());
+        return ctx.builder->CreateICmpEQ(a, b);
     }
     else if (op == "&&") {
         // expr1 ? expr2 : false
