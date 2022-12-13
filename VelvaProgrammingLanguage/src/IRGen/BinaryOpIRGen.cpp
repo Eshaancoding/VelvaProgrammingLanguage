@@ -25,8 +25,6 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
         cout << "----\n";
         auto a = *(LHS->codegen(ctx));
         auto b = *(RHS->codegen(ctx));
-        a->getType()->print(outs());
-        b->getType()->print(outs());
         return ctx.builder->CreateICmpEQ(a, b);
     }
     else if (op == "&&") {
@@ -58,7 +56,7 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
         auto rhs = *(RHS->codegen(ctx));
         ctx.builder->SetInsertPoint(merge);
 
-        auto pn = ctx.builder->CreatePHI(Type::getInt8Ty(*ctx.context), 2, ctx.names.use("or_phi"));
+        auto pn = ctx.builder->CreatePHI(Type::getInt32Ty(*ctx.context), 2, ctx.names.use("or_phi"));
         pn->addIncoming(ConstantInt::get(*ctx.context, APInt(8, 1)), lbb);
         pn->addIncoming(rhs, rbb);
         return pn;

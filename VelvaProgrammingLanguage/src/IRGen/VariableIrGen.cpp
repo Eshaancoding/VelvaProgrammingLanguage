@@ -128,7 +128,7 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 {
     auto v = ctx.namedValues[var];
-    return ctx.builder->CreateLoad(v->getType(), v, var.c_str());
+    return ctx.builder->CreateLoad(Type::getInt32Ty(*ctx.context), v, var.c_str());
 }
 
 // error stuff literally just dummy functions because it has to override shit
