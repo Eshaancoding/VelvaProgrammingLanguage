@@ -40,6 +40,10 @@ int main (int argc, char** argv) {
         if (parser.currentToken->isEOF()) break;
     }
     (*main_fn->codegen(ctx))->print(errs()); 
+
+    // optimization 
+    ctx.setOptimize();
+    ctx.compile();
 }
 
 // Token code
