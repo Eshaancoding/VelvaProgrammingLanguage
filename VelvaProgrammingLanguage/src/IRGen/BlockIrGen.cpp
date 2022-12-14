@@ -24,17 +24,15 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
                 expr->codegen(ctx);
             }
             ifBB = elseBB;
-            thenBB = BasicBlock::Create(*ctx.context, ctx.names.use("then"), f);
-            elseBB = BasicBlock::Create(*ctx.context, ctx.names.use("else"), f);
         } else {
             ctx.builder->SetInsertPoint(ifBB);
             for(auto &expr: block.second) {
                 expr->codegen(ctx);
             }
             blocks.push_back(ifBB);
-            thenBB = BasicBlock::Create(*ctx.context, ctx.names.use("then"), f);
-            elseBB = BasicBlock::Create(*ctx.context, ctx.names.use("else"), f);
         }
+        thenBB = BasicBlock::Create(*ctx.context, ctx.names.use("then"), f);
+        elseBB = BasicBlock::Create(*ctx.context, ctx.names.use("else"), f);
     }
     BasicBlock *mergeBB = BasicBlock::Create(*ctx.context, ctx.names.use("if_merge"), f);
     for (auto block: blocks) {
@@ -89,6 +87,7 @@ optional<Value*> WhileExpr::codegen(CompilationContext &ctx) {
     BasicBlock *whileCond = BasicBlock::Create(*ctx.context, ctx.names.use("while_cond"), f);
     BasicBlock *bodyBB = BasicBlock::Create(*ctx.context, ctx.names.use("while"), f);
     BasicBlock *endBB = BasicBlock::Create(*ctx.context, ctx.names.use("while_end"), f);
+    ctx.builder->CreateBr(whileCond);
     ctx.builder->SetInsertPoint(whileCond);
     ctx.builder->CreateCondBr(*(cond->codegen(ctx)), bodyBB, endBB);
     ctx.builder->SetInsertPoint(bodyBB);

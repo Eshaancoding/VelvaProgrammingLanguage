@@ -6,20 +6,23 @@ optional<unique_ptr<WhileExpr>> Parser::ParseWhile() {
         lexer.log_err("No ( after while keyword");
         return nullopt;
     }
+    currentToken = move(lexer.getToken());
     auto conditional = ParseExpression();
     if (!conditional) { return nullopt; }
 
+    /*
     currentToken = move(lexer.getToken());
     if(currentToken->getCharacters()!=")") {
         lexer.log_err("No ) after while conditional");
         return nullopt;
     }
-
+    */
     currentToken = move(lexer.getToken());
     if(currentToken->getCharacters()!="{") {
         lexer.log_err("Expected { after while");
         return nullopt;
     }
+    currentToken = move(lexer.getToken());
     auto body = ParseBlock(); 
     if (!body) { return nullopt; }
 
