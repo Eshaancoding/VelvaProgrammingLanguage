@@ -37,6 +37,11 @@ message(STATUS "LLVM include dirs: ${LLVM_INCLUDE_DIRS}")
 add_executable(${COMPILER_NAME} ${VELVA_FILE_PATH}) 
 set_property(TARGET ${COMPILER_NAME} PROPERTY CXX_STANDARD 17) #We can set this to 20 in the future
 
+message(STATUS ${LLVM_TARGETS_TO_BUILD})
+foreach(target ${LLVM_TARGETS_TO_BUILD})
+  list(APPEND targets "LLVM${target}CodeGen")
+endforeach()
+message(STATUS ${targets})
 # add_executable(TestInstantiator ../src/Driver/compiler.cpp)
 # idk what libraries to link
 # add_test(NAME TestInstantiator
@@ -45,9 +50,9 @@ include_directories(${LLVM_INCLUDE_DIRS} include)
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 add_definitions(${LLVM_DEFINITIONS_LIST})
 
-llvm_map_components_to_libnames(llvm_libs support core irreader)
+llvm_map_components_to_libnames(llvm_libraries analysis support core object irreader executionengine scalaropts instcombine orcjit runtimedyld interpreter mc nativecodegen)
 
-target_link_libraries(${COMPILER_NAME} ${llvm_libs})
+target_link_libraries(${COMPILER_NAME} ${llvm_libs} ${targets})
 
 # enable_testing()
 # add_test()
