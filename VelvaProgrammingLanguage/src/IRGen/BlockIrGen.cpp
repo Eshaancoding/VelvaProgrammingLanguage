@@ -15,7 +15,14 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
             ctx.builder->SetInsertPoint(ifBB);
             auto condV = (*block.first)->codegen(ctx);
             if (!condV) return nullopt;
-            auto cond = ctx.builder->CreateICmpEQ(*condV, ConstantInt::get(*ctx.context, APInt(32, 0)), ctx.names.use("ifcond")); // CreateICmpONE doesn't exist, did you mean CreateICmp
+
+            // Debug             
+            cout << "********** CODV DEBUG ***********\n" << endl;
+            (*condV)->getType()->print(outs());
+            cout << "*********** END **********\n" << endl;
+
+            // actual code
+            auto cond = ctx.builder->CreateICmpEQ(*condV, ConstantInt::get(*ctx.context, APInt(1, 1)), ctx.names.use("ifcond")); // CreateICmpONE doesn't exist, did you mean CreateICmp
             ctx.builder->CreateCondBr(cond, thenBB, elseBB);
             ctx.builder->SetInsertPoint(thenBB);
             for(auto &expr: block.second) {
