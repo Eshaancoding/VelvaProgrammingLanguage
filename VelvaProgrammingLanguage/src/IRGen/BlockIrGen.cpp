@@ -8,18 +8,13 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
     BasicBlock *ifBB = ctx.builder->GetInsertBlock();
     BasicBlock *thenBB = BasicBlock::Create(*ctx.context, ctx.names.use("then"), f);
     BasicBlock *elseBB = BasicBlock::Create(*ctx.context, ctx.names.use("else"), f);
-    vector<BasicBlock*> blocks({ifBB});
+    vector<BasicBlock*> blocks;
     for(auto const &block: ifMap) {
-        if (block.first) {
+        if (block.first.has_value()) {
             blocks.push_back(thenBB);
             ctx.builder->SetInsertPoint(ifBB);
             auto condV = (*block.first)->codegen(ctx);
             if (!condV) return nullopt;
-
-            // Debug             
-            cout << "********** CODV DEBUG ***********\n" << endl;
-            (*condV)->getType()->print(outs());
-            cout << "*********** END **********\n" << endl;
 
             // actual code
             auto cond = ctx.builder->CreateICmpEQ(*condV, ConstantInt::get(*ctx.context, APInt(1, 1)), ctx.names.use("ifcond")); // CreateICmpONE doesn't exist, did you mean CreateICmp
@@ -33,16 +28,16 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
             elseBB = BasicBlock::Create(*ctx.context, ctx.names.use("else"), f);
         } else {
             ctx.builder->SetInsertPoint(ifBB);
-            ctx.builder->CreateBr(elseBB);
-            blocks.push_back(elseBB);
-            ctx.builder->SetInsertPoint(elseBB);
             for(auto &expr: block.second) {
                 expr->codegen(ctx);
             }
+            blocks.push_back(ifBB);
+            thenBB = BasicBlock::Create(*ctx.context, ctx.names.use("then"), f);
+            elseBB = BasicBlock::Create(*ctx.context, ctx.names.use("else"), f);
         }
     }
     BasicBlock *mergeBB = BasicBlock::Create(*ctx.context, ctx.names.use("if_merge"), f);
-    for(auto const &block: blocks) {
+    for (auto block: blocks) {
         ctx.builder->SetInsertPoint(block);
         ctx.builder->CreateBr(mergeBB);
     }

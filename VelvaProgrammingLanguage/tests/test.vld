@@ -11,3 +11,5 @@ else if x <= 10 {
 else {
     x = x * 9
 }
+
+x = x + 2
