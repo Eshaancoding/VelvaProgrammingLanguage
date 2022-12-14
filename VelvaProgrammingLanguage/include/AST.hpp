@@ -27,20 +27,8 @@
 #include "llvm/IR/Value.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Module.h"
-#include "llvm/Support/FileSystem.h"
-#include "llvm/Support/Host.h"
-#include "llvm/Support/TargetSelect.h"
-#include "llvm/Support/raw_ostream.h"
-#include "llvm/Target/TargetMachine.h"
-#include "llvm/Target/TargetOptions.h"
-#include "llvm/MC/TargetRegistry.h"
-#include "llvm/Transforms/Scalar/InstSimplifyPass.h"
-#include "llvm/Transforms/Scalar/SimplifyCFG.h"
-#include "llvm/Transforms/Scalar/GVN.h"
 #include <cmath>
 #include "Utils.hpp"
-#include "llvm/MC/TargetRegistry.h"
-
 using namespace std;
 using namespace llvm;
 
@@ -56,14 +44,9 @@ struct CompilationContext {
         std::unique_ptr<IRBuilder<>> builder;
         std::unique_ptr<Module> mod;
         map<string, AllocaInst*> namedValues;
-        //std::unique_ptr<FunctionPassManager> fpm;
-        std::unique_ptr<ModulePassManager> mpm;
         NameRegistry names;
 
-        CompilationContext(bool compileToObject = true);
-        void compile();
-        void setOptimize();
-        //void defaultOptimize();
+        CompilationContext(bool createOFile = true);
 };
 
 /**

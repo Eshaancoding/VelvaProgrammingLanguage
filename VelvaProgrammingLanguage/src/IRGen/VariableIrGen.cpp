@@ -1,71 +1,18 @@
 #include "AST.hpp"
 
+#include "llvm/MC/TargetRegistry.h"
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/Host.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
 
-CompilationContext::CompilationContext(bool compileToObject) {
+CompilationContext::CompilationContext(bool createOFile) {
     context = std::make_unique<LLVMContext>();
     mod = std::make_unique<Module>("mod", *context);
     builder = std::make_unique<IRBuilder<>>(*context);
-    mpm = std::make_unique<ModulePassManager>();
 }
-
-void CompilationContext::compile() {
-    auto targetTriple = sys::getDefaultTargetTriple();
-    InitializeAllTargetInfos();
-    InitializeAllTargets();
-    InitializeAllTargetMCs();
-    InitializeAllAsmParsers();
-    InitializeAllAsmPrinters();
-    string error;
-    auto target = TargetRegistry::lookupTarget(targetTriple, error);
-    assert(target);
-    auto cpu = "generic";
-    auto features = "";
-
-    // initialize analysis manager
-    ModuleAnalysisManager MAM;
-
-    TargetOptions out;
-    auto rm = Optional<Reloc::Model>();
-    auto targetMachine = target->createTargetMachine(targetTriple, cpu, features, out, rm);
-
-    mod->setDataLayout(targetMachine->createDataLayout());
-    mod->setTargetTriple(targetTriple);
-
-    auto filename = "output.o";
-    error_code ec;
-    raw_fd_ostream dest(filename, ec, sys::fs::OF_None);
-    auto fileType = CGFT_ObjectFile;
-
-    if(ec) {
-        cerr<<"Could not write to file";
-    }
-
-    if(targetMachine->addPassesToEmitFile(*mpm, dest, nullptr, fileType)) {
-        cerr << "Beshan is dog";
-        return;
-    }
-    this->mpm->run(*mod, MAM);
-    dest.flush();
-}
-
-void CompilationContext::setOptimize() {
-    // setting up optimization passes
-    std::unique_ptr<FunctionPassManager> fpm;
-
-    // adding passes, more will be added later
-    fpm->addPass(InstSimplifyPass()); 
-    fpm->addPass(GVNPass());
-    fpm->addPass(SimplifyCFGPass());
-
-    // add the function pass manager to the module pass manager
-    mpm->addPass(createModuleToFunctionPassAdaptor(std::move(fpm)));
-}
-
-// void CompilationContext::defaultOptimize() {
-//     PassBuilder PB;
-//     this->mpm = 
-// }
-
 optional<Value *> IntExpr::codegen(CompilationContext &ctx)
 {
     return ConstantInt::get(*ctx.context, APInt(numBits, num));
