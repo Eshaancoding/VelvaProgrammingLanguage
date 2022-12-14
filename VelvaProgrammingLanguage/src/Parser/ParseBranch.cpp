@@ -15,7 +15,7 @@ optional<vector<unique_ptr<Expr>>> Parser::ParseBlock (string end_char) {
 }
 
 optional<unique_ptr<BranchExpr>> Parser::ParseBranch () {
-    map<optional<unique_ptr<Expr>>, vector<unique_ptr<Expr>>> ifMap;
+    vector<tuple<optional<unique_ptr<Expr>>, vector<unique_ptr<Expr>>>> ifMap;
 
     while (true) {
         optional<unique_ptr<Expr>> conditional = nullopt;
@@ -50,7 +50,7 @@ optional<unique_ptr<BranchExpr>> Parser::ParseBranch () {
         vector<unique_ptr<Expr>> body = move(*parseBlock);
 
         // run
-        ifMap[move(conditional)] = move(body);
+        ifMap.push_back(make_tuple<optional<unique_ptr<Expr>>, vector<unique_ptr<Expr>>>(move(conditional), move(body)));
     }
 
     return make_unique<BranchExpr>(move(ifMap));

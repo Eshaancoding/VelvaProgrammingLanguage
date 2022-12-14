@@ -10,23 +10,23 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
     BasicBlock *elseBB = BasicBlock::Create(*ctx.context, ctx.names.use("else"), f);
     vector<BasicBlock*> blocks;
     for(auto const &block: ifMap) {
-        if (block.first.has_value()) {
+        if (get<0>(block).has_value()) {
             blocks.push_back(thenBB);
             ctx.builder->SetInsertPoint(ifBB);
-            auto condV = (*block.first)->codegen(ctx);
+            auto condV = (*get<0>(block))->codegen(ctx);
             if (!condV) return nullopt;
 
             // actual code
             auto cond = ctx.builder->CreateICmpEQ(*condV, ConstantInt::get(*ctx.context, APInt(1, 1)), ctx.names.use("ifcond")); // CreateICmpONE doesn't exist, did you mean CreateICmp
             ctx.builder->CreateCondBr(cond, thenBB, elseBB);
             ctx.builder->SetInsertPoint(thenBB);
-            for(auto &expr: block.second) {
+            for(auto &expr: get<1>(block)) {
                 expr->codegen(ctx);
             }
             ifBB = elseBB;
         } else {
             ctx.builder->SetInsertPoint(ifBB);
-            for(auto &expr: block.second) {
+            for(auto &expr: get<1>(block)) {
                 expr->codegen(ctx);
             }
             blocks.push_back(ifBB);
@@ -47,9 +47,9 @@ string BranchExpr::debug_info() {
     string s;
     for(auto &itr : ifMap) {
         // check if conditional exist
-        if (itr.first) {
+        if (get<0>(itr)) {
             // conditional does exist
-            s += "Conditional: " + (*itr.first)->debug_info() + "\n";
+            s += "Conditional: " + (*get<0>(itr))->debug_info() + "\n";
         }
         else {
             s += "No conditional\n";
