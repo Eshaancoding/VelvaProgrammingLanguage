@@ -40,21 +40,25 @@ void CompilationContext::compile() {
         cerr<<"Could not write to file";
     }
 
+    if(targetMachine->addPassesToEmitFile(*mpm, dest, nullptr, fileType)) {
+        cerr << "Beshan is dog";
+        return;
+    }
     this->mpm->run(*mod, MAM);
     dest.flush();
 }
 
 void CompilationContext::setOptimize() {
     // setting up optimization passes
-    FunctionPassManager fpm;
+    std::unique_ptr<FunctionPassManager> fpm;
 
     // adding passes, more will be added later
-    fpm.addPass(InstSimplifyPass()); 
-    fpm.addPass(GVNPass());
-    fpm.addPass(SimplifyCFGPass());
+    fpm->addPass(InstSimplifyPass()); 
+    fpm->addPass(GVNPass());
+    fpm->addPass(SimplifyCFGPass());
 
     // add the function pass manager to the module pass manager
-    mpm->addPass(createModuleToFunctionPassAdaptor(move(fpm)));
+    mpm->addPass(createModuleToFunctionPassAdaptor(std::move(fpm)));
 }
 
 // void CompilationContext::defaultOptimize() {
