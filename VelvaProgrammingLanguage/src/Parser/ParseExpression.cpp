@@ -35,9 +35,8 @@ pair<int, string> Parser::ParseOperation () {
         else if (characters == "-") { return {20, characters}; }
         else if (characters == "/") { return {30, characters}; }
         else if (characters == "*") { return {30, characters}; }
-        else return {-1, ""};
     }
-    else return {-1, ""};
+    return {-1, ""};
 }
 
 optional<unique_ptr<Expr>> Parser::ParseExpression () {
