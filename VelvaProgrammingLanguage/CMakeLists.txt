@@ -21,6 +21,8 @@ set(LLVM_LINK_COMPONENTS
 
 # For cmake flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+
 
 # Check if both files exist
 if (NOT EXISTS "../cmake_pre.bash") 

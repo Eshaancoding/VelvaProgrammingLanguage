@@ -42,7 +42,6 @@ int main (int argc, char** argv) {
     (*main_fn->codegen(ctx))->print(errs()); 
 
     // optimization 
-    ctx.setOptimize();
     ctx.compile();
 }
 

@@ -1,13 +1,41 @@
 #include "AST.hpp"
+#include "llvm/Passes/PassBuilder.h"
+
 
 
 CompilationContext::CompilationContext(bool compileToObject) {
     context = std::make_unique<LLVMContext>();
     mod = std::make_unique<Module>("mod", *context);
     builder = std::make_unique<IRBuilder<>>(*context);
-    mpm = std::make_unique<ModulePassManager>();
 }
 
+// void CompilationContext::compile() {
+//     LoopAnalysisManager LAM;
+//     FunctionAnalysisManager FAM;
+//     CGSCCAnalysisManager CGAM;
+//     ModuleAnalysisManager MAM;
+
+//     // Create the new pass manager builder.
+//     // Take a look at the PassBuilder constructor parameters for more
+//     // customization, e.g. specifying a TargetMachine or various debugging
+//     // options.
+//     PassBuilder PB;
+
+//     // Register all the basic analyses with the managers.
+//     PB.registerModuleAnalyses(MAM);
+//     PB.registerCGSCCAnalyses(CGAM);
+//     PB.registerFunctionAnalyses(FAM);
+//     PB.registerLoopAnalyses(LAM);
+//     PB.crossRegisterProxies(LAM, FAM, CGAM, MAM);
+
+//     // Create the pass manager.
+//     // This one corresponds to a typical -O2 optimization pipeline.
+//     ModulePassManager MPM = PB.buildPerModuleDefaultPipeline(OptimizationLevel::O0);
+
+//     // Optimize the IR!
+//     MPM.run(*mod, MAM);
+
+// }
 void CompilationContext::compile() {
     auto targetTriple = sys::getDefaultTargetTriple();
     InitializeAllTargetInfos();
@@ -22,7 +50,19 @@ void CompilationContext::compile() {
     auto features = "";
 
     // initialize analysis manager
-    ModuleAnalysisManager MAM;
+    AnalysisManager<Module> MAM;
+    LoopAnalysisManager LAM;
+    FunctionAnalysisManager FAM;
+    CGSCCAnalysisManager CGAM;
+
+    PassBuilder PB;
+    PB.registerModuleAnalyses(MAM);
+    PB.registerCGSCCAnalyses(CGAM);
+    PB.registerFunctionAnalyses(FAM); 
+    PB.registerLoopAnalyses(LAM);
+    PB.crossRegisterProxies(LAM, FAM, CGAM, MAM);
+
+    auto mpm = PB.buildPerModuleDefaultPipeline(OptimizationLevel::O2);
 
     TargetOptions out;
     auto rm = Optional<Reloc::Model>();
@@ -40,21 +80,12 @@ void CompilationContext::compile() {
         cerr<<"Could not write to file";
     }
 
-    this->mpm->run(*mod, MAM);
+    mpm.run(*mod, MAM);
     dest.flush();
 }
 
-void CompilationContext::setOptimize() {
-    // setting up optimization passes
-    FunctionPassManager fpm;
-
-    // adding passes, more will be added later
-    fpm.addPass(InstSimplifyPass()); 
-    fpm.addPass(GVNPass());
-    fpm.addPass(SimplifyCFGPass());
-
-    // add the function pass manager to the module pass manager
-    mpm->addPass(createModuleToFunctionPassAdaptor(move(fpm)));
+ModulePassManager CompilationContext::setOptimize(ModuleAnalysisManager &MAM) {
+    
 }
 
 // void CompilationContext::defaultOptimize() {

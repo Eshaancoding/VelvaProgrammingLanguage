@@ -40,6 +40,7 @@
 #include <cmath>
 #include "Utils.hpp"
 #include "llvm/MC/TargetRegistry.h"
+#include "llvm/Analysis/InstructionSimplify.h"
 
 using namespace std;
 using namespace llvm;
@@ -57,12 +58,11 @@ struct CompilationContext {
         std::unique_ptr<Module> mod;
         map<string, AllocaInst*> namedValues;
         //std::unique_ptr<FunctionPassManager> fpm;
-        std::unique_ptr<ModulePassManager> mpm;
         NameRegistry names;
 
         CompilationContext(bool compileToObject = true);
         void compile();
-        void setOptimize();
+        ModulePassManager setOptimize(ModuleAnalysisManager& MAM);
         //void defaultOptimize();
 };
 
