@@ -40,7 +40,7 @@ int main (int argc, char** argv) {
         if (parser.currentToken->isEOF()) break;
     }
     (*main_fn->codegen(ctx))->print(errs()); 
-
+    verifyFunction(*ctx.mod->getFunction("__main"), &llvm::errs());
     // optimization 
     ctx.compile();
 }

@@ -3,95 +3,7 @@
 
 
 
-CompilationContext::CompilationContext(bool compileToObject) {
-    context = std::make_unique<LLVMContext>();
-    mod = std::make_unique<Module>("mod", *context);
-    builder = std::make_unique<IRBuilder<>>(*context);
-}
 
-// void CompilationContext::compile() {
-//     LoopAnalysisManager LAM;
-//     FunctionAnalysisManager FAM;
-//     CGSCCAnalysisManager CGAM;
-//     ModuleAnalysisManager MAM;
-
-//     // Create the new pass manager builder.
-//     // Take a look at the PassBuilder constructor parameters for more
-//     // customization, e.g. specifying a TargetMachine or various debugging
-//     // options.
-//     PassBuilder PB;
-
-//     // Register all the basic analyses with the managers.
-//     PB.registerModuleAnalyses(MAM);
-//     PB.registerCGSCCAnalyses(CGAM);
-//     PB.registerFunctionAnalyses(FAM);
-//     PB.registerLoopAnalyses(LAM);
-//     PB.crossRegisterProxies(LAM, FAM, CGAM, MAM);
-
-//     // Create the pass manager.
-//     // This one corresponds to a typical -O2 optimization pipeline.
-//     ModulePassManager MPM = PB.buildPerModuleDefaultPipeline(OptimizationLevel::O0);
-
-//     // Optimize the IR!
-//     MPM.run(*mod, MAM);
-
-// }
-void CompilationContext::compile() {
-    auto targetTriple = sys::getDefaultTargetTriple();
-    InitializeAllTargetInfos();
-    InitializeAllTargets();
-    InitializeAllTargetMCs();
-    InitializeAllAsmParsers();
-    InitializeAllAsmPrinters();
-    string error;
-    auto target = TargetRegistry::lookupTarget(targetTriple, error);
-    assert(target);
-    auto cpu = "generic";
-    auto features = "";
-
-    // initialize analysis manager
-    AnalysisManager<Module> MAM;
-    LoopAnalysisManager LAM;
-    FunctionAnalysisManager FAM;
-    CGSCCAnalysisManager CGAM;
-
-    PassBuilder PB;
-    PB.registerModuleAnalyses(MAM);
-    PB.registerCGSCCAnalyses(CGAM);
-    PB.registerFunctionAnalyses(FAM); 
-    PB.registerLoopAnalyses(LAM);
-    PB.crossRegisterProxies(LAM, FAM, CGAM, MAM);
-
-    auto mpm = PB.buildPerModuleDefaultPipeline(OptimizationLevel::O2);
-
-    TargetOptions out;
-    auto rm = Optional<Reloc::Model>();
-    auto targetMachine = target->createTargetMachine(targetTriple, cpu, features, out, rm);
-
-    mod->setDataLayout(targetMachine->createDataLayout());
-    mod->setTargetTriple(targetTriple);
-
-    auto filename = "output.o";
-    error_code ec;
-    raw_fd_ostream dest(filename, ec, sys::fs::OF_None);
-    auto fileType = CGFT_ObjectFile;
-
-    if(ec) {
-        cerr<<"Could not write to file";
-    }
-
-    mpm.run(*mod, MAM);
-    dest.flush();
-}
-
-ModulePassManager CompilationContext::setOptimize(ModuleAnalysisManager &MAM) {
-    
-}
-
-// void CompilationContext::defaultOptimize() {
-//     PassBuilder PB;
-//     this->mpm = 
-// }
 
 optional<Value *> IntExpr::codegen(CompilationContext &ctx)
 {
@@ -198,7 +110,7 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 
     // if we do not return anything, then we just return nothing. However if we do return, then we have the return statement handle that (parsed by runner and created by AST)
     if (!returnType)
-        ctx.builder->CreateRet(UndefValue::get(Type::getVoidTy(*ctx.context)));
+        ctx.builder->CreateRet(nullptr);
 
     verifyFunction(*F);
 

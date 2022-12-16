@@ -41,10 +41,11 @@
 #include "Utils.hpp"
 #include "llvm/MC/TargetRegistry.h"
 #include "llvm/Analysis/InstructionSimplify.h"
+#include "llvm/IR/LegacyPassManager.h"
 
 using namespace std;
 using namespace llvm;
-
+using namespace llvm::sys;
 // IR generation variables
 
 /**
