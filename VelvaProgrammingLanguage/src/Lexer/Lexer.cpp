@@ -72,7 +72,24 @@ unique_ptr<Token> Lexer::getToken() {
             if (isalpha(LastChar) || isdigit(LastChar) || isspace(LastChar)) break;
             starting_char_str += LastChar;
         }
-        return make_unique<CharacterToken>(starting_char_str);
+    
+        // Determine if it is a comment
+        if (starting_char_str == "//") {
+            int starting_line = line_num; 
+            while (line_num == starting_line)
+                getChar();
+
+            return move(getToken());
+        }
+        else if (starting_char_str == "/*") {
+            unique_ptr<Token> currentToken = make_unique<CharacterToken>(starting_char_str);
+            while (currentToken->getCharacters() != "*/" && !currentToken->isEOF()) currentToken = move(getToken());
+            printf("Current token sdfsdfsdf: %s", currentToken->to_str().c_str());
+            return move(getToken());
+        }
+        else {
+            return make_unique<CharacterToken>(starting_char_str);
+        }
     }
 
     //***************** Parse Characters *****************
