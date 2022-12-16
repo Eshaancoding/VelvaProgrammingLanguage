@@ -2,7 +2,7 @@
 #include "llvm/Bitcode/BitcodeWriter.h"
 
 
-CompilationContext::CompilationContext(bool compileToObject) {
+CompilationContext::CompilationContext() {
     context = std::make_unique<LLVMContext>();
     mod = std::make_unique<Module>("mod", *context);
     builder = std::make_unique<IRBuilder<>>(*context);
@@ -80,9 +80,9 @@ void CompilationContext::compile() {
     dest.flush();
 }
 
-ModulePassManager CompilationContext::setOptimize(ModuleAnalysisManager &MAM) {
+// ModulePassManager CompilationContext::setOptimize(ModuleAnalysisManager &MAM) {
     
-}
+// }
 
 // void CompilationContext::defaultOptimize() {
 //     PassBuilder PB;

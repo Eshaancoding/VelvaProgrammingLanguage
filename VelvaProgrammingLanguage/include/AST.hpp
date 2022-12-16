@@ -61,9 +61,9 @@ struct CompilationContext {
         //std::unique_ptr<FunctionPassManager> fpm;
         NameRegistry names;
 
-        CompilationContext(bool compileToObject = true);
+        CompilationContext();
         void compile();
-        ModulePassManager setOptimize(ModuleAnalysisManager& MAM);
+        // ModulePassManager setOptimize(ModuleAnalysisManager& MAM);
         //void defaultOptimize();
 };
 
