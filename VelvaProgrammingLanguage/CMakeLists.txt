@@ -43,7 +43,8 @@ set_property(TARGET ${COMPILER_NAME} PROPERTY CXX_STANDARD 17) #We can set this 
 #             COMMAND TestInstantiator) // we are adding tests later okay
 include_directories(${LLVM_INCLUDE_DIRS} include)
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
-add_definitions(${LLVM_DEFINITIONS_LIST})
+message(STATUS "LLVM Def list: ${LLVM_DEFINITIONS_LIST}")
+add_definitions(${LLVM_DEFINITIONS_LIST}, -fstandalone-debug)
 
 llvm_map_components_to_libnames(llvm_libs support core irreader)
 

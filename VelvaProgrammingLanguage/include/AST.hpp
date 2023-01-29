@@ -197,7 +197,15 @@ class DeclareFunctionExpr {
         optional<std::string> returnType;
         bool isReal = true;
         vector<unique_ptr<Expr>> body;
-        DeclareFunctionExpr(bool isExternal, bool isPure, string name, vector<tuple<string, string> > params, optional<string> returnType) : isPure(isPure), name(name), params(params), returnType(returnType), isExternal(isExternal) {} ;
+
+        DeclareFunctionExpr(
+            bool isExternal, 
+            bool isPure, 
+            string name, 
+            vector<tuple<string, string> > params, 
+            optional<string> returnType, 
+            vector<unique_ptr<Expr>> body={}
+        ) : isPure(isPure), name(name), params(params), returnType(returnType), isExternal(isExternal), body(move(body)) {};
         optional<Function*> codegen(CompilationContext &ctx);
         string debug_info();
         string return_type (); 

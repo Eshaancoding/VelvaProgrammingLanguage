@@ -6,6 +6,7 @@ optional<unique_ptr<CallFuncExpr>> Parser::ParseCallExpr (string funcName) {
     while (true) {
         // usually we would parse an expression, but for now we are just parsing a bunch of floats
         auto expression = ParseExpression();
+        
         if (!expression) return nullopt;
         params.push_back(move(*expression));
 

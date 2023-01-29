@@ -22,31 +22,28 @@ int main (int argc, char** argv) {
             }
             else {
                 printf("Something went wrong!!\n");
+                break;
             }
         } 
-        else if (code == -1) {
+        else if (code == 1) {
+            auto statement = parser.parseFunction();
+            if (statement) {
+                printf("Statement AST: %s\n", (*statement)->debug_info().c_str());
+                // main_fn->body.push_back(move(*statement));
+                printf("IR main function not implemented!\n");
+                break;
+            }
+            else {
+                printf("Something went wrong!!\n");
+                break;
+            }
+        }
+        else {
+            printf("Code exit with %d!!\n", code);
             break; // there's an error!
         }
-        // else if (code == 1) {
-        //     auto statement = parser.parseFunction();
-        //     if (statement) {
-        //         cout << "Function AST: " << (*statement)->debug_info() << endl;
-        //         //printf("Function AST: %s\n", (*statement)->debug_info().c_str());
-        //         main_fn->body.push_back(move(*statement));
-        //     }
-        //     else printf("Something went wrong!!\n");
-        // }
         parser.printCurrentToken();
         if (parser.currentToken->isEOF()) break;
     }
     (*main_fn->codegen(ctx))->print(errs()); 
 }
-
-// Token code
-// int main (int argc, char** argv) { //     Lexer lex = Lexer(argv[1]);
-//     Token* currentToken = lex.getToken(); 
-//     while (!currentToken->isEOF()) {
-//         printf("Current token: %s\n", currentToken->to_str().c_str());
-//         currentToken = lex.getToken(); 
-//     }
-// }

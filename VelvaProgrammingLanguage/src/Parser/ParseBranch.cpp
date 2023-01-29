@@ -4,7 +4,6 @@ optional<vector<unique_ptr<Expr>>> Parser::ParseBlock (string end_char) {
     vector<unique_ptr<Expr>> list = {};
     while (true) {
         if (currentToken->getCharacters() == end_char) {
-            currentToken = move(lexer.getToken());
             break;
         }
         optional<unique_ptr<Expr>> statement = parseStatement();
