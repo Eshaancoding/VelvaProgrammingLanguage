@@ -43,15 +43,15 @@ CompilationContext::CompilationContext() {
 
 // }
 void CompilationContext::compile() {
-    
-    auto targetTriple = sys::getDefaultTargetTriple();
-
     InitializeAllTargetInfos();
     InitializeAllTargets();
     InitializeAllTargetMCs();
     InitializeAllAsmParsers();
     InitializeAllAsmPrinters();
     
+    printf("Test: %s\n", sys::getDefaultTargetTriple().c_str());
+    auto targetTriple = sys::getDefaultTargetTriple();
+
     string error;
     auto target = TargetRegistry::lookupTarget(targetTriple, error);
     assert(target);
@@ -74,10 +74,13 @@ void CompilationContext::compile() {
     }
     legacy::PassManager pass;
     auto fileType = CGFT_ObjectFile;
-    auto ret = targetMachine->addPassesToEmitFile(pass, dest, nullptr, fileType);
+    if(auto ret = targetMachine->addPassesToEmitFile(pass, dest, nullptr, fileType)) {
+        errs() << "The TargetMachine cannot emit a file of this type";
+    };
     
     pass.run(*mod);
     dest.flush();
+    delete targetMachine;
 }
 
 // ModulePassManager CompilationContext::setOptimize(ModuleAnalysisManager &MAM) {

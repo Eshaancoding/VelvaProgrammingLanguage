@@ -57,6 +57,11 @@ message(STATUS "LLVM include dirs: ${LLVM_INCLUDE_DIRS}")
 add_executable(${COMPILER_NAME} ${VELVA_FILE_PATH}) 
 set_property(TARGET ${COMPILER_NAME} PROPERTY CXX_STANDARD 17) #We can set this to 20 in the future
 
+message(STATUS ${LLVM_TARGETS_TO_BUILD})
+foreach(target ${LLVM_TARGETS_TO_BUILD})
+  list(APPEND targets "LLVM${target}CodeGen")
+endforeach()
+message(STATUS ${targets})
 # add_executable(TestInstantiator ../src/Driver/compiler.cpp)
 # idk what libraries to link
 # add_test(NAME TestInstantiator

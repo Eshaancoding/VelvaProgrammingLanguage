@@ -49,4 +49,5 @@ int main (int argc, char** argv) {
     verifyFunction(*ctx.mod->getFunction("_main"), &llvm::errs());
     // optimization 
     ctx.compile();
+    printf("Successfully compiled!\n");
 }

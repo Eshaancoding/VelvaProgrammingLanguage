@@ -1,14 +1,18 @@
 #ifndef AST
 #define AST 
-#include <cctype>
-#include <cstdio>
-#include <cstdlib>
+#include <cmath>
+#include "Utils.hpp"
+#include <iostream>
 #include <map>
-#include <memory>
-#include <string>
-#include <utility>
 #include <vector>
-#include "Lexer.cpp"
+#include <string>
+#include <memory>
+#include <tuple>
+#include <optional>
+#include <functional>
+#include <variant>
+#include "Functions.hpp"
+#include "Utils.hpp"
 #include "llvm-c/Core.h"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
@@ -18,12 +22,28 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
-#include "llvm/IR/Module.h"
-#include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
 #include "llvm/IR/Value.h"
 #include "llvm/IR/Function.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
+#include "llvm/Transforms/Scalar/InstSimplifyPass.h"
+#include "llvm/Transforms/Scalar/SimplifyCFG.h"
+#include "llvm/Transforms/Scalar/GVN.h"
+#include "llvm/Analysis/InstructionSimplify.h"
+#include "llvm/IR/Instructions.h"
+#include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Module.h"
+#include "llvm/IR/Type.h"
+#include "llvm/MC/TargetRegistry.h"
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/Host.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
 using namespace llvm;
 
 // LLVMContext stores global data of LLVM core infrastructure, type and constant uniquing tables, no locking on thread, so one context per thread
