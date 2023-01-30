@@ -1,5 +1,5 @@
-int x = 0
-while (x <= 10) {
-    x = x + 1
+func addToResult (int a, int b)  {
+    int result = a + b
 }
-x = x * 9
+
+f(3,4)

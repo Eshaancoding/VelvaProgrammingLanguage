@@ -88,13 +88,16 @@ optional<unique_ptr<DeclareFunctionExpr>> Parser::ParseDeclareFunctionExpr (bool
         return nullopt;
     }
 
-    // for now we are just going to parse in an empty function
     currentToken = move(lexer.getToken());
+    auto body = this->ParseBlock();
+    if (!body) return nullopt;
+
     if (currentToken->getCharacters() != "}") {
         lexer.log_err("Expected character }");
         return nullopt;
     }
 
     currentToken = move(lexer.getToken());
-    return make_unique<DeclareFunctionExpr>(false, isPure, func_name, params, returnType);
+    return make_unique<DeclareFunctionExpr>(false, isPure, func_name, params, returnType, move(body.value()));
+    // return make_unique<DeclareFunctionExpr>(false, isPure, func_name, params, returnType, move(*body));
 }

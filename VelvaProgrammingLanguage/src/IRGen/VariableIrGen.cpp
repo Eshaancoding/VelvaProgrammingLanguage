@@ -1,19 +1,72 @@
 #include "AST.hpp"
 #include "llvm/Passes/PassBuilder.h"
 
-#include "llvm/MC/TargetRegistry.h"
-#include "llvm/Support/FileSystem.h"
-#include "llvm/Support/Host.h"
-#include "llvm/Support/TargetSelect.h"
-#include "llvm/Support/raw_ostream.h"
-#include "llvm/Target/TargetMachine.h"
-#include "llvm/Target/TargetOptions.h"
 
-CompilationContext::CompilationContext(bool createOFile) {
+
+CompilationContext::CompilationContext(bool compileToObject) {
     context = std::make_unique<LLVMContext>();
     mod = std::make_unique<Module>("mod", *context);
     builder = std::make_unique<IRBuilder<>>(*context);
 }
+
+
+// void CompilationContext::compile() {
+//     auto targetTriple = sys::getDefaultTargetTriple();
+//     InitializeAllTargetInfos();
+//     InitializeAllTargets();
+//     InitializeAllTargetMCs();
+//     InitializeAllAsmParsers();
+//     InitializeAllAsmPrinters();
+//     string error;
+//     auto target = TargetRegistry::lookupTarget(targetTriple, error);
+//     assert(target);
+//     auto cpu = "generic";
+//     auto features = "";
+
+//     // initialize analysis manager
+//     AnalysisManager<Module> MAM;
+//     LoopAnalysisManager LAM;
+//     FunctionAnalysisManager FAM;
+//     CGSCCAnalysisManager CGAM;
+
+//     PassBuilder PB;
+//     PB.registerModuleAnalyses(MAM);
+//     PB.registerCGSCCAnalyses(CGAM);
+//     PB.registerFunctionAnalyses(FAM); 
+//     PB.registerLoopAnalyses(LAM);
+//     PB.crossRegisterProxies(LAM, FAM, CGAM, MAM);
+
+//     auto mpm = PB.buildPerModuleDefaultPipeline(OptimizationLevel::O0);
+
+//     TargetOptions out;
+//     auto rm = Optional<Reloc::Model>();
+//     auto targetMachine = target->createTargetMachine(targetTriple, cpu, features, out, rm);
+
+//     mod->setDataLayout(targetMachine->createDataLayout());
+//     mod->setTargetTriple(targetTriple);
+
+//     auto filename = "output.o";
+//     error_code ec;
+//     raw_fd_ostream dest(filename, ec, sys::fs::OF_None);
+//     auto fileType = CGFT_ObjectFile;
+
+//     if(ec) {
+//         cerr<<"Could not write to file";
+//     }
+
+//     mpm.run(*mod, MAM);
+//     dest.flush();
+// }
+
+// ModulePassManager CompilationContext::setOptimize(ModuleAnalysisManager &MAM) {
+    
+// }
+
+// void CompilationContext::defaultOptimize() {
+//     PassBuilder PB;
+//     this->mpm = 
+// }
+
 optional<Value *> IntExpr::codegen(CompilationContext &ctx)
 {
     return ConstantInt::get(*ctx.context, APInt(numBits, num));
@@ -144,7 +197,9 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
     auto rhs = value->codegen(ctx);
     if (!rhs)
         return {};
-    return ctx.builder->CreateStore(*rhs, inst);
+    auto s = ctx.builder->CreateStore(*rhs, inst);
+    s->setVolatile(true);
+    return s;
 };  
 
 optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {

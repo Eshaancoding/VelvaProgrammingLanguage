@@ -11,6 +11,7 @@ char Lexer::getChar () {
         char_idx += 1;
     }
     LastChar = file_read.get();
+    
     return LastChar;
 }
 
@@ -32,8 +33,12 @@ unique_ptr<Token> Lexer::getToken() {
         start_char_idx = char_idx;
         std::string IdentifierStr = "";
         IdentifierStr += LastChar;
-        while (isalnum((getChar())))
+        while (true) {
+            getChar();
+            if (!isalnum(LastChar)) break;
+            if (LastChar == -1) break; // if last char is at the end of the file
             IdentifierStr += LastChar;
+        }
         return make_unique<IdentifierToken>(IdentifierStr);
     }
 
@@ -45,6 +50,7 @@ unique_ptr<Token> Lexer::getToken() {
         while (true) {
             NumStr += LastChar;
             getChar();
+            if (LastChar == -1) break; // if last char is the end of file
             if (LastChar == '.') is_floating_point = true;
             else if (!isdigit(LastChar)) break;
         }
@@ -69,6 +75,7 @@ unique_ptr<Token> Lexer::getToken() {
         starting_char_str += LastChar;
         while (true) {
             getChar();
+            if (LastChar == -1) break; // if last char is the end of file
             if (isalpha(LastChar) || isdigit(LastChar) || isspace(LastChar) || LastChar == EOF || LastChar == '\xff') break;
             starting_char_str += LastChar;
         }
