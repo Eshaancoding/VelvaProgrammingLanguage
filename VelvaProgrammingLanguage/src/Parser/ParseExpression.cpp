@@ -69,7 +69,6 @@ optional<unique_ptr<Expr>> Parser::ParseBinaryOp (unique_ptr<Expr> LHS, optional
     while (true) {
         // get RHS 
         auto RHS = ParsePrimary();
-        printf("RHS: %s\n", (*RHS)->debug_info().c_str());
         if (!RHS) return nullopt;
 
         // get next operation

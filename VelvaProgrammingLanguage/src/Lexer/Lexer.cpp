@@ -91,7 +91,6 @@ unique_ptr<Token> Lexer::getToken() {
         else if (starting_char_str == "/*") {
             unique_ptr<Token> currentToken = make_unique<CharacterToken>(starting_char_str);
             while (currentToken->getCharacters() != "*/" && !currentToken->isEOF()) currentToken = move(getToken());
-            printf("Current token sdfsdfsdf: %s", currentToken->to_str().c_str());
             return move(getToken());
         }
         else {

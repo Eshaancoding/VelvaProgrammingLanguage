@@ -17,7 +17,6 @@ int main (int argc, char** argv) {
         if (code == 0) {
             auto statement = parser.parseStatement();
             if (statement) {
-                printf("Statement AST: %s\n", (*statement)->debug_info().c_str());
                 main_fn->body.push_back(move(*statement));
             }
             else {
@@ -26,23 +25,22 @@ int main (int argc, char** argv) {
             }
         } 
         else if (code == 1) {
-            auto statement = parser.parseFunction();
-            if (statement) {
-                printf("Statement AST: %s\n", (*statement)->debug_info().c_str());
-                // main_fn->body.push_back(move(*statement));
-                printf("IR main function not implemented!\n");
-                break;
+            auto function = parser.parseFunction();
+            if (function) {
+                auto cg = (*function)->codegen(ctx);
+                if (!cg)
+                    (*cg)->print(errs());
+                else
+                    printf("Code gen function isn't working");
             }
             else {
                 printf("Something went wrong!!\n");
-                break;
             }
         }
         else {
             printf("Code exit with %d!!\n", code);
             break; // there's an error!
         }
-        parser.printCurrentToken();
         if (parser.currentToken->isEOF()) break;
     }
     (*main_fn->codegen(ctx))->print(errs()); 
