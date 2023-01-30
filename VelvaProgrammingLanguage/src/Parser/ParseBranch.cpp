@@ -48,6 +48,8 @@ optional<unique_ptr<BranchExpr>> Parser::ParseBranch () {
         if (!parseBlock) return nullopt;
         vector<unique_ptr<Expr>> body = move(*parseBlock);
 
+        currentToken = move(lexer.getToken());
+
         // run
         ifMap.push_back(make_tuple<optional<unique_ptr<Expr>>, vector<unique_ptr<Expr>>>(move(conditional), move(body)));
     }
