@@ -5,11 +5,5 @@ int x = b
 if x == 9 {
     x = x * 3
 }
-else if x <= 10 {
-    x = x * 5
-}
-else {
-    x = x * 9
-}
 
 x = x + 2

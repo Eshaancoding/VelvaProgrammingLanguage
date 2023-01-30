@@ -12,6 +12,7 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
     for(auto const &block: ifMap) {
         if (get<0>(block).has_value()) {
             blocks.push_back(thenBB);
+            blocks.push_back(elseBB);
             ctx.builder->SetInsertPoint(ifBB);
             auto condV = (*get<0>(block))->codegen(ctx);
             if (!condV) return nullopt;
