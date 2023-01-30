@@ -11,7 +11,7 @@ using namespace std;
 int main (int argc, char** argv) {
     Parser parser = Parser(argv[1]);
     CompilationContext ctx;
-    auto main_fn = make_unique<DeclareFunctionExpr>(false, false, "__main", vector<tuple<string, string>>({}), nullopt);
+    auto main_fn = make_unique<DeclareFunctionExpr>(false, false, "_main", vector<tuple<string, string>>({}), nullopt);
     while (true) {
         int code = parser.getTypeCode();
         if (code == 0) {
@@ -40,6 +40,9 @@ int main (int argc, char** argv) {
         if (parser.currentToken->isEOF()) break;
     }
     (*main_fn->codegen(ctx))->print(errs()); 
+    verifyFunction(*ctx.mod->getFunction("_main"), &llvm::errs());
+    // optimization 
+    ctx.compile();
 }
 
 // Token code

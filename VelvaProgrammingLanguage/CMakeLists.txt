@@ -1,8 +1,28 @@
 cmake_minimum_required(VERSION 3.13.4)
 project(Velva)
 
+# Linker LLVM components
+set(LLVM_LINK_COMPONENTS
+  aarch64asmparser
+  armasmparser
+  avrasmparser
+  bpfasmparser
+  mipsasmparser
+  msp430asmparser
+  powerpcasmparser
+  riscvasmparser
+  sparcasmparser
+  systemzasmparser
+  veasmparser
+  webassemblyasmparser
+  x86asmparser
+  amdgpuasmparser
+)
+
 # For cmake flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+
 
 # Check if both files exist
 if (NOT EXISTS "../cmake_pre.bash") 
@@ -45,9 +65,14 @@ include_directories(${LLVM_INCLUDE_DIRS} include)
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 add_definitions(${LLVM_DEFINITIONS_LIST})
 
-llvm_map_components_to_libnames(llvm_libs support core irreader)
+llvm_map_components_to_libnames(llvm_libraries asmparser ${LLVM_LINK_COMPONENTS}  analysis support core object irreader executionengine scalaropts instcombine orcjit runtimedyld interpreter mc nativecodegen)
+#llvm_map_components_to_libnames(llvm_libraries all)
+#asmparser analysis support core object irreader executionengine scalaropts instcombine orcjit runtimedyld interpreter mc nativecodegen)
 
-target_link_libraries(${COMPILER_NAME} ${llvm_libs})
+message(STATUS "llvm libs: ${llvm_libraries}")
+message(STATUS "targets: ${targets}")
+
+target_link_libraries(${COMPILER_NAME} ${llvm_libraries} ${targets})
 
 # enable_testing()
 # add_test()

@@ -29,9 +29,13 @@
 #include "llvm/IR/Module.h"
 #include <cmath>
 #include "Utils.hpp"
+#include "llvm/MC/TargetRegistry.h"
+#include "llvm/Analysis/InstructionSimplify.h"
+#include "llvm/IR/LegacyPassManager.h"
+
 using namespace std;
 using namespace llvm;
-
+using namespace llvm::sys;
 // IR generation variables
 
 /**
@@ -44,9 +48,13 @@ struct CompilationContext {
         std::unique_ptr<IRBuilder<>> builder;
         std::unique_ptr<Module> mod;
         map<string, AllocaInst*> namedValues;
+        //std::unique_ptr<FunctionPassManager> fpm;
         NameRegistry names;
 
-        CompilationContext(bool createOFile = true);
+        CompilationContext();
+        void compile();
+        // ModulePassManager setOptimize(ModuleAnalysisManager& MAM);
+        //void defaultOptimize();
 };
 
 /**

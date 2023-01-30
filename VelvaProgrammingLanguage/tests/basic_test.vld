@@ -1,0 +1,9 @@
+int x = 3
+x = x * 2
+// hello
+/*
+
+sdfsdfsdf
+
+*/
+int y = 3 * 3

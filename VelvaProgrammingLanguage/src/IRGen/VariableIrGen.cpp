@@ -1,4 +1,5 @@
 #include "AST.hpp"
+#include "llvm/Passes/PassBuilder.h"
 
 #include "llvm/MC/TargetRegistry.h"
 #include "llvm/Support/FileSystem.h"
@@ -118,7 +119,7 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 
     // if we do not return anything, then we just return nothing. However if we do return, then we have the return statement handle that (parsed by runner and created by AST)
     if (!returnType)
-        ctx.builder->CreateRet(UndefValue::get(Type::getVoidTy(*ctx.context)));
+        ctx.builder->CreateRet(nullptr);
 
     verifyFunction(*F);
 
