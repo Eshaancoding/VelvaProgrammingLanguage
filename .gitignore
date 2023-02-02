@@ -5,3 +5,15 @@
 build/
 CMakeCache.txt
 CMakeFiles
+VelvaProgrammingLanguage/tree-sitter-velva/src
+VelvaProgrammingLanguage/tree-sitter-velva/bindings
+build/
+.vscode/
+.DS_Store
+VelvaProgrammingLanguage/tree-sitter-velva/src
+VelvaProgrammingLanguage/tree-sitter-velva/bindings
+VelvaProgrammingLanguage/tree-sitter-velva/node_modules
+VelvaProgrammingLanguage/tree-sitter-velva/package-lock.json
+VelvaProgrammingLanguage/tree-sitter-velva/Cargo.toml
+VelvaProgrammingLanguage/tree-sitter-velva/test/*
+VelvaProgrammingLanguage/tree-sitter-velva/binding.gyp
