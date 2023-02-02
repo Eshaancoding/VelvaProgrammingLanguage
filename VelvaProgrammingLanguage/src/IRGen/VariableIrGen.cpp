@@ -61,7 +61,7 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 {
     // TODO: Later we have to check if the function has already been declared or not, and check if it has an empty body (if not, we give error)
 
-    std::vector<Type *> paramTypes(params.size());
+    std::vector<Type *> paramTypes;
     for (auto &param : params)
     {
         if (get<0>(param) == "int") {
@@ -101,8 +101,7 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
     // codegen through all expressions
     
     for (auto &expr: body) { 
-        auto v = expr->codegen(ctx); 
-        
+        expr->codegen(ctx); 
     }
 
     // if we do not return anything, then we just return nothing. However if we do return, then we have the return statement handle that (parsed by runner and created by AST)

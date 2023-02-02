@@ -11,6 +11,8 @@ func addToResult (int a, int b) -> int {
 }
 */
 optional<unique_ptr<DeclareFunctionExpr>> Parser::ParseDeclareFunctionExpr (bool isPure) {
+    bool haveArgs = true;
+
     currentToken = move(lexer.getToken()); // eat func 
     if (!currentToken->isIdent()) {
         lexer.log_err("Expected function name.");
@@ -18,7 +20,8 @@ optional<unique_ptr<DeclareFunctionExpr>> Parser::ParseDeclareFunctionExpr (bool
     
     string func_name = currentToken->getName();    
     currentToken = move(lexer.getToken()); // eat func_name, get (
-    if (currentToken->getCharacters() != "(") {
+    if (currentToken->getCharacters() == "()") haveArgs = false;
+    else if (currentToken->getCharacters() != "(") {
         lexer.log_err("Expected (");
         return nullopt;
     }
@@ -26,7 +29,8 @@ optional<unique_ptr<DeclareFunctionExpr>> Parser::ParseDeclareFunctionExpr (bool
     // Get params
     vector<tuple<string, string> > params;
     currentToken = move(lexer.getToken()); // eat ( start parsing env 
-    while (true) {
+    if (currentToken->getCharacters() == ")") haveArgs = false;
+    while (haveArgs) {
         // parse int, float type argument
         if (!currentToken->isIdent()) {
             lexer.log_err("Expected type variable.");
@@ -56,6 +60,7 @@ optional<unique_ptr<DeclareFunctionExpr>> Parser::ParseDeclareFunctionExpr (bool
         // End of function
         string character = currentToken->getCharacters();
         if (character == ")") {
+            currentToken = move(lexer.getToken()); // eat ), get next char 
             break;
         } 
         else if (character != ",") {
@@ -66,7 +71,6 @@ optional<unique_ptr<DeclareFunctionExpr>> Parser::ParseDeclareFunctionExpr (bool
     }
     
     // get return type, if there is any
-    currentToken = move(lexer.getToken()); // eat ), get char  
     optional<std::string> returnType = nullopt;
     if (currentToken->getCharacters() == "-") {
         // means we are returning the type

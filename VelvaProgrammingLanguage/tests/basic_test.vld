@@ -1,13 +1,6 @@
-func hello (int i, int x) {
-    int y = i + x
+func hello () {
+    int y = 3
 }
 
 int x = 3
 x = x * 2
-// hello
-/*
-
-sdfsdfsdf
-
-*/
-int y = 3 * 3
