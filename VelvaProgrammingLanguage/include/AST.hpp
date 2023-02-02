@@ -399,4 +399,12 @@ class WhileExpr: public Expr {
         string debug_info() override;
         string return_type() override;
 };
+
+class ReturnStateExpr : public Expr {
+    public: 
+        unique_ptr<Expr> val_return;
+        ReturnStateExpr(unique_ptr<Expr> val) : val_return(move(val)) {};
+        optional<Value*> codegen (CompilationContext &ctx) override;
+};
+
 #endif

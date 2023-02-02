@@ -64,7 +64,8 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
     std::vector<Type *> paramTypes;
     for (auto &param : params)
     {
-        if (get<0>(param) == "int") {
+        printf("Params: %s and %s\n", get<0>(param).c_str(), get<1>(param).c_str());
+        if  (get<0>(param) == "int") {
             paramTypes.push_back(Type::getInt32Ty(*ctx.context));
         } 
         else if (get<0>(param) == "double") {
@@ -73,6 +74,9 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         else if (get<0>(param) == "string") {
             paramTypes.push_back(Type::getInt8PtrTy(*ctx.context));
         }
+
+        // AllocaInst *inst = ctx.builder->CreateAlloca(Type::getInt32Ty(*ctx.context));
+        // ctx.namedValues[name] = inst;
     }
 
     auto retType = returnType == "int" ? Type::getInt32Ty(*ctx.context)
@@ -142,4 +146,15 @@ optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {
 
 optional<Value*> Expr::codegen (CompilationContext &ctx) {
     return nullopt;
+}
+
+optional<Value*> ReturnStateExpr::codegen (CompilationContext &ctx) {
+    // empty because the function will automatically try to search for the return statemnent
+    auto cg = this->val_return->codegen(ctx);
+    if (cg) {
+        ctx.builder->CreateRet(*cg);
+        return *cg; // <-- kinda cheeky, but we don't use the value anyways :man_shrugging:
+    }
+    else
+        return std::nullopt;
 }

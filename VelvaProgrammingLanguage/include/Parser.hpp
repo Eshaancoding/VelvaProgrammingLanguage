@@ -148,6 +148,12 @@ public:
     optional<unique_ptr<DeclareFunctionExpr>> parseFunction ();
 
     /**
+     * @brief Parse return statement. Defined in ParserReturn.cpp
+     * @return returns a return statement AST
+    */
+    optional<unique_ptr<ReturnStateExpr>> ParseReturn ();
+
+    /**
      * @brief Defines which type of code is in the current line of the parser. Defined in ParseGeneral.cpp
      * @return returns an integer. 0 if it is a statement, 1 if it is a function, and 2 if it is a class
     */

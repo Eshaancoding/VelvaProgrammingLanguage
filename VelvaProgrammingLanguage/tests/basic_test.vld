@@ -1,6 +1,7 @@
-func hello () {
+func hello (int a, int b) -> int {
     int y = 3
+    return y
 }
 
 int x = 3
-x = x * 2
+int z = x * 2

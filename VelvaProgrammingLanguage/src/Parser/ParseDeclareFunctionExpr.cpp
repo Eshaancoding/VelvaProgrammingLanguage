@@ -72,22 +72,14 @@ optional<unique_ptr<DeclareFunctionExpr>> Parser::ParseDeclareFunctionExpr (bool
     
     // get return type, if there is any
     optional<std::string> returnType = nullopt;
-    if (currentToken->getCharacters() == "-") {
+    if (currentToken->getCharacters() == "->") {
         // means we are returning the type
-        currentToken = move(lexer.getToken());   
-        if (currentToken->getCharacters() != ">") {
-            lexer.log_err("Expected >");
-            return nullopt;
-        }
         currentToken = move(lexer.getToken());   
         returnType = currentToken->getName();
         currentToken = move(lexer.getToken());   
-        if (currentToken->getCharacters() != "{") {
-            lexer.log_err("Expected {");
-            return nullopt;
-        }
     } 
-    else if (currentToken->getCharacters() != "{") {
+
+    if (currentToken->getCharacters() != "{") {
         lexer.log_err("Expected { or -");
         return nullopt;
     }
