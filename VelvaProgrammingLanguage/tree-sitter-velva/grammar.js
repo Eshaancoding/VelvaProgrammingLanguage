@@ -1,54 +1,71 @@
 module.exports = grammar({
     name: "Velva",
     rules: {
+        // general file wrapper
+        file: $ => repeat($._statement),
 
-        file: $ => repeat($.statement),
-
-        statement: $ => choice(
+        // wrapper for each statement (hidden)
+        _statement: $ => choice(
             $.if_statement,
             $.var_declaration,
             $.assignment,
             $.block,
-            // $._return_statement,
-            //$._func_call,
+            $.return_statement,
+            $.func_call,
+            $.function_declare,
+            $.pure_function_declare,
+            $.for,
+            $.while
+        ),
+        
+        // declaring a normal function
+        function_declare: $ => seq(
+            "func",
+            $.primitive_type,
+            $.identifier,
+            $.parameter_list,  
+            $.block
+        ),
+        
+        // declaring a pure function
+        pure_function_declare: $ => seq(
+            "pure",
+            $.primitive_type,
+            $.identifier,
+            $.parameter_list,
+            $.block
         ),
 
-        // function_declare: $ => seq(
-        //     "func",
-        //     $._primitive_type,
-        //     $.identifier,
-        //     $._parameter_list,  
-        //     $.block
-        // ),
+        // for loop
+        for: $ => seq(
+            "for",
+            "(",
+            $.var_declaration,
+            ";",
+            $.condition,
+            ";",
+            $.assignment,
+            ")",
+            $.block
+        ),
 
-        // pure_function_declare: $ => seq(
-        //     "pure",
-        //     $._primitive_type,
-        //     $.identifier,
-        //     $._parameter_list,
-        //     $.block
-        // ),
+        // while loop
+        while: $ => seq(
+            "while",
+            "(",
+            $.condition,
+            ")",
+            $.block,
+        ),
 
-        // for: $ => seq(
-        //     "for",
-        //     "(",
-        //     $.var_declaration,
-        //     ";",
-        //     $._condition,
-        //     ";",
-        //     $._assignment,
-        //     ")",
-        //     $.block
-        // ),
+        // block with curly braces (used in conditionals, loops, and functions, but can also be included to group a scope)
+        block: $ => seq(
+            "{",
+            repeat($._statement),
+            "}"
+        ),
 
-        // while: $ => seq(
-        //     "while",
-        //     "(",
-        //     $._condition,
-        //     ")",
-        //     $.block,
-        // ),
-
+        // conditional
         if_statement: $ => seq(
             "if",
             "(",
@@ -58,15 +75,9 @@ module.exports = grammar({
             optional($._if_continuation)
         ),
 
-        block: $ => seq(
-            "{",
-            repeat($.statement),
-            "}"
-        ),
-
         // variable declaration, assignment, manipulation
         var_declaration: $ => seq(
-            $._primitive_type,
+            $.primitive_type,
             $.identifier,
             '=',
             $.expression,
@@ -76,27 +87,36 @@ module.exports = grammar({
         //expressions
         expression: $ => choice(
             $.identifier,
-            $._binary_expression,
+            $.binary_expression,
             $._unary_expression,
             $.number
         ),
 
+        // includes not function and integer invert function
         _unary_expression: $ => choice(
-            $._not
+            $.not,
+            $.negative
             // more can be added later
         ),
 
-        _not: $ => seq(
+        not: $ => seq(
             "!",
             $.identifier
         ),
 
-        _inc_dec: $ => seq(
+        negative: $ => seq(
+            "-",
+            $.identifier
+        ),
+
+        // increment and decrement for assignment
+        inc_dec: $ => seq(
             $.identifier,
             choice("++", "--")
         ),
 
-        _binary_expression: $ => choice(
+        // binary expression (needs testing)
+        binary_expression: $ => choice(
             prec.left(2, seq($.expression, '*', $.expression)),
             prec.left(2, seq($.expression, '/', $.expression)),
             prec.left(1, seq($.expression, '-', $.expression)),
@@ -113,42 +133,41 @@ module.exports = grammar({
                 "=",
                 $.expression,
             ),
-            $._inc_dec
         ),
 
         // types
-        _primitive_type: $ => choice(
+        primitive_type: $ => choice(
             'int',
             'float'
         ),
 
         //functions
-        //_parameter: $ => seq(
-        //     $._primitive_type,
-        //     $.identifier
-        // ),
+        parameter: $ => seq(
+            $.primitive_type,
+            $.identifier
+        ),
 
-        // _parameter_list: $ => seq(
-        //     "(",
-        //     repeat($._parameter),
-        //     ")"
-        // ),
+        parameter_list: $ => seq(
+            "(",
+            //repeat($.parameter),
+            ")"
+        ),
         
         // // general block & statements (probably need to be updated), used in loops, conditionals, functions
 
         // conditionals
 
         _if_continuation: $ => choice(
-            $._else_if,
-            $._else,
+            $.else_if,
+            $.else,
         ),
 
-        _else: $ => seq(
+        else: $ => seq(
             "else",
             $.block,
         ),
 
-        _else_if: $ => seq(
+        else_if: $ => seq(
             "else",
             $.if_statement
         ),
@@ -163,15 +182,15 @@ module.exports = grammar({
             "==", "!=", "<", ">", "<=", ">="
         ),
 
-        // _return_statement: $ => seq(
-        //     "return",
-        //     $._expression
-        // ), 
+        return_statement: $ => seq(
+            "return",
+            $.expression
+        ), 
 
-        // func_call: $ => seq(
-        //     $.identifier,
-        //     "()"
-        // ),
+        func_call: $ => seq(
+            $.identifier,
+            "()"
+        ),
 
         identifier: $ => /[a-z]+/,
         number: $ => /\d+/,

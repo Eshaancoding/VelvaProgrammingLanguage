@@ -1,0 +1,3 @@
+func int f() {
+    int x = 78
+}
