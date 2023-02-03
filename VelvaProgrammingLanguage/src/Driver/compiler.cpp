@@ -5,14 +5,13 @@
 #include <stdio.h>
 #include "Parser.hpp"
 
-
 using namespace std;
 
 int main (int argc, char** argv) {
     Parser parser = Parser(argv[1]);
     CompilationContext ctx;
-    vector<string> functionNames = {"_main"};
-    auto main_fn = make_unique<DeclareFunctionExpr>(false, false, "_main", vector<tuple<string, string>>({}), nullopt);
+    vector<string> functionNames = {"_start"};
+    auto main_fn = make_unique<DeclareFunctionExpr>(false, false, functionNames[0], vector<tuple<string, string>>({}), nullopt);
     bool did_succeed = true;
     while (true) {
         int code = parser.getTypeCode();
@@ -61,5 +60,9 @@ int main (int argc, char** argv) {
         // optimization 
         ctx.compile();
         printf("Successfully compiled!\n");
+
+        // linker
+        int errCode = system("ld output.o");
+        if (errCode == 0) printf("Successfully linked\n");
     }
 }

@@ -1,7 +1,8 @@
 func hello (int a, int b) -> int {
-    int y = 3 + 62 * 3
+    int x = 2*3
+    int y = x + 62
     return y
 }
 
-int x = 3
-int z = x * 2
+int a = 3
+int b = 5
