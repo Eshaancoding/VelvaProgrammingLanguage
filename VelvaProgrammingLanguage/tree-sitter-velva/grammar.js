@@ -21,10 +21,10 @@ module.exports = grammar({
         // declaring a normal function
         function_declare: $ => seq(
             "func",
-            $.primitive_type,
-            $.identifier,
+            field("return", $.primitive_type),
+            field("name", $.identifier),
             $.parameter_list,  
-            $.block
+            field("body", $.block)
         ),
         
         // declaring a pure function
@@ -68,19 +68,19 @@ module.exports = grammar({
         // conditional
         if_statement: $ => seq(
             "if",
-            "(",
+            // "(",
             $.condition,
-            ")",
+            // ")",
             $.block,
             optional($._if_continuation)
         ),
 
         // variable declaration, assignment, manipulation
         var_declaration: $ => seq(
-            $.primitive_type,
-            $.identifier,
+            field("type", $.primitive_type),
+            field("name", $.identifier),
             '=',
-            $.expression,
+            field("value", $.expression),
             
         ),
 

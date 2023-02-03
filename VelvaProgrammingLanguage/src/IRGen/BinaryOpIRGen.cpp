@@ -1,6 +1,9 @@
 #include "AST.hpp"
 #include "Utils.hpp"
 
+Value *GenerateBinaryOp(CompilationContext &ctx, TSNode *node) {
+    
+}
 optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
     // to be implemented
     if (op == "+") {

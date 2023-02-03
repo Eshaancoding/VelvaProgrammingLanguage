@@ -66,7 +66,9 @@ message(STATUS ${targets})
 # idk what libraries to link
 # add_test(NAME TestInstantiator
 #             COMMAND TestInstantiator) // we are adding tests later okay
+add_library(treesitter SHARED IMPORTED)
 include_directories(${LLVM_INCLUDE_DIRS} include)
+include_directories(${TREE_SITTER_DIR}/include/tree_sitter include)
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 message(STATUS "LLVM Def list: ${LLVM_DEFINITIONS_LIST}")
 add_definitions(${LLVM_DEFINITIONS_LIST}, -fstandalone-debug)
@@ -78,6 +80,8 @@ llvm_map_components_to_libnames(llvm_libraries asmparser ${LLVM_LINK_COMPONENTS}
 message(STATUS "llvm libs: ${llvm_libraries}")
 message(STATUS "targets: ${targets}")
 
+
+set_target_properties(treesitter PROPERTIES IMPORTED_LOCATION ${TREE_SITTER_DIR}/lib/libtre-sitter.a)
 target_link_libraries(${COMPILER_NAME} ${llvm_libraries} ${targets})
 
 # enable_testing()
