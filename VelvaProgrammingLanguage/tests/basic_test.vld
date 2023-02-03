@@ -1,5 +1,5 @@
 func hello (int a, int b) -> int {
-    int y = 3
+    int y = 3 + 62 * 3
     return y
 }
 
