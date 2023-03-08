@@ -25,6 +25,12 @@ private:
     TSParser *parser;
     TSTree *tree;
     TSTreeCursor cursor;
+    std::string src;
+
+    /**
+     * @brief Given the starting and ending point, we use the src string in order to return the string
+    */
+    std::string getStartingEnding (TSPoint start, TSPoint end);
 public: 
     /**
      * @brief Initializes Parser. Declared in ParserInit.cpp
