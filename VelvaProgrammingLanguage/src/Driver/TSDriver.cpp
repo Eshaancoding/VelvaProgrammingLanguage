@@ -7,7 +7,10 @@
 #include <cstring>
 using namespace std;
 
-TSLanguage *tree_sitter_Velva(void);
+extern "C" {
+    const TSLanguage *tree_sitter_Velva(void);
+}
+
 
 int main(int argc, const char **argv)
 {

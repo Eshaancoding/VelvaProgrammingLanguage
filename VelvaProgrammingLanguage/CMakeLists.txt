@@ -32,7 +32,10 @@ endif()
 # Run bash file to set CMAKE_PREFIX_PATH
 execute_process (
     COMMAND bash ../cmake_pre.sh
+    OUTPUT FAKE_PREFIX_PATH
 )
+list(APPEND CMAKE_PREFIX_PATH FAKE_PREFIX_PATH)
+
 message(STATUS "Prefix path: $ENV{CMAKE_PREFIX_PATH}")
 execute_process (
     COMMAND bash ../list_files.sh
@@ -77,8 +80,8 @@ foreach(dir ${dirs})
   message(STATUS "dir='${dir}'")
 endforeach()
 
-add_definitions(${LLVM_DEFINITIONS_LIST}, -fstandalone-debug)
-# add_definitions(${LLVM_DEFINITIONS_LIST})
+# add_definitions(${LLVM_DEFINITIONS_LIST}, -fstandalone-debug)
+add_definitions(${LLVM_DEFINITIONS_LIST})
 
 llvm_map_components_to_libnames(llvm_libraries asmparser ${LLVM_LINK_COMPONENTS}  analysis support core object irreader executionengine scalaropts instcombine orcjit runtimedyld interpreter mc nativecodegen)
 #llvm_map_components_to_libnames(llvm_libraries all)
@@ -87,7 +90,7 @@ llvm_map_components_to_libnames(llvm_libraries asmparser ${LLVM_LINK_COMPONENTS}
 # message(STATUS "llvm libs: ${llvm_libraries}")
 # message(STATUS "targets: ${targets}")
 
-message(STATUS "Tree sitter dir: $ENV{TREE_SITTER_DIR}/lib/libtree-sitter.a")
+message(STATUS "Tree sietter dir: $ENV{TREE_SITTER_DIR}/lib/libtree-sitter.a")
 
 add_library(treesitter SHARED IMPORTED)
 
