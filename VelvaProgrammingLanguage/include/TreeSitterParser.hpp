@@ -24,6 +24,7 @@ class Parser {
 private:
     TSParser *parser;
     TSTree *tree;
+    TSTreeCursor cursor;
 public: 
     /**
      * @brief Initializes Parser. Declared in ParserInit.cpp
@@ -33,7 +34,7 @@ public:
 
 
     /**
-     * @brief parses the AST, starting from the original node
+     * @brief parses the AST, starting from the original node, and converts to our custom AST
      * 
      */
 
@@ -49,6 +50,8 @@ public:
      * @brief deconstructor for Parser, which will free objects such as parser and tree
     */
    ~Parser ();
+
+
 
 };
 

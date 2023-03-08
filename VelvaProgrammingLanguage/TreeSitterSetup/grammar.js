@@ -19,6 +19,7 @@ module.exports = grammar({
         ),
         
         // declaring a normal function
+        
         function_declare: $ => seq(
             "func",
             field("return", $.primitive_type),
@@ -109,6 +110,15 @@ module.exports = grammar({
             $.identifier
         ),
 
+        assignment: $ => choice(
+            seq(
+                $.identifier,
+                "=",
+                $.expression,
+            ),
+            $.inc_dec
+        ),
+
         // increment and decrement for assignment
         inc_dec: $ => seq(
             $.identifier,
@@ -126,14 +136,6 @@ module.exports = grammar({
         // _operator: $ => choice(
         //     "+", "-", "*", "/"
         // ),
-
-        assignment: $ => choice(
-            seq(
-                $.identifier,
-                "=",
-                $.expression,
-            ),
-        ),
 
         // types
         primitive_type: $ => choice(

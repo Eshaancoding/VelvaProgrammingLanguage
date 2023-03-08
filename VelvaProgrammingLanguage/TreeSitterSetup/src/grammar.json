@@ -323,6 +323,32 @@
         }
       ]
     },
+    "assignment": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "identifier"
+            },
+            {
+              "type": "STRING",
+              "value": "="
+            },
+            {
+              "type": "SYMBOL",
+              "name": "expression"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "inc_dec"
+        }
+      ]
+    },
     "inc_dec": {
       "type": "SEQ",
       "members": [
@@ -431,28 +457,6 @@
               }
             ]
           }
-        }
-      ]
-    },
-    "assignment": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "identifier"
-            },
-            {
-              "type": "STRING",
-              "value": "="
-            },
-            {
-              "type": "SYMBOL",
-              "name": "expression"
-            }
-          ]
         }
       ]
     },

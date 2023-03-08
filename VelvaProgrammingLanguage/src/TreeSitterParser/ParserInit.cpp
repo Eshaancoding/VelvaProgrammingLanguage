@@ -22,14 +22,17 @@ Parser::Parser (const char* filename) {
         source_code,
         strlen(source_code)
     );
+
+    cursor = ts_tree_cursor_new(ts_tree_root_node(tree));
 }
 
 Parser::~Parser() {
     ts_tree_delete(tree);
     ts_parser_delete(parser);
+    ts_tree_cursor_delete(&cursor);
 }
 
-void Parser::printTree(std::optional<TSNode> nodeInp, int lvl) {
+void Parser::printTree (std::optional<TSNode> nodeInp, int lvl) {
     TSNode node;
     if (!nodeInp) node = ts_tree_root_node(tree);
     else node = *nodeInp;
@@ -40,7 +43,6 @@ void Parser::printTree(std::optional<TSNode> nodeInp, int lvl) {
 
     int len = ts_node_child_count(node);
     for (int i = 0; i < len; i++) {
-        
         printTree(ts_node_child(node, i), ++lvl);
     }
     
