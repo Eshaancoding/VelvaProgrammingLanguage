@@ -1,17 +1,17 @@
-#include <iostream>
-#include <stdio.h>
-#include <fstream>
-#include <ctype.h>
-#include <stdio.h>
+// #include <iostream>
+// #include <stdio.h>
+// #include <fstream>
+// #include <ctype.h>
+// #include <stdio.h>
 // #include "Parser.hpp"
 // #include <tree_sitter/api.h>
 
 
-using namespace std;
+// using namespace std;
 
-int main () {
-    printf("Hello world\n");
-}
+// int main () {
+//     printf("Hello world\n");
+// }
 
 // int main (int argc, char** argv) {
 //     Parser parser = Parser(argv[1]);
@@ -50,7 +50,7 @@ int main () {
 //     }
 //     (*main_fn->codegen(ctx))->print(errs()); 
 //     verifyFunction(*ctx.mod->getFunction("_main"), &llvm::errs());
-//     // optimization 
+//      //    optimization 
 //     ctx.compile();
 //     printf("Successfully compiled!\n");
 // }

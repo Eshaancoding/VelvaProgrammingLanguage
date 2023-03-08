@@ -66,8 +66,9 @@ endforeach()
 # idk what libraries to link
 # add_test(NAME TestInstantiator
 #             COMMAND TestInstantiator) // we are adding tests later okay
-include_directories(${LLVM_INCLUDE_DIRS} $ENV{TREE_SITTER_DIR}/lib/include include)
+include_directories(${LLVM_INCLUDE_DIRS} $ENV{TREE_SITTER_DIR}/lib/include $ENV{TREE_SITTER_PARSER_INCLUDE} include)
 message(STATUS "Tree sitter include: $ENV{TREE_SITTER_DIR}/lib/include")
+message(STATUS "Tree sitter parser file: $ENV{TREE_SITTER_PARSER_FILE}")
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 # message(STATUS "LLVM Def list: ${LLVM_DEFINITIONS_LIST}")
 
@@ -76,8 +77,8 @@ foreach(dir ${dirs})
   message(STATUS "dir='${dir}'")
 endforeach()
 
-# add_definitions(${LLVM_DEFINITIONS_LIST}, -fstandalone-debug)
-add_definitions(${LLVM_DEFINITIONS_LIST})
+add_definitions(${LLVM_DEFINITIONS_LIST}, -fstandalone-debug)
+# add_definitions(${LLVM_DEFINITIONS_LIST})
 
 llvm_map_components_to_libnames(llvm_libraries asmparser ${LLVM_LINK_COMPONENTS}  analysis support core object irreader executionengine scalaropts instcombine orcjit runtimedyld interpreter mc nativecodegen)
 #llvm_map_components_to_libnames(llvm_libraries all)

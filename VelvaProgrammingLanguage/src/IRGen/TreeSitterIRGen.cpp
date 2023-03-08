@@ -2,5 +2,5 @@
 
 
 void Generate(TSNode *node) {
-    switch()
+//     switch()
 }
