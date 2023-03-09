@@ -1,49 +1,52 @@
 #include "TreeSitterCursor.hpp"
 
-std::string TreeSitterCursor::sourceStr()
-{
+std::string TreeSitterCursor::getSourceStr() {
     auto node = currentNode();
 
     TSPoint start = ts_node_start_point(node);
     TSPoint end = ts_node_end_point(node);
+
+    printf("Start: %d %d\n", start.row, start.column); 
+    printf("End: %d %d\n", end.row, end.column);
+    printf("Source: %s\n", source.c_str());
 
     std::string line_ret;
     bool parsing = false;
     int lineNum = 0;
     
     // convert to buffer
-    // std::stringstream ss(src);
+    std::istringstream ss(source);
 
-    // for (std::string line; std::getline(ss, line, '\n');)
-    // {
-    //     for (int i = 0; i < line.length(); i++)
-    //     {
-    //         char ch = line.c_str()[i];
+    for (std::string line; std::getline(ss, line, '\n');)
+    {
+        for (int i = 0; i < line.length(); i++)
+        {
+            char ch = line.c_str()[i];
 
-    //         if (start.row == lineNum && start.column == i)
-    //         {
-    //             parsing = true;
-    //         }
+            if (start.row == lineNum && start.column == i)
+            {
+                parsing = true;
+            }
 
-    //         if (parsing)
-    //             line_ret += ch;
+            if (parsing)
+                line_ret += ch;
 
-    //         if (end.row == lineNum)
-    //         {
-    //             parsing = false;
-    //         }
-    //     }
-    //     if (parsing)
-    //         line_ret += "\n";
-    //     lineNum += 1;
-    // }
+            if (end.row == lineNum && end.column == i)
+            {
+                parsing = false;
+            }
+        }
+        if (parsing)
+            line_ret += "\n";
+        lineNum += 1;
+    }
 
-    return "";
+    return line_ret;
 }
 
-TreeSitterCursor::TreeSitterCursor (TSTree *tree, std::string source) {
+TreeSitterCursor::TreeSitterCursor (TSTree *tree, std::string src) {
     cursor = ts_tree_cursor_new(ts_tree_root_node(tree));
-    src = source; 
+    source = src; 
 }
     
 TSNode TreeSitterCursor::currentNode () {

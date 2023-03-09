@@ -7,12 +7,14 @@ unique_ptr<Expr> Parser::ParseExpression () {
 
     if (type == "binary_expression")
         return ParseBinaryOp();
+    else if (type ==  "number") 
+        return ParseNumber();
     else 
         cerr << "Dogshaan screwed up";
 }
 
 unique_ptr<Expr> Parser::ParseNumber() {
-    auto src = cursor.sourceStr();
+    auto src = cursor.getSourceStr();
     return make_unique<IntExpr>(stoi(src));
 }
 

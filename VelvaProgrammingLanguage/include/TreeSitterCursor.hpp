@@ -2,19 +2,18 @@
 #include <tree_sitter/api.h>
 #include <string>
 #include <optional>
+#include <sstream>
 
 // REALLY GENERIC wrapper class around cursor tree sitter
 class TreeSitterCursor {
 private:
     TSTreeCursor cursor; 
-    std::string src; 
-
-    
+    std::string source; 
 public: 
     TreeSitterCursor() = default;
-    TreeSitterCursor(TSTree *tree, std::string source);
+    TreeSitterCursor(TSTree *tree, std::string src);
     
-    std::string sourceStr ();
+    std::string getSourceStr ();
     TSNode currentNode ();
     std::string getType ();
     std::optional<TSNode> goToParent ();
