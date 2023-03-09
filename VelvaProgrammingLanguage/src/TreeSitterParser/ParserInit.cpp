@@ -53,13 +53,13 @@ Parser::Parser (const char* filename) {
         strlen(source_code)
     );
 
-    cursor = ts_tree_cursor_new(ts_tree_root_node(tree));
+    cursor = TreeSitterCursor(tree);
 }
 
 Parser::~Parser() {
     ts_tree_delete(tree);
     ts_parser_delete(parser);
-    ts_tree_cursor_delete(&cursor);
+    cursor.~TreeSitterCursor(); // <-- call deconstructor
 }
 
 // convert this to ts tree cursor later
@@ -70,19 +70,19 @@ void Parser::printTree (std::optional<TSNode> nodeInp, int lvl) {
 
     TSPoint start = ts_node_start_point(node);
     TSPoint end = ts_node_end_point(node);
+
     const char *string = ts_node_type(node);
-    std::string str_in_file = getStartingEnding(start, end);
-    // for (int i = 0; i < lvl; i++) printf(" ");
-    // printf("%s\n", string);
+    for (int i = 0; i < lvl; i++) printf(" ");
+    printf("%s: start: %d %d end %d %d\n", string, start.row, start.column, end.row, end.column);
 
     // printf("=============================================\n");
-    printf("Start: %d %d End: %d %d\n", start.column, start.row, end.column, end.row);
-    printf("Contents: %s\n", str_in_file.c_str());
-    printf("=============================================\n");
+    // printf("Start: %d %d End: %d %d\n", start.column, start.row, end.column, end.row);
+    // printf("Contents: %s\n", str_in_file.c_str());
+    // printf("=============================================\n");
 
-    int len = ts_node_child_count(node);
+    int len = ts_node_named_child_count(node);
     for (int i = 0; i < len; i++) {
-        printTree(ts_node_child(node, i), ++lvl);
+        printTree(ts_node_named_child(node, i), ++lvl);
     }
     
 }

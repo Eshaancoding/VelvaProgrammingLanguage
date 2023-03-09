@@ -1,0 +1,11 @@
+func int f() {
+    int x = 78
+    x = 32
+    for(int x = 0;x<5;x++) {
+        int y = 0
+    }
+}
+
+while(x>5) {
+    int x=1
+}

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <functional>
 #include <tree_sitter/api.h>
 #include <tree_sitter/parser.h>
 #include <cassert>
@@ -20,4 +21,5 @@ int main(int argc, const char **argv)
 
     Parser pars(filename);
     pars.printTree();
-}
+
+}   
