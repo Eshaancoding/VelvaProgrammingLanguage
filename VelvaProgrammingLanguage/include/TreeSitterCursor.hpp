@@ -13,12 +13,13 @@ public:
     TreeSitterCursor() = default;
     TreeSitterCursor(TSTree *tree, std::string src);
     
+    void printNode ();
     std::string getSourceStr ();
     TSNode currentNode ();
     std::string getType ();
     std::optional<TSNode> goToParent ();
-    std::optional<TSNode> goToChild ();
-    std::optional<TSNode> goToSibling ();
+    std::optional<TSNode> goToChild (bool noName=false);
+    std::optional<TSNode> goToSibling (bool noName=false);
     void reset (TSNode node);
 
 };

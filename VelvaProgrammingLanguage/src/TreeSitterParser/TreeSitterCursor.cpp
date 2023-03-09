@@ -6,10 +6,6 @@ std::string TreeSitterCursor::getSourceStr() {
     TSPoint start = ts_node_start_point(node);
     TSPoint end = ts_node_end_point(node);
 
-    printf("Start: %d %d\n", start.row, start.column); 
-    printf("End: %d %d\n", end.row, end.column);
-    printf("Source: %s\n", source.c_str());
-
     std::string line_ret;
     bool parsing = false;
     int lineNum = 0;
@@ -59,16 +55,34 @@ std::optional<TSNode> TreeSitterCursor::goToParent () {
     else return std::nullopt; 
 }
 
-std::optional<TSNode> TreeSitterCursor::goToChild () {
+std::optional<TSNode> TreeSitterCursor::goToChild (bool noName) {
+    // this entire code basically skips until it gets a named node (expr, primitive_type, binary_expression, etc.)
     bool result = ts_tree_cursor_goto_first_child(&cursor);
-    if (result) return currentNode();
-    else return std::nullopt;
+    if (!result) return std::nullopt;
+    if (noName) return currentNode();
+    while (true) {
+        auto cn = currentNode();
+        if (ts_node_is_named(cn)) return cn;
+        else {
+            bool result = ts_tree_cursor_goto_next_sibling(&cursor);
+            if (!result) return std::nullopt;
+        }
+    }
 }
 
-std::optional<TSNode> TreeSitterCursor::goToSibling () {
+std::optional<TSNode> TreeSitterCursor::goToSibling (bool noName) {
+    // this entire code basically skips until it gets a named node (expr, primitive_type, binary_expression, etc.)
     bool result = ts_tree_cursor_goto_next_sibling(&cursor);
-    if (result) return currentNode();
-    else return std::nullopt;
+    if (!result) return std::nullopt;
+    if (noName) return currentNode();
+    while (true) {
+        auto cn = currentNode();
+        if (ts_node_is_named(cn)) return cn;
+        else {
+            bool result = ts_tree_cursor_goto_next_sibling(&cursor);
+            if (!result) return std::nullopt;
+        }
+    }
 }
 void TreeSitterCursor::reset (TSNode node) {
     ts_tree_cursor_reset(&cursor, node);
@@ -77,3 +91,12 @@ void TreeSitterCursor::reset (TSNode node) {
 std::string TreeSitterCursor::getType () {
     return std::string(ts_node_type(currentNode()));
 }
+
+void TreeSitterCursor::printNode() {
+    auto node = currentNode();
+    TSPoint start = ts_node_start_point(node);
+    TSPoint end = ts_node_end_point(node);
+
+    const char *string = ts_node_type(node);
+    printf("%s: start: %d %d end %d %d\n", string, start.row, start.column, end.row, end.column);
+} 

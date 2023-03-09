@@ -10,7 +10,7 @@ std::unique_ptr<DeclareFunctionExpr> Parser::ParseAST () {
 
     while (childNode) {
         auto x = ParseGeneral();
-        childNode = cursor.goToChild();
+        childNode = cursor.goToSibling();
     }
 
     return nullptr;
@@ -18,8 +18,6 @@ std::unique_ptr<DeclareFunctionExpr> Parser::ParseAST () {
 
 GENERAL_TYPE Parser::ParseGeneral () {
     std::string type = cursor.getType();
-
-    printf("====== TYPE: %s =======\n", type.c_str());
 
     if (type == "function_declare") return ParseFunctionDeclare();
     else if (type == "block") return ParseBlock();

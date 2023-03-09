@@ -2,10 +2,24 @@
 
 
 unique_ptr<Expr> Parser::ParseVarDecl () {
-    printf("type in parse var decl:%s\n", cursor.getType().c_str());   
-
-    printf("source code:\n%s\n", cursor.getSourceStr().c_str());   
+   
+    // get primitive type
+    cursor.goToChild();
+    assert(cursor.getType() == "primitive_type");
+    std::string primitiveType = cursor.getSourceStr();
     
+    // get identifier
+    cursor.goToSibling();
+    assert(cursor.getType() == "identifier");
+    std::string identifier = cursor.getSourceStr();
     
-    return nullptr;
+    // get expression
+    cursor.goToSibling();
+    assert(cursor.getType() == "expression");
+    auto expr = ParseExpression();
+    
+    // go back to the var decl expr 
+    cursor.goToParent();
+    
+    return make_unique<VarDeclareExpr>(VarMutability::VAR_MUTABILITY_VAR, identifier, move(expr), primitiveType);
 }

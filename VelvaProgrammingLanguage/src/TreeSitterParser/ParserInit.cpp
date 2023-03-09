@@ -37,7 +37,7 @@ Parser::~Parser()
 }
 
 // convert this to ts tree cursor later
-void Parser::printTree(std::optional<TSNode> nodeInp, int lvl)
+void Parser::printTree(bool printNoNamedNodes, std::optional<TSNode> nodeInp, int lvl)
 {
     TSNode node;
     if (!nodeInp)
@@ -58,9 +58,13 @@ void Parser::printTree(std::optional<TSNode> nodeInp, int lvl)
     // printf("Contents: %s\n", str_in_file.c_str());
     // printf("=============================================\n");
 
-    int len = ts_node_named_child_count(node);
-    for (int i = 0; i < len; i++)
-    {
-        printTree(ts_node_named_child(node, i), lvl+1);
+    if (printNoNamedNodes) {
+        int len = ts_node_child_count(node);
+        for (int i = 0; i < len; i++)
+            printTree(printNoNamedNodes, ts_node_child(node, i), lvl+1);
+    } else  {
+        int len = ts_node_named_child_count(node);
+        for (int i = 0; i < len; i++)
+            printTree(printNoNamedNodes, ts_node_named_child(node, i), lvl+1);
     }
 }

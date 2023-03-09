@@ -100,7 +100,7 @@ public:
      * @brief print the Tree from treesitter 
      * @param node the starting node. Default nullptr, will be set to the root node
     */
-   void printTree (std::optional<TSNode> nodeInp = std::nullopt, int lvl=0);
+   void printTree (bool printNoNamedNodes=false, std::optional<TSNode> nodeInp = std::nullopt, int lvl=0);
  
     /**
      * @brief deconstructor for Parser, which will free objects such as parser and tree
