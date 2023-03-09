@@ -21,5 +21,5 @@ int main(int argc, const char **argv)
 
     Parser pars(filename);
     pars.printTree();
-    // pars.ParseAST();
+    pars.ParseAST();
 }   

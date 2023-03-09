@@ -1,75 +1,33 @@
 #include "TreeSitterParser.hpp"
+#include <cassert>
 
-std::string Parser::getStartingEnding(TSNode node)
-{
-    auto ss = std::stringstream{src};
-
-    TSPoint start = ts_node_start_point(node);
-    TSPoint end = ts_node_end_point(node);
-
-    std::string line_ret;
-    bool parsing = false;
-    int lineNum = 0;
-    for (std::string line; std::getline(ss, line, '\n');)
-    {
-        for (int i = 0; i < line.length(); i++)
-        {
-            char ch = line.c_str()[i];
-
-            if (start.row == lineNum && start.column == i)
-            {
-                parsing = true;
-            }
-
-            if (parsing)
-                line_ret += ch;
-
-            if (end.row == lineNum)
-            {
-                parsing = false;
-            }
-        }
-        if (parsing)
-            line_ret += "\n";
-        lineNum += 1;
-    }
-
-    return line_ret;
-}
 
 Parser::Parser(const char *filename)
 {
-    printf("filename: %s\n", filename);
-    FILE *f = fopen(filename, "r");
+    auto is = std::ifstream(filename);
+    
+    assert(is);
+    // get length of file:
+    std::string str(std::istreambuf_iterator<char>{is}, {}) ;
 
-    // Determine file size
-    fseek(f, 0, SEEK_END);
-    size_t size = ftell(f);
-
-    char *where = new char[size];
-
-    rewind(f);
-    fread(where, sizeof(char), size, f);
-
-    src = std::string(where);
-
+    // ...buffer contains the entire file...
     parser = ts_parser_new();
-
-    if (tree_sitter_Velva() == nullptr)
+    assert(parser);
+    auto velva = tree_sitter_Velva();
+    if (velva == nullptr)
     {
         throw invalid_argument("aw shucks");
     }
 
-    ts_parser_set_language(parser, tree_sitter_Velva());
+    ts_parser_set_language(parser, velva);
     tree = ts_parser_parse_string(
         parser,
         NULL,
-        where,
-        strlen(where)
+        str.c_str(),
+        strlen(str.c_str())
     );
 
-    cursor = TreeSitterCursor(tree);
-    delete[] where;
+    cursor = TreeSitterCursor(tree, str);
 }
 
 Parser::~Parser()
@@ -103,6 +61,6 @@ void Parser::printTree(std::optional<TSNode> nodeInp, int lvl)
     int len = ts_node_named_child_count(node);
     for (int i = 0; i < len; i++)
     {
-        printTree(ts_node_named_child(node, i), ++lvl);
+        printTree(ts_node_named_child(node, i), lvl+1);
     }
 }

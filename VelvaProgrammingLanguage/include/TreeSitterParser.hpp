@@ -31,10 +31,7 @@ private:
     TreeSitterCursor cursor;
     std::string src;
 public: 
-    /**
-     * @brief Given the starting and ending point, we use the src string in order to return the string
-    */
-    std::string getStartingEnding (TSNode node);
+    
     /**
      * @brief Initializes Parser. Declared in ParserInit.cpp
      * @param filename the path to the filename that it should be parsing.
@@ -73,6 +70,11 @@ public:
      * @brief parses variable declaration
     */
     unique_ptr<Expr> ParseVarDecl ();
+    
+    /**
+     * @brief Parse number
+    */
+    unique_ptr<Expr> ParseNumber ();  
     
     /**
      * @brief Parses a block of text

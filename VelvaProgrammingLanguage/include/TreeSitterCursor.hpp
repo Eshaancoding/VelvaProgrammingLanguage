@@ -7,10 +7,14 @@
 class TreeSitterCursor {
 private:
     TSTreeCursor cursor; 
+    std::string src; 
+
+    
 public: 
     TreeSitterCursor() = default;
-    TreeSitterCursor(TSTree *tree);
+    TreeSitterCursor(TSTree *tree, std::string source);
     
+    std::string sourceStr ();
     TSNode currentNode ();
     std::string getType ();
     std::optional<TSNode> goToParent ();
