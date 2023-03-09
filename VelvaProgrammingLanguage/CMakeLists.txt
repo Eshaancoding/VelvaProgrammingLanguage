@@ -20,8 +20,8 @@ set(LLVM_LINK_COMPONENTS
 )
 
 # For cmake flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=memory")
-set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=memory")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address")
+set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=address")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
 
