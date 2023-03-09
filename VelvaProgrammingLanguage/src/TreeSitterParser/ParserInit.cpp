@@ -50,7 +50,7 @@ void Parser::printTree(std::optional<TSNode> nodeInp, int lvl)
 
     const char *string = ts_node_type(node);
     for (int i = 0; i < lvl; i++)
-        printf(" ");
+        printf("   ");
     printf("%s: start: %d %d end %d %d\n", string, start.row, start.column, end.row, end.column);
 
     // printf("=============================================\n");

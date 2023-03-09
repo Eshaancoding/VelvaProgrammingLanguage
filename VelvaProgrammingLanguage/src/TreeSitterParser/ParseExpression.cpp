@@ -16,7 +16,7 @@ unique_ptr<Expr> Parser::ParseNumber() {
     return make_unique<IntExpr>(stoi(src));
 }
 
-unique_ptr<Expr> Parser::ParseBinaryop() {
+unique_ptr<Expr> Parser::ParseBinaryOp() {
     auto src = cursor.currentNode();
     
 }
