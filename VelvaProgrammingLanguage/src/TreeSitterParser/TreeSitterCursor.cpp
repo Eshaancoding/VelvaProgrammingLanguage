@@ -1,9 +1,6 @@
 #include "TreeSitterCursor.hpp"
 
 
-TreeSitterCursor::~TreeSitterCursor() {
-    free(&cursor);
-}
 
 TreeSitterCursor::TreeSitterCursor (TSTree *tree) {
     cursor = ts_tree_cursor_new(ts_tree_root_node(tree));

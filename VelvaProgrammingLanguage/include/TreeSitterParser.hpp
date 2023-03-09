@@ -17,6 +17,8 @@
 #include <tree_sitter/parser.h>
 #include "TreeSitterCursor.hpp"
 
+#define GENERAL_TYPE std::variant<vector<unique_ptr<Expr>>, unique_ptr<Expr>, unique_ptr<DeclareFunctionExpr>>
+
 extern "C"
 {
     const TSLanguage *tree_sitter_Velva(void);
@@ -32,19 +34,45 @@ public:
     /**
      * @brief Given the starting and ending point, we use the src string in order to return the string
     */
-    std::string getStartingEnding (TSPoint start, TSPoint end);
+    std::string getStartingEnding (TSNode node);
     /**
      * @brief Initializes Parser. Declared in ParserInit.cpp
      * @param filename the path to the filename that it should be parsing.
     */
     Parser (const char* filename); 
 
+
     /**
      * @brief General Parser based on current node. For example, if the type of current node is a for, then it would call the for loop parser
      * @return can return various of types, so setting as a general parsed
      */
-    template<typename T>
-    T ParseGeneral ();
+    GENERAL_TYPE ParseGeneral ();
+    
+    /**
+     * @brief parse binary operation
+     * 
+    */    
+   unique_ptr<Expr> ParseBinaryOp ();
+    
+    /**
+     * @brief Parse Expression
+    */
+   unique_ptr<Expr> ParseExpression ();
+    
+    /**
+     * @brief Parse while
+    */
+   unique_ptr<Expr> ParseWhile();
+
+    /**
+     * @brief Parse for loop
+    */
+   unique_ptr<Expr> ParseForLoop ();
+    
+    /**
+     * @brief parses variable declaration
+    */
+    unique_ptr<Expr> ParseVarDecl ();
     
     /**
      * @brief Parses a block of text

@@ -10,7 +10,6 @@ private:
 public: 
     TreeSitterCursor() = default;
     TreeSitterCursor(TSTree *tree);
-    ~TreeSitterCursor();
     
     TSNode currentNode ();
     std::string getType ();

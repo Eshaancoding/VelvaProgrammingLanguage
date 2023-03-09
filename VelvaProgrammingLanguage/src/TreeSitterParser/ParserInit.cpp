@@ -1,7 +1,10 @@
 #include "TreeSitterParser.hpp"
 
-std::string Parser::getStartingEnding (TSPoint start, TSPoint end) {
+std::string Parser::getStartingEnding (TSNode node) {
     auto ss = std::stringstream{src};
+
+    TSPoint start = ts_node_start_point(node);
+    TSPoint end = ts_node_end_point(node);
 
     std::string line_ret;
     bool parsing = false;
@@ -35,8 +38,8 @@ Parser::Parser (const char* filename) {
     std::string content((std::istreambuf_iterator<char>(ifs)),
                         (std::istreambuf_iterator<char>()));
 
-    const char *source_code = content.c_str();
-    src = std::string(source_code);
+    
+    src = content;
 
     parser = ts_parser_new();
 
@@ -49,17 +52,16 @@ Parser::Parser (const char* filename) {
     tree = ts_parser_parse_string(
         parser,
         NULL,
-        source_code,
-        strlen(source_code)
+        content.c_str(),
+        strlen(content.c_str())
     );
 
     cursor = TreeSitterCursor(tree);
 }
 
 Parser::~Parser() {
-    ts_tree_delete(tree);
+    ts_tree_delete(tree);   
     ts_parser_delete(parser);
-    cursor.~TreeSitterCursor(); // <-- call deconstructor
 }
 
 // convert this to ts tree cursor later

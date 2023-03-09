@@ -20,6 +20,7 @@ int main(int argc, const char **argv)
     const char *filename = argv[1];
 
     Parser pars(filename);
-    pars.printTree();
-
+    // pars.printTree();
+    // pars.ParseAST();
+    cout << "barking" << endl;
 }   
