@@ -1,25 +1,27 @@
 #include "TreeSitterParser.hpp"
 
 std::unique_ptr<DeclareFunctionExpr> Parser::ParseAST () {
-    // start at file node
-    TSNode node = cursor.currentNode();
+    
+    unique_ptr<Expr> block = ParseBlock();
 
-    bool stop = false;
-    auto childNode = cursor.goToChild();
-    if (!childNode) return nullptr;
+    cursor.goToParent();
+    cursor.printNode();
 
-    while (childNode) {
-        auto x = ParseGeneral();
-        childNode = cursor.goToSibling();
-    }
-
-    return nullptr;
+    return make_unique<DeclareFunctionExpr>(
+        false,
+        false,
+        "_main",
+        (vector<tuple<string, string>>){},
+        std::nullopt, 
+        move(block)
+    );
 }
 
 GENERAL_TYPE Parser::ParseGeneral () {
     std::string type = cursor.getType();
 
     if (type == "function_declare") return ParseFunctionDeclare();
+    else if (type == "if_statement") return ParseIfStatement();
     else if (type == "block") return ParseBlock();
     else if (type == "var_declaration") return ParseVarDecl();
     else if (type == "expression") return ParseExpression();
@@ -32,6 +34,3 @@ GENERAL_TYPE Parser::ParseGeneral () {
     return unique_ptr<Expr>(nullptr);
 }
 
-vector<unique_ptr<Expr>> Parser::ParseBlock () {
-    return {}; 
-}

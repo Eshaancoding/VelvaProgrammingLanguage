@@ -1,5 +1,23 @@
 #include "AST.hpp"
 #include "Utils.hpp"
+
+optional<Value*> IfStatement::codegen (CompilationContext &ctx) {
+    // <---------------- to be filled in later ---------------->
+    return nullopt;
+}
+
+optional<Value*> BlockExpr::codegen (CompilationContext &ctx) {
+    for (int i = 0; i < counter; i++) {
+        if (expr_map.count(i) == 1) {
+            // exists in expr_map
+            expr_map[i]->codegen(ctx);
+        }
+        else if (function_map.count(i) == 1) {
+            function_map[i]->codegen(ctx);
+        }
+    }
+}
+
 optional<Value*> ErrorExpr::codegen(CompilationContext &ctx) { return nullopt; }
 
 

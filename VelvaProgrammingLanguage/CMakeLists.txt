@@ -20,8 +20,8 @@ set(LLVM_LINK_COMPONENTS
 )
 
 # For cmake flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wreturn-type") # return type errs are annoying
+set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -Wreturn-type")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
 

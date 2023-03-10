@@ -13,22 +13,18 @@ std::string TreeSitterCursor::getSourceStr() {
     // convert to buffer
     std::istringstream ss(source);
 
-    for (std::string line; std::getline(ss, line, '\n');)
-    {
-        for (int i = 0; i < line.length(); i++)
-        {
+    for (std::string line; std::getline(ss, line, '\n');) {
+        for (int i = 0; i < line.length(); i++) {
             char ch = line.c_str()[i];
 
-            if (start.row == lineNum && start.column == i)
-            {
+            if (start.row == lineNum && start.column == i) {
                 parsing = true;
             }
 
             if (parsing)
                 line_ret += ch;
 
-            if (end.row == lineNum && end.column == i)
-            {
+            if (end.row == lineNum && end.column == i) {
                 parsing = false;
             }
         }

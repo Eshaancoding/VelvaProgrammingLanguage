@@ -183,6 +183,23 @@ class BinaryOpExpr : public Expr {
         string return_type() override;
 };
 
+class DeclareFunctionExpr;
+
+class BlockExpr : public Expr {
+    private:
+        int counter = 0;
+        map<int, unique_ptr<Expr>> expr_map;
+        map<int, unique_ptr<DeclareFunctionExpr>> function_map; 
+    public: 
+        BlockExpr () = default;
+        void add (unique_ptr<Expr> expr); 
+        void add (vector<unique_ptr<Expr>> expr); 
+        void add (unique_ptr<DeclareFunctionExpr> func);   
+        string return_type () override;
+        string debug_info () override;
+        optional<Value*> codegen (CompilationContext &ctx) override;
+};
+
 /**
  * @brief An AST node representing a function prototype.
  * 
@@ -214,7 +231,7 @@ class DeclareFunctionExpr {
          */
         optional<std::string> returnType;
         bool isReal = true;
-        vector<unique_ptr<Expr>> body;
+        unique_ptr<Expr> body;
 
         DeclareFunctionExpr(
             bool isExternal, 
@@ -222,13 +239,36 @@ class DeclareFunctionExpr {
             string name, 
             vector<tuple<string, string> > params, 
             optional<string> returnType, 
-            vector<unique_ptr<Expr>> body={}
+            unique_ptr<Expr> body // <-- should be block expr
         ) : isPure(isPure), name(name), params(params), returnType(returnType), isExternal(isExternal), body(move(body)) {};
         optional<Function*> codegen(CompilationContext &ctx);
         string debug_info();
         string return_type (); 
 };
 
+
+/**
+ * @brief If statement
+*/
+class IfStatement : public Expr {
+    private:
+        unique_ptr<Expr> block; // should be a block expr
+        unique_ptr<Expr> firstExpr; // the first operand in the if statement
+        std::string operation; // the operation between the first & second operand
+        unique_ptr<Expr> secondExpr; // the second operand in the if statement
+
+    public:
+        IfStatement(
+            unique_ptr<Expr> firstExpr,
+            std::string operation,
+            unique_ptr<Expr> secondExpr,
+            unique_ptr<Expr> block
+        ) : block(move(block)), operation(operation), firstExpr(move(firstExpr)), secondExpr(move(secondExpr)) {};
+
+        optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
+        string return_type() override;
+};
 
 /**
  * @brief Error Expr for errors on code 
@@ -399,4 +439,9 @@ class WhileExpr: public Expr {
         string debug_info() override;
         string return_type() override;
 };
+
+
+
+
+
 #endif

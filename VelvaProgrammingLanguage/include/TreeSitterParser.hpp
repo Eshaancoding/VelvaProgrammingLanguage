@@ -12,12 +12,13 @@
 #include <cmath>
 #include <tuple>
 #include <functional>
+#include <cassert>
 #include <stdio.h>
 #include <tree_sitter/api.h>
 #include <tree_sitter/parser.h>
 #include "TreeSitterCursor.hpp"
 
-#define GENERAL_TYPE std::variant<vector<unique_ptr<Expr>>, unique_ptr<Expr>, unique_ptr<DeclareFunctionExpr>>
+#define GENERAL_TYPE std::variant<unique_ptr<Expr>, unique_ptr<DeclareFunctionExpr>>
 
 extern "C"
 {
@@ -77,10 +78,21 @@ public:
     unique_ptr<Expr> ParseNumber ();  
     
     /**
+     * @brief Parses if statement
+     * @return should return an if statement expr
+    */
+    unique_ptr<Expr> ParseIfStatement();
+    
+    /**
+     * @brief parse the identifier
+    */
+   unique_ptr<Expr> ParseIdentifier();
+    
+    /**
      * @brief Parses a block of text
      * 
      */
-    vector<unique_ptr<Expr>> ParseBlock ();
+    unique_ptr<Expr> ParseBlock ();
 
     /**
      * @brief parses a function declare method 

@@ -69,9 +69,9 @@ module.exports = grammar({
         // conditional
         if_statement: $ => seq(
             "if",
-            // "(",
+            "(",
             $.condition,
-            // ")",
+            ")",
             $.block,
             optional($._if_continuation)
         ),

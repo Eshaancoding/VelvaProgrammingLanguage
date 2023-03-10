@@ -19,7 +19,10 @@ int main(int argc, const char **argv)
     }
     const char *filename = argv[1];
 
+    CompilationContext ctx;
     Parser pars(filename);
     pars.printTree(true);
-    pars.ParseAST();
+    auto main_fn = pars.ParseAST();
+    printf("============================= CodeGen =======================\n");
+    (*main_fn->codegen(ctx))->print(errs()); 
 }   

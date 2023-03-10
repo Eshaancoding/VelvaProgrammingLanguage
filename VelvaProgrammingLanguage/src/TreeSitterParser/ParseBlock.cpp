@@ -1,0 +1,21 @@
+#include "TreeSitterParser.hpp"
+
+unique_ptr<Expr> Parser::ParseBlock () {
+    BlockExpr block;
+    auto node = cursor.goToChild();
+    while (node) {
+        auto gen = ParseGeneral();
+        if (std::holds_alternative<unique_ptr<Expr>>(move(gen))) {
+            unique_ptr<Expr> val = std::get<unique_ptr<Expr>>(move(gen));
+            block.add(move(val));
+        } 
+        else if (std::holds_alternative<unique_ptr<DeclareFunctionExpr>>(move(gen))) {
+            unique_ptr<DeclareFunctionExpr> val = std::get<unique_ptr<DeclareFunctionExpr>>(move(gen));
+            block.add(move(val));
+        }
+        node = cursor.goToSibling();
+    }
+    cursor.goToParent(); // go back to block
+
+    return make_unique<BlockExpr>(move(block));
+}

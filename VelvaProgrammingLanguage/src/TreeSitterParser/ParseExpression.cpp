@@ -1,17 +1,30 @@
 #include "TreeSitterParser.hpp"
 #include <cstring>
 #include <string>
+
+unique_ptr<Expr> Parser::ParseIdentifier () {
+    std::string name = cursor.getSourceStr();
+    
+    return make_unique<VarUseExpr>(name);
+}
+
 unique_ptr<Expr> Parser::ParseExpression () {
     auto node = cursor.goToChild();
     auto type = cursor.getType();
+
 
     if (type == "binary_expression") {
         auto result = ParseBinaryOp();
         cursor.goToParent(); // go back to the expr parent
         return result;
     }
-    else if (type ==  "number") {
+    else if (type == "number") {
         auto result = ParseNumber();
+        cursor.goToParent(); // go back to the expr parent
+        return result;
+    }
+    else if (type == "identifier") {
+        auto result = ParseIdentifier();
         cursor.goToParent(); // go back to the expr parent
         return result;
     }
@@ -42,7 +55,6 @@ unique_ptr<Expr> Parser::ParseBinaryOp() {
     cursor.goToSibling();
     auto secondExpression = ParseExpression();
     
-    printf("Parsed binary op with op %s\n", op.c_str());
     cursor.goToParent(); // redirect back to the binary expression
     
     return make_unique<BinaryOpExpr>(op, move(firstExpression), move(secondExpression), "nan");
