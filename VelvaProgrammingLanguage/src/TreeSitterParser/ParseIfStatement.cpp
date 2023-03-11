@@ -33,5 +33,5 @@ unique_ptr<Expr> Parser::ParseIfStatement () {
     cursor.goToParent();
 
     // return make_unique<IfStatement>(move(firstExpr), op, move(secondExpr), move(block)); 
-    return std::nullopt;
+    return nullptr;
 }
