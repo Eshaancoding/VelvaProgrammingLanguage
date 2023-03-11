@@ -16,6 +16,7 @@ optional<Value*> BlockExpr::codegen (CompilationContext &ctx) {
             function_map[i]->codegen(ctx);
         }
     }
+    return nullopt;
 }
 
 optional<Value*> ErrorExpr::codegen(CompilationContext &ctx) { return nullopt; }

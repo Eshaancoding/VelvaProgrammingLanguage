@@ -38,85 +38,22 @@ public:
      * @param filename the path to the filename that it should be parsing.
     */
     Parser (const char* filename); 
-
-
-    /**
-     * @brief General Parser based on current node. For example, if the type of current node is a for, then it would call the for loop parser
-     * @return can return various of types, so setting as a general parsed
-     */
     GENERAL_TYPE ParseGeneral ();
-    
-    /**
-     * @brief parse binary operation
-     * 
-    */    
-   unique_ptr<Expr> ParseBinaryOp ();
-    
-    /**
-     * @brief Parse Expression
-    */
-   unique_ptr<Expr> ParseExpression ();
-    
-    /**
-     * @brief Parse while
-    */
-   unique_ptr<Expr> ParseWhile();
-
-    /**
-     * @brief Parse for loop
-    */
-   unique_ptr<Expr> ParseForLoop ();
-    
-    /**
-     * @brief parses variable declaration
-    */
+    unique_ptr<Expr> ParseBinaryOp ();
+    unique_ptr<Expr> ParseExpression ();
+    unique_ptr<Expr> ParseWhile();
+    unique_ptr<Expr> ParseForLoop ();
     unique_ptr<Expr> ParseVarDecl ();
-    
-    /**
-     * @brief Parse number
-    */
     unique_ptr<Expr> ParseNumber ();  
-    
-    /**
-     * @brief Parses if statement
-     * @return should return an if statement expr
-    */
     unique_ptr<Expr> ParseIfStatement();
-    
-    /**
-     * @brief parse the identifier
-    */
-   unique_ptr<Expr> ParseIdentifier();
-    
-    /**
-     * @brief Parses a block of text
-     * 
-     */
+    unique_ptr<Expr> ParseIdentifier();
     unique_ptr<Expr> ParseBlock ();
-
-    /**
-     * @brief parses a function declare method 
-     * 
-     */
+    unique_ptr<Expr> ParseCondition ();
     std::unique_ptr<DeclareFunctionExpr> ParseFunctionDeclare ();
-
-
-    /**
-     * @brief parses the AST, starting from the original node, and converts to our custom AST
-     * 
-     */
-
     std::unique_ptr<DeclareFunctionExpr> ParseAST ();
 
-    /**
-     * @brief print the Tree from treesitter 
-     * @param node the starting node. Default nullptr, will be set to the root node
-    */
+    
    void printTree (bool printNoNamedNodes=false, std::optional<TSNode> nodeInp = std::nullopt, int lvl=0);
- 
-    /**
-     * @brief deconstructor for Parser, which will free objects such as parser and tree
-    */
    ~Parser ();
 };
 

@@ -248,29 +248,6 @@ class DeclareFunctionExpr {
 
 
 /**
- * @brief If statement
-*/
-class IfStatement : public Expr {
-    private:
-        unique_ptr<Expr> block; // should be a block expr
-        unique_ptr<Expr> firstExpr; // the first operand in the if statement
-        std::string operation; // the operation between the first & second operand
-        unique_ptr<Expr> secondExpr; // the second operand in the if statement
-
-    public:
-        IfStatement(
-            unique_ptr<Expr> firstExpr,
-            std::string operation,
-            unique_ptr<Expr> secondExpr,
-            unique_ptr<Expr> block
-        ) : block(move(block)), operation(operation), firstExpr(move(firstExpr)), secondExpr(move(secondExpr)) {};
-
-        optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
-        string return_type() override;
-};
-
-/**
  * @brief Error Expr for errors on code 
  * 
  */

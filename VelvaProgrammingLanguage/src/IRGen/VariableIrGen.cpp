@@ -99,9 +99,7 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
     // }
 
     // codegen through all expressions
-    
     body->codegen(ctx);
-
     // if we do not return anything, then we just return nothing. However if we do return, then we have the return statement handle that (parsed by runner and created by AST)
     if (!returnType)
         ctx.builder->CreateRet(nullptr);

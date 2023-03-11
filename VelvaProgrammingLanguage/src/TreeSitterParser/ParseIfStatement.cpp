@@ -1,11 +1,9 @@
 #include "TreeSitterParser.hpp"
 
-unique_ptr<Expr> Parser::ParseIfStatement () {
-    auto childNode = cursor.goToChild();
-    assert(cursor.getType() == "condition");
+unique_ptr<Expr> Parser::ParseCondition () {
 
-    // parse condition
     cursor.goToChild();
+
     assert(cursor.getType() == "expression");
     auto firstExpr = ParseExpression();
 
@@ -18,10 +16,22 @@ unique_ptr<Expr> Parser::ParseIfStatement () {
     auto secondExpr = ParseExpression();
 
     cursor.goToParent();
+
+    return make_unique<BinaryOpExpr>(op, move(firstExpr), move(secondExpr));
+}
+
+unique_ptr<Expr> Parser::ParseIfStatement () {
+    auto childNode = cursor.goToChild();
+    assert(cursor.getType() == "condition");
+
+    auto expr = ParseCondition();
+
+    
     cursor.goToSibling();
     assert(cursor.getType() == "block");
     auto block = ParseBlock();
     cursor.goToParent();
 
-    return make_unique<IfStatement>(move(firstExpr), op, move(secondExpr), move(block)); 
+    // return make_unique<IfStatement>(move(firstExpr), op, move(secondExpr), move(block)); 
+    return std::nullopt;
 }
