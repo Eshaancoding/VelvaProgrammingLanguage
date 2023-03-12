@@ -61,7 +61,6 @@ unique_ptr<Expr> Parser::ParseBinaryOp() {
 }
 
 unique_ptr<Expr> Parser::ParseAssigment() {
-    printf("========= asgiment ======\n");
     cursor.goToChild();
     
     std::string var_name = cursor.getSourceStr();

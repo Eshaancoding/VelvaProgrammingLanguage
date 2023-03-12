@@ -1,10 +1,4 @@
-int y = 2 + 3 
-if (y == 3) {
-    x = 3
-} 
-else if (x == 3) {
+func hello (bool x, int y) {
     x = 3
 }
-else {
-    x = 3
-}
+d(3, 2)

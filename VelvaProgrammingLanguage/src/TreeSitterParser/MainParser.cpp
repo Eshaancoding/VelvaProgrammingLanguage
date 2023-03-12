@@ -5,7 +5,6 @@ std::unique_ptr<DeclareFunctionExpr> Parser::ParseAST () {
     unique_ptr<Expr> block = ParseBlock();
 
     cursor.goToParent();
-    cursor.printNode();
 
     return make_unique<DeclareFunctionExpr>(
         false,
@@ -21,6 +20,7 @@ GENERAL_TYPE Parser::ParseGeneral () {
     std::string type = cursor.getType();
 
     if (type == "function_declare") return ParseFunctionDeclare();
+    else if (type == "func_call") return ParseFuncCall();
     else if (type == "if_statement") return ParseIfStatement();
     else if (type == "block") return ParseBlock();
     else if (type == "var_declaration") return ParseVarDecl();
@@ -28,6 +28,7 @@ GENERAL_TYPE Parser::ParseGeneral () {
     else if (type == "expression") return ParseExpression();
     else if (type == "for") return ParseForLoop();
     else if (type == "while") return ParseWhile();
+    // else if (type == "return") return ParseReturn();
     else {
         throw invalid_argument((std::string("Invalid type when parsing general: ")+type).c_str());
     }

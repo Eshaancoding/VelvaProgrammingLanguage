@@ -45,13 +45,15 @@ void Parser::printTree(bool printNoNamedNodes, std::optional<TSNode> nodeInp, in
     else
         node = *nodeInp;
 
+    bool is_named = ts_node_is_named(node);
+
     TSPoint start = ts_node_start_point(node);
     TSPoint end = ts_node_end_point(node);
 
     const char *string = ts_node_type(node);
     for (int i = 0; i < lvl; i++)
         printf("   ");
-    printf("%s: start: %d %d end %d %d\n", string, start.row, start.column, end.row, end.column);
+    printf("%s: start: %d %d end %d %d %s\n", string, start.row, start.column, end.row, end.column, is_named ? "named" : "");
 
     // printf("=============================================\n");
     // printf("Start: %d %d End: %d %d\n", start.column, start.row, end.column, end.row);

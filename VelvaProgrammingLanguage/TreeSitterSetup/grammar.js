@@ -13,30 +13,10 @@ module.exports = grammar({
             $.return_statement,
             $.func_call,
             $.function_declare,
-            $.pure_function_declare,
             $.for,
             $.while
         ),
         
-        // declaring a normal function
-        
-        function_declare: $ => seq(
-            "func",
-            field("return", $.primitive_type),
-            field("name", $.identifier),
-            $.parameter_list,  
-            field("body", $.block)
-        ),
-        
-        // declaring a pure function
-        pure_function_declare: $ => seq(
-            "pure",
-            $.primitive_type,
-            $.identifier,
-            $.parameter_list,
-            $.block
-        ),
-
         // for loop
         for: $ => seq(
             "for",
@@ -90,7 +70,8 @@ module.exports = grammar({
             $.identifier,
             $.binary_expression,
             $._unary_expression,
-            $.number
+            $.number,
+            $.boolean
         ),
 
         // includes not function and integer invert function
@@ -102,7 +83,7 @@ module.exports = grammar({
 
         not: $ => seq(
             "!",
-            $.identifier
+            choice($.identifier, $.boolean)
         ),
 
         negative: $ => seq(
@@ -140,7 +121,8 @@ module.exports = grammar({
         // types
         primitive_type: $ => choice(
             'int',
-            'float'
+            'float',
+            'bool'
         ),
 
         //functions
@@ -151,10 +133,18 @@ module.exports = grammar({
 
         parameter_list: $ => seq(
             "(",
-            //repeat($.parameter),
+            commaSep($.parameter),
             ")"
         ),
         
+        function_declare: $ => seq(
+            optional('pure'),
+            choice("func", $.primitive_type),
+            $.identifier,
+            $.parameter_list,  
+            $.block
+        ),
+
         // // general block & statements (probably need to be updated), used in loops, conditionals, functions
 
         // conditionals
@@ -186,15 +176,32 @@ module.exports = grammar({
 
         return_statement: $ => seq(
             "return",
-            $.expression
-        ), 
+            choice($.expression, '\n')
+        ),
+
+        argument: $ => seq(
+            $.expression, 
+        ),
 
         func_call: $ => seq(
             $.identifier,
-            "()"
+            '(',
+            commaSep($.argument),
+            ')'
         ),
 
         identifier: $ => /[a-z]+/,
         number: $ => /\d+/,
+        boolean: $ => choice("true", "false")
     }
 });
+
+
+// Definitely not copied & pasted from tree-sitter-cpp
+function commaSep(rule) {
+  return optional(commaSep1(rule));
+}
+
+function commaSep1(rule) {
+  return seq(rule, repeat(seq(',', rule)));
+}

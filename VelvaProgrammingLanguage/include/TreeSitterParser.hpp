@@ -41,6 +41,8 @@ public:
     GENERAL_TYPE ParseGeneral ();
     unique_ptr<Expr> ParseAssigment();
     unique_ptr<Expr> ParseBinaryOp ();
+    // unique_ptr<Expr> ParseReturn ();
+    unique_ptr<Expr> ParseFuncCall ();
     unique_ptr<Expr> ParseExpression ();
     unique_ptr<Expr> ParseWhile();
     unique_ptr<Expr> ParseForLoop ();
