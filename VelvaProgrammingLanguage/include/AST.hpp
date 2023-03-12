@@ -381,18 +381,20 @@ class BranchExpr: public Expr {
         string return_type() override;
 };
 
-// class ForExpr : public Expr vector<tuple<optional<unique_ptr<Expr>>, vector<unique_ptr<Expr>>>>{
-//     public:
-//         unique_ptr<Expr> Start, End, Step;
-//         vector<unique_ptr<Expr>> body;
+class ForExpr : public Expr {
+    public:
+        // for (int i = 3; i < 6; i++)
+        unique_ptr<Expr> varDecl; // i = 3;
+        unique_ptr<Expr> condition; // i < 6;
+        unique_ptr<Expr> operation; // i++
+        unique_ptr<Expr> body;
 
-//         ForExpr(unique_ptr<Expr>> Start, optional<unique_ptr<Expr>> End,
-//         optional<unique_ptr<Expr>> Step, optional<vector<unique_ptr<Expr>>> Body) : 
-//         Start(move(Start)), End(move(End)), Step(move(Step)), Body(move(Body)) {};
+        ForExpr(unique_ptr<Expr> varDecl, unique_ptr<Expr> condition, unique_ptr<Expr> operation, unique_ptr<Expr> body) : varDecl(move(varDecl)), condition(move(condition)), operation(move(operation)), body(move(body)) {}
 
-//         optional<Value*> codegen(CompilationContext &ctx) override;
-//         string debug_info() override;
-// };
+        optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
+        string return_type() override;
+};
 
 
 // ex: i == 3 ? 0 : 1
@@ -409,9 +411,9 @@ class TernaryExpr: public Expr {
 class WhileExpr: public Expr {
     public:
         unique_ptr<Expr> cond;
-        vector<unique_ptr<Expr>> body;
+        unique_ptr<Expr> body;
 
-        WhileExpr(unique_ptr<Expr> cond, vector<unique_ptr<Expr>> body) : cond(move(cond)), body(move(body)) {};
+        WhileExpr(unique_ptr<Expr> cond, unique_ptr<Expr> body) : cond(move(cond)), body(move(body)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
         string return_type() override;

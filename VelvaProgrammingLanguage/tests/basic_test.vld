@@ -1,5 +1,5 @@
-float i = -3.0
-i = 4
-if (i == 3) {
-    i = 2.0
+int x = 2
+while (i == 4) {
+    x = 3 
 }
+x = 2

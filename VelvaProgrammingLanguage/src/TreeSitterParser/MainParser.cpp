@@ -20,6 +20,8 @@ GENERAL_TYPE Parser::ParseGeneral () {
     std::string type = cursor.getType();
 
     if (type == "function_declare") return ParseFunctionDeclare();
+    else if (type == "while") return ParseWhile();
+    else if (type == "for") return  ParseForLoop();
     else if (type == "func_call") return ParseFuncCall();
     else if (type == "if_statement") return ParseIfStatement();
     else if (type == "block") return ParseBlock();

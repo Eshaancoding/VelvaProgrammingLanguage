@@ -3,9 +3,6 @@
 std::string TreeSitterCursor::getSourceStr() {
     auto node = currentNode();
 
-    printf("========= get src str ============\n");
-    printNode();
-
     TSPoint start = ts_node_start_point(node);
     TSPoint end = ts_node_end_point(node);
 
@@ -42,8 +39,6 @@ std::string TreeSitterCursor::getSourceStr() {
             line_ret += "\n";
         lineNum += 1;
     }
-    printf("line ret: %s\n", line_ret.c_str());
-    printf("len: %d\n", (int)line_ret.length());
 
     return line_ret;
 }
