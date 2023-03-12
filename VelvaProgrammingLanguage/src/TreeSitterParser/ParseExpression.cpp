@@ -59,3 +59,18 @@ unique_ptr<Expr> Parser::ParseBinaryOp() {
     
     return make_unique<BinaryOpExpr>(op, move(firstExpression), move(secondExpression), "nan");
 }
+
+unique_ptr<Expr> Parser::ParseAssigment() {
+    printf("========= asgiment ======\n");
+    cursor.goToChild();
+    
+    std::string var_name = cursor.getSourceStr();
+
+    cursor.goToSibling();
+    
+    auto expression = ParseExpression();
+
+    cursor.goToParent();
+
+    return make_unique<AssignExpr>(var_name, move(expression));
+}

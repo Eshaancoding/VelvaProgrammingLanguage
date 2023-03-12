@@ -24,11 +24,12 @@ GENERAL_TYPE Parser::ParseGeneral () {
     else if (type == "if_statement") return ParseIfStatement();
     else if (type == "block") return ParseBlock();
     else if (type == "var_declaration") return ParseVarDecl();
+    else if (type == "assignment") return ParseAssigment();
     else if (type == "expression") return ParseExpression();
     else if (type == "for") return ParseForLoop();
     else if (type == "while") return ParseWhile();
     else {
-        throw invalid_argument((std::string("Invalid type: ")+type).c_str());
+        throw invalid_argument((std::string("Invalid type when parsing general: ")+type).c_str());
     }
     // ts_tree_cursor_reset(cursor, currentNode);
     return unique_ptr<Expr>(nullptr);

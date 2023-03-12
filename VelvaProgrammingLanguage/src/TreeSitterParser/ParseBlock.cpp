@@ -2,8 +2,9 @@
 
 unique_ptr<Expr> Parser::ParseBlock () {
     BlockExpr block;
+    int num = cursor.getNumChilds();
     auto node = cursor.goToChild();
-    while (node) {
+    for (int i = 0; i < num; i++) {
         auto gen = ParseGeneral();
         if (std::holds_alternative<unique_ptr<Expr>>(move(gen))) {
             unique_ptr<Expr> val = std::get<unique_ptr<Expr>>(move(gen));
@@ -13,7 +14,8 @@ unique_ptr<Expr> Parser::ParseBlock () {
             unique_ptr<DeclareFunctionExpr> val = std::get<unique_ptr<DeclareFunctionExpr>>(move(gen));
             block.add(move(val));
         }
-        node = cursor.goToSibling();
+        if (i < num-1)
+            node = cursor.goToSibling();
     }
     cursor.goToParent(); // go back to block
 

@@ -45,6 +45,16 @@ TSNode TreeSitterCursor::currentNode () {
     return ts_tree_cursor_current_node(&cursor);
 }
     
+int TreeSitterCursor::getNumChilds (bool noName) {
+    auto node = currentNode();
+    if (noName) {
+        return ts_node_child_count(node);
+    }
+    else {
+        return ts_node_named_child_count(node);
+    }
+}
+    
 std::optional<TSNode> TreeSitterCursor::goToParent () {
     bool result = ts_tree_cursor_goto_parent(&cursor);
     if (result) return currentNode();

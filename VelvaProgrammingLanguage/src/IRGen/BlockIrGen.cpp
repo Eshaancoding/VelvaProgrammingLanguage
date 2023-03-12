@@ -1,11 +1,6 @@
 #include "AST.hpp"
 #include "Utils.hpp"
 
-optional<Value*> IfStatement::codegen (CompilationContext &ctx) {
-    // <---------------- to be filled in later ---------------->
-    return nullopt;
-}
-
 optional<Value*> BlockExpr::codegen (CompilationContext &ctx) {
     for (int i = 0; i < counter; i++) {
         if (expr_map.count(i) == 1) {
@@ -41,15 +36,16 @@ optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
             auto cond = ctx.builder->CreateICmpEQ(*condV, ConstantInt::get(*ctx.context, APInt(1, 1)), ctx.names.use("ifcond")); // CreateICmpONE doesn't exist, did you mean CreateICmp
             ctx.builder->CreateCondBr(cond, thenBB, elseBB);
             ctx.builder->SetInsertPoint(thenBB);
-            for(auto &expr: get<1>(block)) {
-                expr->codegen(ctx);
-            }
+            // codegne body
+            get<1>(block)->codegen(ctx);
+            
             ifBB = elseBB;
         } else {
             ctx.builder->SetInsertPoint(ifBB);
-            for(auto &expr: get<1>(block)) {
-                expr->codegen(ctx);
-            }
+
+            // codegne body
+            get<1>(block)->codegen(ctx);
+
             blocks.push_back(ifBB);
         }
         thenBB = BasicBlock::Create(*ctx.context, ctx.names.use("then"), f);

@@ -374,8 +374,8 @@ class BranchExpr: public Expr {
         * @brief first argument in the map is the conditional statement (if it's null, then it's an else statement)
         * the other argument: vector<Expr> is the body of the if statement 
         */
-        vector<tuple<optional<unique_ptr<Expr>>, vector<unique_ptr<Expr>>>> ifMap;
-        BranchExpr(vector<tuple<optional<unique_ptr<Expr>>, vector<unique_ptr<Expr>>>> ifmaps) : ifMap(move(ifmaps)) {};
+        vector<tuple<optional<unique_ptr<Expr>>, unique_ptr<Expr>>> ifMap;
+        BranchExpr(vector<tuple<optional<unique_ptr<Expr>>, unique_ptr<Expr>>> ifmaps) : ifMap(move(ifmaps)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
         string return_type() override;

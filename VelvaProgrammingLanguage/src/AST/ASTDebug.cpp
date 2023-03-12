@@ -9,7 +9,6 @@ string BinaryOpExpr::debug_info() { return "Binary Operation expr with LHS [" + 
 string StringExpr::debug_info() { return "String Expr with text: " + text; }
 string ErrorExpr::debug_info() { return "Error Expr!"; }
 string BlockExpr::debug_info() { return "Block expr"; }
-string IfStatement::debug_info() { return "If Statement"; }
 
 // hi daniel you want me to compile it for you?
 

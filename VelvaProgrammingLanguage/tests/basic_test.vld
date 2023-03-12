@@ -1,4 +1,10 @@
 int y = 2 + 3 
-while (y == 3) {
-    x = x + 3
+if (y == 3) {
+    x = 3
+} 
+else if (x == 3) {
+    x = 3
+}
+else {
+    x = 3
 }

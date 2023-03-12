@@ -16,4 +16,3 @@ string BranchExpr::return_type() { return "BranchExpr"; }
 string TernaryExpr::return_type() { return "TenaryExpr"; } 
 string WhileExpr::return_type() { return "WhileExpr"; } 
 string BlockExpr::return_type() { return "block"; }
-string IfStatement::return_type() { return "IfStatement"; }
