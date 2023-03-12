@@ -74,13 +74,36 @@ unique_ptr<Expr> Parser::ParseBinaryOp() {
 unique_ptr<Expr> Parser::ParseAssigment() {
     cursor.goToChild();
     
-    std::string var_name = cursor.getSourceStr();
+    unique_ptr<Expr> expr; 
+    std::string var_name = "";
+    std::string type = cursor.getType();
 
-    cursor.goToSibling();
-    
-    auto expression = ParseExpression();
+    if (type == "inc_dec") {
+        printf("parsing inc_dec\n");
+        cursor.goToChild();
+        
+        cursor.printNode();
 
+        var_name = cursor.getSourceStr();
+        
+        cursor.goToSibling();
+
+        auto baseChild = make_unique<VarUseExpr>(var_name);
+        auto increment = make_unique<IntExpr>(1);
+
+        if (cursor.getSourceStr() == "++")
+            expr = make_unique<BinaryOpExpr>("+", move(baseChild), move(increment), "nan");
+        else if (cursor.getSourceStr() == "--")
+            expr = make_unique<BinaryOpExpr>("-", move(baseChild), move(increment), "nan");
+
+        printf("Parsed inc_dec\n");
+    } else {
+        var_name = cursor.getSourceStr();
+
+        cursor.goToSibling();
+        
+        expr = ParseExpression();
+    }
     cursor.goToParent();
-
-    return make_unique<AssignExpr>(var_name, move(expression));
+    return make_unique<AssignExpr>(var_name, move(expr));
 }

@@ -24,5 +24,12 @@ int main(int argc, const char **argv)
     pars.printTree(true);
     auto main_fn = pars.ParseAST();
     printf("============================= CodeGen =======================\n");
-    (*main_fn->codegen(ctx))->print(errs()); 
+    auto fn = main_fn->codegen(ctx);
+    if (!fn) throw invalid_argument("Invalid main function");
+    (*fn)->print(errs()); 
+
+    printf("================== Compiling to object File =================\n");
+    verifyFunction(**fn, &llvm::errs());
+    ctx.compile();
+    printf("Successfully compiled!\n");
 }   

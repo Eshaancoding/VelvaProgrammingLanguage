@@ -49,7 +49,6 @@ void CompilationContext::compile() {
     InitializeAllAsmParsers();
     InitializeAllAsmPrinters();
     
-    printf("Test: %s\n", sys::getDefaultTargetTriple().c_str());
     auto targetTriple = sys::getDefaultTargetTriple();
 
     string error;

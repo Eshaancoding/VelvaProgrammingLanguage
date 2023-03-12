@@ -9,7 +9,7 @@ std::unique_ptr<DeclareFunctionExpr> Parser::ParseAST () {
     return make_unique<DeclareFunctionExpr>(
         false,
         false,
-        "_main",
+        "_start",
         (vector<tuple<string, string>>){},
         std::nullopt, 
         move(block)
@@ -18,7 +18,7 @@ std::unique_ptr<DeclareFunctionExpr> Parser::ParseAST () {
 
 GENERAL_TYPE Parser::ParseGeneral () {
     std::string type = cursor.getType();
-
+    
     if (type == "function_declare") return ParseFunctionDeclare();
     else if (type == "while") return ParseWhile();
     else if (type == "for") return  ParseForLoop();
@@ -37,4 +37,3 @@ GENERAL_TYPE Parser::ParseGeneral () {
     // ts_tree_cursor_reset(cursor, currentNode);
     return unique_ptr<Expr>(nullptr);
 }
-
