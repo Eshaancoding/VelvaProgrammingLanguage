@@ -17,7 +17,7 @@ module.exports = grammar({
             $.while
         ),
         
-        // for loop
+        // for loop.
         for: $ => seq(
             "for",
             "(",
@@ -197,7 +197,7 @@ module.exports = grammar({
 });
 
 
-// Definitely not copied & pasted from tree-sitter-cpp
+// Definitely not copied from tree-sitter-cpp
 function commaSep(rule) {
   return optional(commaSep1(rule));
 }

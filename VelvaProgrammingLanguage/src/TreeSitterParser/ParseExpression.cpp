@@ -41,13 +41,11 @@ unique_ptr<Expr> Parser::ParseNumber() {
     if (strchr(src.c_str(), '.') != NULL) {
         float x;
         is >> x; 
-        printf("Parsed number: %f\n", x);
         return make_unique<FloatExpr>(x);
     }
     else {
         int x;
         is >> x;
-        printf("Parsed number: %d\n", x);
         return make_unique<IntExpr>(x);
     } 
 }

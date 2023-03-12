@@ -3,10 +3,13 @@
 std::string TreeSitterCursor::getSourceStr() {
     auto node = currentNode();
 
+    printf("========= get src str ============\n");
+    printNode();
+
     TSPoint start = ts_node_start_point(node);
     TSPoint end = ts_node_end_point(node);
 
-    std::string line_ret;
+    std::string line_ret = "";
     bool parsing = false;
     int lineNum = 0;
     
@@ -21,17 +24,26 @@ std::string TreeSitterCursor::getSourceStr() {
                 parsing = true;
             }
 
-            if (parsing)
-                line_ret += ch;
-
             if (end.row == lineNum && end.column == i) {
                 parsing = false;
             }
+            
+            if (parsing)
+                line_ret += ch;
+
+            // tree sitter does this weird thing where it equals the length of the string, as oppose to the index
+            if (end.row == lineNum && end.column == line.length() && end.column == i+1) {
+                parsing = false;
+            }
+            
+            
         }
         if (parsing)
             line_ret += "\n";
         lineNum += 1;
     }
+    printf("line ret: %s\n", line_ret.c_str());
+    printf("len: %d\n", (int)line_ret.length());
 
     return line_ret;
 }
