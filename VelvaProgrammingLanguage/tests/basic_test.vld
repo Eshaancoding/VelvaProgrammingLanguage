@@ -1,4 +1,4 @@
-func hello (bool x, int y) {
+pure int hello (bool x, int y) {
     x = 3
 }
 d(3, 2)

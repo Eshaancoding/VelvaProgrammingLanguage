@@ -11,7 +11,7 @@ std::unique_ptr<DeclareFunctionExpr> Parser::ParseFunctionDeclare () {
 
     if (numChildren == 5) {
         isPure = true;
-        cursor.goToSibling(); // skip pure
+        cursor.goToSibling(true); // skip pure
     }
 
     std::string rt = cursor.getSourceStr();
@@ -43,9 +43,6 @@ std::unique_ptr<DeclareFunctionExpr> Parser::ParseFunctionDeclare () {
 
     auto body = ParseBlock();
     cursor.goToParent();
-
-    printf("function name: %s\n", functionName.c_str());
-    printf("params len: %zu\n", params.size());
 
     return make_unique<DeclareFunctionExpr>(false, isPure, functionName, params, returnType, move(body));
 
