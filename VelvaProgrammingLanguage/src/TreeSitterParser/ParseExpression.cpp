@@ -96,7 +96,6 @@ unique_ptr<Expr> Parser::ParseAssigment() {
         else if (cursor.getSourceStr() == "--")
             expr = make_unique<BinaryOpExpr>("-", move(baseChild), move(increment), "nan");
 
-        printf("Parsed inc_dec\n");
     } else {
         var_name = cursor.getSourceStr();
 
