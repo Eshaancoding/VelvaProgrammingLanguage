@@ -51,3 +51,7 @@ string VarDeclareExpr::debug_info() {
 
     return result;
 }
+
+string ReturnExpr::debug_info() {
+    return "Return expr";
+}

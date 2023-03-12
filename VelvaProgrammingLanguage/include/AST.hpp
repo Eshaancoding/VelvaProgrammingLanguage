@@ -419,4 +419,14 @@ class WhileExpr: public Expr {
         string return_type() override;
 };
 
+class ReturnExpr : public Expr {
+    public: 
+        optional<unique_ptr<Expr>> val;
+
+        ReturnExpr (optional<unique_ptr<Expr>> val) : val(move(val)) {};
+        optional<Value*> codegen (CompilationContext &ctx ) override; 
+        string debug_info() override;
+        string return_type() override;
+};
+
 #endif

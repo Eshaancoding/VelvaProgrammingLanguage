@@ -701,7 +701,7 @@
     },
     "identifier": {
       "type": "PATTERN",
-      "value": "[a-z]+"
+      "value": "[a-zA-Z]+"
     },
     "number": {
       "type": "PATTERN",

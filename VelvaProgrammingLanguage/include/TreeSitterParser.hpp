@@ -41,7 +41,7 @@ public:
     GENERAL_TYPE ParseGeneral ();
     unique_ptr<Expr> ParseAssigment();
     unique_ptr<Expr> ParseBinaryOp ();
-    // unique_ptr<Expr> ParseReturn ();
+    unique_ptr<Expr> ParseReturn ();
     unique_ptr<Expr> ParseFuncCall ();
     unique_ptr<Expr> ParseExpression ();
     unique_ptr<Expr> ParseWhile();
@@ -52,8 +52,8 @@ public:
     unique_ptr<Expr> ParseIdentifier();
     unique_ptr<Expr> ParseBlock ();
     unique_ptr<Expr> ParseCondition ();
-    std::unique_ptr<DeclareFunctionExpr> ParseFunctionDeclare ();
-    std::unique_ptr<DeclareFunctionExpr> ParseAST ();
+    unique_ptr<DeclareFunctionExpr> ParseFunctionDeclare ();
+    unique_ptr<DeclareFunctionExpr> ParseAST ();
 
     
    void printTree (bool printNoNamedNodes=false, std::optional<TSNode> nodeInp = std::nullopt, int lvl=0);

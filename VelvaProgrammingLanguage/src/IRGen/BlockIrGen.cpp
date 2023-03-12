@@ -2,14 +2,23 @@
 #include "Utils.hpp"
 
 optional<Value*> BlockExpr::codegen (CompilationContext &ctx) {
+    
+    bool has_return = false;
     for (int i = 0; i < counter; i++) {
         if (expr_map.count(i) == 1) {
             // exists in expr_map
             expr_map[i]->codegen(ctx);
+
+            if (expr_map[i]->return_type() == "return") has_return = true;
+
         }
         else if (function_map.count(i) == 1) {
-            function_map[i]->codegen(ctx);
+            auto x = function_map[i]->codegen(ctx);
+            if (x) (*x)->print(llvm::errs());
         }
+    }
+    if (!has_return) {
+        ctx.builder->CreateRet(nullptr);
     }
     return nullopt;
 }
@@ -105,4 +114,13 @@ string WhileExpr::debug_info() {
     string s = "Cond: " + cond->debug_info() + "\nBody: \n";
     s += body->debug_info();
     return s;
+}
+
+optional<Value*> ReturnExpr::codegen (CompilationContext &ctx) {
+    if (!val) return ctx.builder->CreateRetVoid(); 
+    auto codegen = (*val)->codegen(ctx);
+    if (codegen)
+        return ctx.builder->CreateRet(*codegen);
+    else 
+        throw invalid_argument("Cannot return unsuccessful value codegen");
 }

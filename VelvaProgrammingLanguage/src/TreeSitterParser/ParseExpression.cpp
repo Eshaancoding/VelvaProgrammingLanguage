@@ -106,3 +106,17 @@ unique_ptr<Expr> Parser::ParseAssigment() {
     cursor.goToParent();
     return make_unique<AssignExpr>(var_name, move(expr));
 }
+
+unique_ptr<Expr> Parser::ParseReturn () {
+    optional<unique_ptr<Expr>> val = nullopt;
+
+    cursor.goToChild();
+
+    if (cursor.getType() == "expression") {
+        val = ParseExpression();
+    }
+
+    cursor.goToParent();
+
+    return make_unique<ReturnExpr>(move(val));
+}
