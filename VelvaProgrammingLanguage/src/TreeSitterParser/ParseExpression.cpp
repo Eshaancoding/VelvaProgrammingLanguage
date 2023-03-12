@@ -35,8 +35,21 @@ unique_ptr<Expr> Parser::ParseExpression () {
 
 unique_ptr<Expr> Parser::ParseNumber() {
     auto src = cursor.getSourceStr();
-    // return back to expression
-    return make_unique<IntExpr>(stoi(src));
+
+    // detect if it is a float or not
+    istringstream is(src);
+    if (strchr(src.c_str(), '.') != NULL) {
+        float x;
+        is >> x; 
+        printf("Parsed number: %f\n", x);
+        return make_unique<FloatExpr>(x);
+    }
+    else {
+        int x;
+        is >> x;
+        printf("Parsed number: %d\n", x);
+        return make_unique<IntExpr>(x);
+    } 
 }
 
 unique_ptr<Expr> Parser::ParseBinaryOp() {

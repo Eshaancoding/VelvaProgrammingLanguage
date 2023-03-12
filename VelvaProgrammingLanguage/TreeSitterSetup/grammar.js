@@ -191,7 +191,7 @@ module.exports = grammar({
         ),
 
         identifier: $ => /[a-z]+/,
-        number: $ => /\d+/,
+        number: $ => /[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/,
         boolean: $ => choice("true", "false")
     }
 });

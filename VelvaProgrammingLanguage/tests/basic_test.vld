@@ -1,4 +1,5 @@
-pure int hello (bool x, int y) {
-    x = 3
+float i = -3.0
+i = 4
+if (i == 3) {
+    i = 2
 }
-d(3, 2)

@@ -705,7 +705,7 @@
     },
     "number": {
       "type": "PATTERN",
-      "value": "\\d+"
+      "value": "[+-]?(\\d+([.]\\d*)?([eE][+-]?\\d+)?|[.]\\d+([eE][+-]?\\d+)?)"
     },
     "boolean": {
       "type": "CHOICE",
