@@ -57,25 +57,36 @@ optional<Value *> StringExpr::codegen(CompilationContext &ctx) {
     // Plus parser doesn't implement string anyway :shrug:
 }
 
+static AllocaInst *CreateEntryBlockAlloca(CompilationContext &ctx,
+                                        Function *TheFunction,
+                                        const std::string &VarName) {
+  IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
+                   TheFunction->getEntryBlock().begin());
+  return TmpB.CreateAlloca(Type::getDoubleTy(*ctx.context), nullptr, VarName);
+}
+
 optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 {
     // TODO: Later we have to check if the function has already been declared or not, and check if it has an empty body (if not, we give error)
 
-    std::vector<Type *> paramTypes(params.size());
+    std::vector<Type *> paramTypes;
     for (auto &param : params)
     {
+        printf("param: %s\n", get<0>(param).c_str());
         if (get<0>(param) == "int") {
             paramTypes.push_back(Type::getInt32Ty(*ctx.context));
         } 
-        else if (get<0>(param) == "double") {
-            paramTypes.push_back(Type::getDoubleTy(*ctx.context));
+        else if (get<0>(param) == "float") {
+            paramTypes.push_back(Type::getFloatTy(*ctx.context));
         } 
         else if (get<0>(param) == "string") {
             paramTypes.push_back(Type::getInt8PtrTy(*ctx.context));
         }
     }
 
+
     auto retType = returnType == "int" ? Type::getInt32Ty(*ctx.context)
+            : returnType == "float" ? Type::getFloatTy(*ctx.context)
             : returnType == "double" ? Type::getDoubleTy(*ctx.context)
             : returnType == "string" ? Type::getInt8PtrTy(*ctx.context)
             : Type::getVoidTy(*ctx.context);
@@ -90,17 +101,35 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         Arg.setName(get<1>(params[Idx]));
         Idx++;
     }
+    
+    auto block = ctx.builder->GetInsertBlock();
+
     BasicBlock *bb = BasicBlock::Create(*ctx.context, name, F);
     ctx.builder->SetInsertPoint(bb);
     
     // ctx.namedValues.clear() ; // Functions need to be declared before any vars ; we should prob do a scoping thing in the future
-    // for(auto &arg : F->args()) {
-    //     ctx.namedValues[arg.getName().str()] = &arg;
-    // }
+    for(auto &arg : F->args()) {
+
+        // Create an alloca for this variable.
+        AllocaInst *Alloca = CreateEntryBlockAlloca(ctx, F, arg.getName().str());
+
+        // Store the initial value into the alloca.
+        ctx.builder->CreateStore(&arg, Alloca);
+
+        // Add arguments to variable symbol table.
+        ctx.namedValues[arg.getName().str()] = Alloca;
+    }
 
     // codegen through all expressions
     body->codegen(ctx);
-    // verifyFunction(*F);
+
+    if (name == "_main") {
+        ctx.builder->CreateRetVoid();
+    }
+
+    verifyFunction(*F);
+
+    ctx.builder->SetInsertPoint(block);
 
     return F;
 }

@@ -2,23 +2,17 @@
 #include "Utils.hpp"
 
 optional<Value*> BlockExpr::codegen (CompilationContext &ctx) {
-    
-    bool has_return = false;
     for (int i = 0; i < counter; i++) {
         if (expr_map.count(i) == 1) {
             // exists in expr_map
             expr_map[i]->codegen(ctx);
-
-            if (expr_map[i]->return_type() == "return") has_return = true;
-
         }
         else if (function_map.count(i) == 1) {
+            auto prevBlock = ctx.builder->GetInsertBlock();
             auto x = function_map[i]->codegen(ctx);
             if (x) (*x)->print(llvm::errs());
+            ctx.builder->SetInsertPoint(prevBlock);
         }
-    }
-    if (!has_return) {
-        ctx.builder->CreateRet(nullptr);
     }
     return nullopt;
 }

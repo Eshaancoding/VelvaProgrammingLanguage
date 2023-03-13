@@ -9,7 +9,7 @@ std::unique_ptr<DeclareFunctionExpr> Parser::ParseAST () {
     return make_unique<DeclareFunctionExpr>(
         false,
         false,
-        "_start",
+        "_main",
         (vector<tuple<string, string>>){},
         std::nullopt, 
         move(block)

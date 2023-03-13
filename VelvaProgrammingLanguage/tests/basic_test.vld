@@ -1,3 +1,4 @@
-func a () {
-    return 3
+float test (float x, float y) {
+    float z = x + y
+    return z / 2
 }
