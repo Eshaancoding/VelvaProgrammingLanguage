@@ -528,8 +528,17 @@
           "name": "parameter_list"
         },
         {
-          "type": "SYMBOL",
-          "name": "block"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "block"
+            },
+            {
+              "type": "STRING",
+              "value": "\n"
+            }
+          ]
         }
       ]
     },

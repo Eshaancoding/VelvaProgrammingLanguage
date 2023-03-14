@@ -40,11 +40,11 @@ std::unique_ptr<DeclareFunctionExpr> Parser::ParseFunctionDeclare () {
     }
     cursor.goToParent();
     cursor.goToSibling();
-
-    auto body = ParseBlock();
+    optional<unique_ptr<BlockExpr>> body = std::nullopt;
+    if (cursor.getType() == "block") body = ParseBlock();
     cursor.goToParent();
 
-    return make_unique<DeclareFunctionExpr>(false, isPure, functionName, params, returnType, move(body));
+    return make_unique<DeclareFunctionExpr>(body.has_value(), isPure, functionName, params, returnType, move(body));
 
 }
 

@@ -142,7 +142,7 @@ module.exports = grammar({
             choice("func", $.primitive_type),
             $.identifier,
             $.parameter_list,  
-            $.block
+            choice($.block, "\n")
         ),
 
         // // general block & statements (probably need to be updated), used in loops, conditionals, functions
