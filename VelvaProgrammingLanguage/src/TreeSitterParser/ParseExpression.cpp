@@ -23,6 +23,11 @@ unique_ptr<Expr> Parser::ParseExpression () {
         cursor.goToParent(); // go back to the expr parent
         return result;
     }
+    else if (type == "string") {
+        auto result = ParseString();
+        cursor.goToParent();
+        return result;
+    }
     else if (type == "identifier") {
         auto result = ParseIdentifier();
         cursor.goToParent(); // go back to the expr parent
@@ -53,6 +58,13 @@ unique_ptr<Expr> Parser::ParseNumber() {
         is >> x;
         return make_unique<IntExpr>(x);
     } 
+}
+
+unique_ptr<Expr> Parser::ParseString() {
+    cursor.goToChild();
+    auto src = cursor.getSourceStr();
+
+    return make_unique<StringExpr>(src);
 }
 
 unique_ptr<Expr> Parser::ParseBinaryOp() {
