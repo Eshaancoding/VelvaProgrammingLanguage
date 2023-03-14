@@ -8,6 +8,7 @@
 #include <memory>
 #include <cstring>
 #include "TreeSitterParser.hpp"
+#include "AST.hpp"
 using namespace std;
 
 int main(int argc, const char **argv)
@@ -22,8 +23,18 @@ int main(int argc, const char **argv)
     CompilationContext ctx;
     Parser pars(filename);
     pars.printTree(true);
+    auto x = DeclareFunctionExpr(
+        true,
+        false,
+        EXIT_SYMBOL,
+        (vector<tuple<string, string>>) { {"int", "code"}},
+        std::nullopt,
+        std::nullopt
+    ).codegen(ctx);
+    (*x)->print(errs());
     auto main_fn = pars.ParseAST();
     printf("============================= CodeGen =======================\n");
+    
     auto fn = main_fn->codegen(ctx);
     if (!fn) throw invalid_argument("Invalid main function");
     (*fn)->print(errs()); 

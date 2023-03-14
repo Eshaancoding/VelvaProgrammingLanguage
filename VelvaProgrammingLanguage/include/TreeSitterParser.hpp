@@ -18,8 +18,12 @@
 #include <tree_sitter/parser.h>
 #include "TreeSitterCursor.hpp"
 
-#define GENERAL_TYPE std::variant<unique_ptr<Expr>, unique_ptr<DeclareFunctionExpr>>
+#define START_SYMBOL "_start"
+#define EXIT_SYMBOL "stop"
 
+typedef std::variant<unique_ptr<Expr>, unique_ptr<DeclareFunctionExpr>> GeneralType;
+
+#define GENERAL_TYPE _Pragma("GCC warning \"deprecated — use GeneralType instead of GENERAL_TYPE\"") GeneralType
 extern "C"
 {
     const TSLanguage *tree_sitter_Velva(void);
@@ -50,7 +54,7 @@ public:
     unique_ptr<Expr> ParseNumber ();  
     unique_ptr<Expr> ParseIfStatement();
     unique_ptr<Expr> ParseIdentifier();
-    unique_ptr<Expr> ParseBlock ();
+    unique_ptr<BlockExpr> ParseBlock ();
     unique_ptr<Expr> ParseCondition ();
     unique_ptr<DeclareFunctionExpr> ParseFunctionDeclare ();
     unique_ptr<DeclareFunctionExpr> ParseAST ();

@@ -14,6 +14,7 @@ optional<Value*> BlockExpr::codegen (CompilationContext &ctx) {
             ctx.builder->SetInsertPoint(prevBlock);
         }
     }
+
     return nullopt;
 }
 

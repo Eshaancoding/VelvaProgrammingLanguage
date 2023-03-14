@@ -1,6 +1,6 @@
 #include "TreeSitterParser.hpp"
 
-unique_ptr<Expr> Parser::ParseBlock () {
+unique_ptr<BlockExpr> Parser::ParseBlock () {
     BlockExpr block;
     int num = cursor.getNumChilds();
     auto node = cursor.goToChild();

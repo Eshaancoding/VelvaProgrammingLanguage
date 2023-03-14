@@ -101,35 +101,36 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         Arg.setName(get<1>(params[Idx]));
         Idx++;
     }
-    
-    auto block = ctx.builder->GetInsertBlock();
+    if(!isExternal) {
+        auto block = ctx.builder->GetInsertBlock();
 
-    BasicBlock *bb = BasicBlock::Create(*ctx.context, name, F);
-    ctx.builder->SetInsertPoint(bb);
-    
-    // ctx.namedValues.clear() ; // Functions need to be declared before any vars ; we should prob do a scoping thing in the future
-    for(auto &arg : F->args()) {
+        BasicBlock *bb = BasicBlock::Create(*ctx.context, name, F);
+        ctx.builder->SetInsertPoint(bb);
+        
+        // ctx.namedValues.clear() ; // Functions need to be declared before any vars ; we should prob do a scoping thing in the future
+        for(auto &arg : F->args()) {
 
-        // Create an alloca for this variable.
-        AllocaInst *Alloca = CreateEntryBlockAlloca(ctx, F, arg.getName().str());
+            // Create an alloca for this variable.
+            AllocaInst *Alloca = CreateEntryBlockAlloca(ctx, F, arg.getName().str());
 
-        // Store the initial value into the alloca.
-        ctx.builder->CreateStore(&arg, Alloca);
+            // Store the initial value into the alloca.
+            ctx.builder->CreateStore(&arg, Alloca);
 
-        // Add arguments to variable symbol table.
-        ctx.namedValues[arg.getName().str()] = Alloca;
+            // Add arguments to variable symbol table.
+            ctx.namedValues[arg.getName().str()] = Alloca;
+        }
+        // codegen through all expressions
+        (*body)->codegen(ctx);
+
+        if (!returnType) {
+            ctx.builder->CreateRetVoid();
+        }
+
+        ctx.builder->SetInsertPoint(block);
     }
-
-    // codegen through all expressions
-    body->codegen(ctx);
-
-    if (name == "_main") {
-        ctx.builder->CreateRetVoid();
-    }
-
     verifyFunction(*F);
 
-    ctx.builder->SetInsertPoint(block);
+    
 
     return F;
 }
@@ -153,7 +154,7 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
     if (!rhs)
         return {};
     auto s = ctx.builder->CreateStore(*rhs, inst);
-    s->setVolatile(true);
+    // s->setVolatile(true);
     return s;
 };  
 

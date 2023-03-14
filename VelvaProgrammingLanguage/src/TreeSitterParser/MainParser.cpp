@@ -2,18 +2,22 @@
 
 std::unique_ptr<DeclareFunctionExpr> Parser::ParseAST () {
     
-    unique_ptr<Expr> block = ParseBlock();
+    unique_ptr<BlockExpr> block = ParseBlock();
 
     cursor.goToParent();
 
-    return make_unique<DeclareFunctionExpr>(
+    auto fn = make_unique<DeclareFunctionExpr>(
         false,
         false,
-        "_main",
+        START_SYMBOL,
         (vector<tuple<string, string>>){},
         std::nullopt, 
         move(block)
     );
+    vector<unique_ptr<Expr>> params;
+    params.push_back(make_unique<IntExpr>(0));
+    (*(fn->body))->add(make_unique<CallFuncExpr>(EXIT_SYMBOL, move(params)));
+    return fn;
 }
 
 GENERAL_TYPE Parser::ParseGeneral () {

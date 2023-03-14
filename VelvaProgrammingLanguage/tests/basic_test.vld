@@ -1,4 +1,4 @@
-float test (float x, float y) {
-    float z = x + y
+int test (int x, int y) {
+    int z = x + y
     return z / 2
 }

@@ -58,6 +58,7 @@ struct CompilationContext {
         std::unique_ptr<IRBuilder<>> builder;
         std::unique_ptr<Module> mod;
         map<string, AllocaInst*> namedValues;
+        map<string, Function*> functions;
         //std::unique_ptr<FunctionPassManager> fpm;
         NameRegistry names;
 
@@ -231,7 +232,7 @@ class DeclareFunctionExpr {
          */
         optional<std::string> returnType;
         bool isReal = true;
-        unique_ptr<Expr> body;
+        optional<unique_ptr<BlockExpr>> body;
 
         DeclareFunctionExpr(
             bool isExternal, 
@@ -239,7 +240,7 @@ class DeclareFunctionExpr {
             string name, 
             vector<tuple<string, string> > params, 
             optional<string> returnType, 
-            unique_ptr<Expr> body // <-- should be block expr
+            optional<unique_ptr<BlockExpr>> body // <-- should be block expr
         ) : isPure(isPure), name(name), params(params), returnType(returnType), isExternal(isExternal), body(move(body)) {};
         optional<Function*> codegen(CompilationContext &ctx);
         string debug_info();

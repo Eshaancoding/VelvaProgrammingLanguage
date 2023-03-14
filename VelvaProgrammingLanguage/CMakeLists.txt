@@ -70,8 +70,7 @@ endforeach()
 # idk what libraries to link
 # add_test(NAME TestInstantiator
 #             COMMAND TestInstantiator) // we are adding tests later okay
-include_directories(${LLVM_INCLUDE_DIRS} $ENV{TREE_SITTER_DIR}/lib/include $ENV{TREE_SITTER_PARSER_INCLUDE} include)
-message(STATUS "Tree sitter include: $ENV{TREE_SITTER_DIR}/lib/include")
+include_directories(${LLVM_INCLUDE_DIRS} $ENV{TREE_SITTER_LIB_INCLUDE} $ENV{TREE_SITTER_PARSER_INCLUDE} include)
 message(STATUS "Tree sitter parser file: $ENV{TREE_SITTER_PARSER_FILE}")
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 # message(STATUS "LLVM Def list: ${LLVM_DEFINITIONS_LIST}")
@@ -91,11 +90,11 @@ llvm_map_components_to_libnames(llvm_libraries asmparser ${LLVM_LINK_COMPONENTS}
 # message(STATUS "llvm libs: ${llvm_libraries}")
 # message(STATUS "targets: ${targets}")
 
-message(STATUS "Tree sietter dir: $ENV{TREE_SITTER_DIR}/lib/libtree-sitter.a")
+message(STATUS "Tree sietter lib: $ENV{TREE_SITTER_LIB_FILE}")
 
 add_library(treesitter SHARED IMPORTED)
 
-target_link_libraries(${COMPILER_NAME} ${llvm_libraries} ${targets} $ENV{TREE_SITTER_DIR}/lib/libtree-sitter.a)
+target_link_libraries(${COMPILER_NAME} ${llvm_libraries} ${targets} $ENV{TREE_SITTER_LIB_FILE})
 
 # enable_testing()
 # add_test()
