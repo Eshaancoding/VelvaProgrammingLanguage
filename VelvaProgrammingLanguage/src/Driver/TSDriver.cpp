@@ -48,4 +48,7 @@ int main(int argc, const char **argv)
     verifyFunction(**fn, &llvm::errs());
     ctx.compile();
     printf("Successfully compiled!\n");
+
+    system("clang output.o");
+    printf("Successfully linked\n");
 }   

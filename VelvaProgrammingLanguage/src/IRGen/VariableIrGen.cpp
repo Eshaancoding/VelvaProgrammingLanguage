@@ -138,6 +138,7 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 {
     auto v = ctx.namedValues[var];
+    cout << var;
     return ctx.builder->CreateLoad(Type::getInt32Ty(*ctx.context), v, var.c_str());
 }
 

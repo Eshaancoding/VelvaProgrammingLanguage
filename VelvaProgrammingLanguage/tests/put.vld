@@ -1,3 +1,3 @@
 int putchar(int i) {}
-int i = 97 //a
-putchar(a)
+putchar(98)
+putchar(0)
