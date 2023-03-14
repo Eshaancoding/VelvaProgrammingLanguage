@@ -23,20 +23,25 @@ int main(int argc, const char **argv)
     CompilationContext ctx;
     Parser pars(filename);
     pars.printTree(true);
-    auto x = DeclareFunctionExpr(
-        true,
-        false,
-        EXIT_SYMBOL,
-        (vector<tuple<string, string>>) { {"int", "code"}},
-        std::nullopt,
-        std::nullopt
-    ).codegen(ctx);
-    (*x)->print(errs());
+    // auto x = DeclareFunctionExpr(
+    //     true,
+    //     false,
+    //     EXIT_SYMBOL,
+    //     (vector<tuple<string, string>>) { {"int", "code"}},
+    //     std::nullopt,
+    //     std::nullopt
+    // ).codegen(ctx);
+    // (*x)->print(errs());
     auto main_fn = pars.ParseAST();
     printf("============================= CodeGen =======================\n");
     
     auto fn = main_fn->codegen(ctx);
     if (!fn) throw invalid_argument("Invalid main function");
+    error_code EC;
+    
+    raw_fd_ostream ofile("dog.ll", EC);
+    ctx.mod->print(ofile, nullptr);
+
     (*fn)->print(errs()); 
 
     printf("================== Compiling to object File =================\n");

@@ -1,4 +1,1 @@
-int ab = 3 + 3
-if (ab == 3) {
-    int x = 3
-}
+int ab = 3 

@@ -16,7 +16,7 @@ std::unique_ptr<DeclareFunctionExpr> Parser::ParseAST () {
     );
     vector<unique_ptr<Expr>> params;
     params.push_back(make_unique<IntExpr>(0));
-    (*(fn->body))->add(make_unique<CallFuncExpr>(EXIT_SYMBOL, move(params)));
+    // (*(fn->body))->add(make_unique<CallFuncExpr>(EXIT_SYMBOL, move(params)));
     return fn;
 }
 

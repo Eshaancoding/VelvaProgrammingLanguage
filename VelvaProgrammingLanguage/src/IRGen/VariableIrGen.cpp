@@ -153,7 +153,8 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
     auto rhs = value->codegen(ctx);
     if (!rhs)
         return {};
-    auto s = ctx.builder->CreateStore(*rhs, inst);
+    auto ptr = ctx.builder->CreateBitCast(*rhs, Type::getPtrTy());
+    auto s = ctx.builder->CreateStore(ptr, inst);
     // s->setVolatile(true);
     return s;
 };  

@@ -18,7 +18,7 @@
 #include <tree_sitter/parser.h>
 #include "TreeSitterCursor.hpp"
 
-#define START_SYMBOL "_start"
+#define START_SYMBOL "main"
 #define EXIT_SYMBOL "stop"
 
 typedef std::variant<unique_ptr<Expr>, unique_ptr<DeclareFunctionExpr>> GeneralType;
