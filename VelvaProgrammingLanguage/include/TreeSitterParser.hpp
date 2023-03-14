@@ -52,7 +52,6 @@ public:
     unique_ptr<Expr> ParseForLoop ();
     unique_ptr<Expr> ParseVarDecl ();
     unique_ptr<Expr> ParseNumber ();  
-    unique_ptr<Expr> ParseString ();
     unique_ptr<Expr> ParseIfStatement();
     unique_ptr<Expr> ParseIdentifier();
     unique_ptr<BlockExpr> ParseBlock ();

@@ -7,8 +7,6 @@ optional<Value *> IntExpr::codegen(CompilationContext &ctx)
     return ConstantInt::get(*ctx.context, APInt(numBits, num));
 }
 
-optional<Value *>
-
 optional<Value *> FloatExpr::codegen(CompilationContext &ctx)
 {
     return ConstantFP::get(*ctx.context, APFloat(decimal));
@@ -50,14 +48,13 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx)
 //     return ConstantExpr::getBitCast(v, i8->getPointerTo());
 // }
 optional<Value *> StringExpr::codegen(CompilationContext &ctx) {
-    // the original function has bugs :/
+    return nullopt; // the original function has bugs :/
 
     // plus, string might be a little bit weird to implement. For example, we might have to redeclare/declare our string
     // See here: https://mapping-high-level-constructs-to-llvm-ir.readthedocs.io/en/latest/appendix-a-how-to-implement-a-string-type-in-llvm/index.html?highlight=string#how-to-implement-a-string-type-in-llvm
-    // basically i read a forum and for string literals we declare a pointer to an unnamed global variable, which is what this does
-    //  link: https://discourse.llvm.org/t/using-value-to-represent-interger-or-string-type/61968/2
 
-    return ctx.builder->CreateGlobalString(text, ctx.mod);
+    // also, why are you setting initializerconstant linkage? Is that mandatory
+    // Plus parser doesn't implement string anyway :shrug:
 }
 
 static AllocaInst *CreateEntryBlockAlloca(CompilationContext &ctx,

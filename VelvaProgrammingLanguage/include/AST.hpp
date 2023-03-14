@@ -48,12 +48,6 @@ using namespace llvm;
 using namespace llvm::sys;
 // IR generation variables
 
-enum Types {
-    INTEGER = 0,
-    FLOAT = 1,
-    BOOLEAN = 2,
-}
-
 /**
  * @brief This object stores variables for a compilation context. Only use this once per compile task.
  * 
@@ -123,17 +117,6 @@ class IntExpr : public Expr {
         string debug_info () override;
         string return_type () override; // just returns string, declared in AST Constructors.cpp
 };
-
-// not implemented yet, just wondering if arrays would be something we want to implement in the future
-class ArrayExpr : public Expr {
-    public:
-        vector<unique_ptr<Expr>> arr; // for now this is only being used for a string implementation, any-type arrays will be added later ig
-        Types type;
-        ArrayExpr(vector<unique_ptr<Expr>> arr) : arr(move(arr)), type(type) {};
-        optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
-        string return_type() override;
-}
 
 /**
  * @brief An AST node that represents a float literal.

@@ -231,10 +231,6 @@
         {
           "type": "SYMBOL",
           "name": "func_call"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "string"
         }
       ]
     },
@@ -704,23 +700,6 @@
               "value": "\n"
             }
           ]
-        }
-      ]
-    },
-    "string": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "\""
-        },
-        {
-          "type": "SYMBOL",
-          "name": "identifier"
-        },
-        {
-          "type": "STRING",
-          "value": "\""
         }
       ]
     },
