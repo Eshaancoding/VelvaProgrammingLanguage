@@ -72,7 +72,8 @@ module.exports = grammar({
             $._unary_expression,
             $.number,
             $.boolean,
-            $.func_call
+            $.func_call,
+            $.string
         ),
 
         // includes not function and integer invert function
@@ -187,7 +188,11 @@ module.exports = grammar({
             choice($.expression, '\n')
         ),
         
-
+        string: $ => seq(
+            "\"",
+            $.identifier,
+            "\""  
+        ),
         identifier: $ => /[a-zA-Z]+/,
         number: $ => /[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/,
         boolean: $ => choice("true", "false")
