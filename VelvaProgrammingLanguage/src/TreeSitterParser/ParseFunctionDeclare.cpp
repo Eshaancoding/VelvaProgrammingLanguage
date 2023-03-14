@@ -13,7 +13,6 @@ std::unique_ptr<DeclareFunctionExpr> Parser::ParseFunctionDeclare () {
         isPure = true;
         cursor.goToSibling(true); // skip pure
     }
-
     std::string rt = cursor.getSourceStr();
     if (rt == "func") returnType = std::nullopt;
     else returnType = rt;
@@ -41,11 +40,17 @@ std::unique_ptr<DeclareFunctionExpr> Parser::ParseFunctionDeclare () {
     cursor.goToParent();
     cursor.goToSibling();
     optional<unique_ptr<BlockExpr>> body = std::nullopt;
-    if (cursor.getType() == "block") body = ParseBlock();
+    if (cursor.getType() == "block") {
+        body = ParseBlock();
+    }
     cursor.goToParent();
-
-    return make_unique<DeclareFunctionExpr>(body.has_value(), isPure, functionName, params, returnType, move(body));
-
+    
+    if (body.has_value()) {
+        return make_unique<DeclareFunctionExpr>(false, isPure, functionName, params, returnType, move(body));
+    }
+    else {
+        return make_unique<DeclareFunctionExpr>(true, isPure, functionName, params, returnType, std::nullopt);
+    }
 }
 
 std::unique_ptr<Expr> Parser::ParseFuncCall() {

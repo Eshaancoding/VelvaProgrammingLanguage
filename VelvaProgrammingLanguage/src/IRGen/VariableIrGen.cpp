@@ -72,7 +72,6 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
     std::vector<Type *> paramTypes;
     for (auto &param : params)
     {
-        printf("param: %s\n", get<0>(param).c_str());
         if (get<0>(param) == "int") {
             paramTypes.push_back(Type::getInt32Ty(*ctx.context));
         } 

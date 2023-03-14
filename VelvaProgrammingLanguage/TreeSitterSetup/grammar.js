@@ -71,7 +71,8 @@ module.exports = grammar({
             $.binary_expression,
             $._unary_expression,
             $.number,
-            $.boolean
+            $.boolean,
+            $.func_call
         ),
 
         // includes not function and integer invert function
@@ -145,6 +146,13 @@ module.exports = grammar({
             choice($.block, "\n")
         ),
 
+        func_call: $ => seq(
+            $.identifier,
+            '(',
+            commaSep($.expression),
+            ')'
+        ),
+
         // // general block & statements (probably need to be updated), used in loops, conditionals, functions
 
         // conditionals
@@ -178,17 +186,7 @@ module.exports = grammar({
             "return",
             choice($.expression, '\n')
         ),
-
-        argument: $ => seq(
-            $.expression, 
-        ),
-
-        func_call: $ => seq(
-            $.identifier,
-            '(',
-            optional(commaSep($.argument)),
-            ')'
-        ),
+        
 
         identifier: $ => /[a-zA-Z]+/,
         number: $ => /[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/,

@@ -28,6 +28,11 @@ unique_ptr<Expr> Parser::ParseExpression () {
         cursor.goToParent(); // go back to the expr parent
         return result;
     }
+    else if (type == "func_call") {
+        auto result = ParseFuncCall();
+        cursor.goToParent();
+        return result;
+    }
     else {
         throw invalid_argument("Parsing expression invalid type");
     }
@@ -79,11 +84,8 @@ unique_ptr<Expr> Parser::ParseAssigment() {
     std::string type = cursor.getType();
 
     if (type == "inc_dec") {
-        printf("parsing inc_dec\n");
         cursor.goToChild();
         
-        cursor.printNode();
-
         var_name = cursor.getSourceStr();
         
         cursor.goToSibling();
