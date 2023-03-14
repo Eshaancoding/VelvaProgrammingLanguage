@@ -42,7 +42,7 @@ public:
      * @param filename the path to the filename that it should be parsing.
     */
     Parser (const char* filename); 
-    GENERAL_TYPE ParseGeneral ();
+    GeneralType ParseGeneral ();
     unique_ptr<Expr> ParseAssigment();
     unique_ptr<Expr> ParseBinaryOp ();
     unique_ptr<Expr> ParseReturn ();

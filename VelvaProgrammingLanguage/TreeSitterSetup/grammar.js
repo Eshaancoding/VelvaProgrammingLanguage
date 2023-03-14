@@ -186,7 +186,7 @@ module.exports = grammar({
         func_call: $ => seq(
             $.identifier,
             '(',
-            commaSep($.argument),
+            optional(commaSep($.argument)),
             ')'
         ),
 

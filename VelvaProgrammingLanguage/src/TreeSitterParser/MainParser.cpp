@@ -20,7 +20,7 @@ std::unique_ptr<DeclareFunctionExpr> Parser::ParseAST () {
     return fn;
 }
 
-GENERAL_TYPE Parser::ParseGeneral () {
+GeneralType Parser::ParseGeneral () {
     std::string type = cursor.getType();
     
     if (type == "function_declare") return ParseFunctionDeclare();

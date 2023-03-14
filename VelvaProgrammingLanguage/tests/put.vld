@@ -1,3 +1,4 @@
 int putchar(int i) {}
-putchar(98)
-putchar(0)
+int getchar() {}
+int i = getchar()
+putchar(i)
