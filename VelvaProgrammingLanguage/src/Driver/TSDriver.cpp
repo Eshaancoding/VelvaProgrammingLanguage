@@ -50,5 +50,6 @@ int main(int argc, const char **argv)
     printf("Successfully compiled!\n");
 
     system("clang output.o");
-    printf("Successfully linked\n");
+    printf("Successfully linked. running...\n");
+    system("./a.out");
 }   
