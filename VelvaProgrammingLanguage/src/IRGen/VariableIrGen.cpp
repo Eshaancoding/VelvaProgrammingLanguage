@@ -28,35 +28,26 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx)
     return ctx.builder->CreateCall(calleeF, argv, "calltmp");
 }
 
-// optional<Value *> StringExpr::codegen(CompilationContext &ctx)
-// {
-//     auto i8 = IntegerType::get(*ctx.context, 8);
-//     vector<Constant*> chars(text.size());
-//     for(int i = 0; i < text.size(); ++i) {
-//         chars[i] = ConstantInt::get(i8, text[i]);
-//     }
-//     chars.push_back(ConstantInt::get(i8, 0));
+optional<Value *> StringExpr::codegen(CompilationContext &ctx)
+{
+    auto i8 = IntegerType::get(*ctx.context, 8);
+    vector<Constant*> chars(text.size());
+    for(int i = 0; i < text.size(); ++i) {
+        chars[i] = ConstantInt::get(i8, text[i]);
+    }
+    chars.push_back(ConstantInt::get(i8, 0));
 
-//     auto stringType = ArrayType::get(i8, chars.size());
+    auto stringType = ArrayType::get(i8, chars.size());
 
-//     auto globalDecl = (GlobalVariable*) ctx.mod->getOrInsertGlobal(".str" + to_string(StringExpr::STR_TOTAL), stringType);
-//     globalDecl->setInitializer(ConstantArray::get(stringType, chars));
-//     globalDecl->setConstant(true);
-//     globalDecl->setLinkage(GlobalValue::LinkageTypes::PrivateLinkage);
-//     globalDecl->setUnnamedAddr(GlobalValue::UnnamedAddr::Global);
+    auto globalDecl = (GlobalVariable*) ctx.mod->getOrInsertGlobal(ctx.names.use(".str"), stringType);
+    globalDecl->setInitializer(ConstantArray::get(stringType, chars));
+    globalDecl->setConstant(true);
+    globalDecl->setLinkage(GlobalValue::LinkageTypes::PrivateLinkage);
+    globalDecl->setUnnamedAddr(GlobalValue::UnnamedAddr::Global);
 
-//     return ConstantExpr::getBitCast(v, i8->getPointerTo());
-// }
-optional<Value *> StringExpr::codegen(CompilationContext &ctx) {
-    // the original function has bugs :/
-
-    // plus, string might be a little bit weird to implement. For example, we might have to redeclare/declare our string
-    // See here: https://mapping-high-level-constructs-to-llvm-ir.readthedocs.io/en/latest/appendix-a-how-to-implement-a-string-type-in-llvm/index.html?highlight=string#how-to-implement-a-string-type-in-llvm
-    // basically i read a forum and for string literals we declare a pointer to an unnamed global variable, which is what this does
-    //  link: https://discourse.llvm.org/t/using-value-to-represent-interger-or-string-type/61968/2
-
-    return ctx.builder->CreateGlobalString(text);
+    return ConstantExpr::getBitCast(globalDecl, i8->getPointerTo());
 }
+
 
 static AllocaInst *CreateEntryBlockAlloca(CompilationContext &ctx,
                                         Function *TheFunction,
@@ -152,6 +143,7 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
 
     AllocaInst *inst = ctx.builder->CreateAlloca(retType, 0, name.c_str());
     ctx.namedValues[name] = inst;
+    cout << value->debug_info();
     auto rhs = value->codegen(ctx);
     if (!rhs)
         return {};
