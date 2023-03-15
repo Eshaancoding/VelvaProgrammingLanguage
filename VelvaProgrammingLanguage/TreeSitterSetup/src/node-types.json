@@ -470,6 +470,10 @@
         "required": true,
         "types": [
           {
+            "type": "auto",
+            "named": false
+          },
+          {
             "type": "primitive_type",
             "named": true
           }
@@ -584,6 +588,10 @@
   },
   {
     "type": ">=",
+    "named": false
+  },
+  {
+    "type": "auto",
     "named": false
   },
   {

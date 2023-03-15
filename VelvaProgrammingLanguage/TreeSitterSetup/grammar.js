@@ -58,7 +58,7 @@ module.exports = grammar({
 
         // variable declaration, assignment, manipulation
         var_declaration: $ => seq(
-            field("type", $.primitive_type),
+            field("type", choice($.primitive_type, "auto")),
             field("name", $.identifier),
             '=',
             field("value", $.expression),
