@@ -156,6 +156,7 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
     if (!rhs)
         return {};
     auto s = ctx.builder->CreateStore(*rhs, inst);
+    printf("done\n");
     // s->setVolatile(true);
     return s;
 };  
