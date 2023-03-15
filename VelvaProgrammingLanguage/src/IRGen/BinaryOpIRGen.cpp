@@ -66,3 +66,11 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
         return nullopt;
     }
 }
+
+VarDeclareExpr::VarDeclareExpr(VarMutability mutType, string name, unique_ptr<Expr> value, optional<string> type) : mutType(mutType), name(name), value(std::move(value)) {
+    auto typeExpr = value->return_type();
+    if (type && *type != typeExpr) {
+        throw invalid_argument("bruh not same type");
+    }
+    type = typeExpr;
+};

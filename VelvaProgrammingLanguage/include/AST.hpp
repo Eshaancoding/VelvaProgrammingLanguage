@@ -52,7 +52,7 @@ enum Types {
     INTEGER = 0,
     FLOAT = 1,
     BOOLEAN = 2,
-}
+};
 
 /**
  * @brief This object stores variables for a compilation context. Only use this once per compile task.
@@ -125,15 +125,15 @@ class IntExpr : public Expr {
 };
 
 // not implemented yet, just wondering if arrays would be something we want to implement in the future
-class ArrayExpr : public Expr {
-    public:
-        vector<unique_ptr<Expr>> arr; // for now this is only being used for a string implementation, any-type arrays will be added later ig
-        Types type;
-        ArrayExpr(vector<unique_ptr<Expr>> arr) : arr(move(arr)), type(type) {};
-        optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
-        string return_type() override;
-}
+// class ArrayExpr : public Expr {
+//     public:
+//         vector<unique_ptr<Expr>> arr; // for now this is only being used for a string implementation, any-type arrays will be added later ig
+//         Types type;
+//         ArrayExpr(vector<unique_ptr<Expr>> arr) : arr(move(arr)), type(type) {};
+//         optional<Value*> codegen(CompilationContext &ctx) override;
+//         string debug_info() override;
+//         string return_type() override;
+// };
 
 /**
  * @brief An AST node that represents a float literal.
@@ -346,7 +346,7 @@ class VarDeclareExpr : public Expr {
          * @brief The type; if nullopt, then use type inference.
          * 
          */
-        optional<string> type;
+        string type;
         /**
          * @brief The name of the variable to be declared.
          * 
@@ -357,7 +357,8 @@ class VarDeclareExpr : public Expr {
          * 
          */
         unique_ptr<Expr> value;
-        VarDeclareExpr(VarMutability mutType, string name, unique_ptr<Expr> value, optional<string> type) : mutType(mutType), name(name), value(std::move(value)), type(type) {};
+        // defined in BinaryOpIrGen.cpp
+        VarDeclareExpr(VarMutability mutType, string name, unique_ptr<Expr> value, optional<string> type);
         void alloc(CompilationContext &ctx);
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;

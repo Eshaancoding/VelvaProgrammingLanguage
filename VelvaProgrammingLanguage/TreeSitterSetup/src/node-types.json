@@ -635,6 +635,10 @@
     "named": false
   },
   {
+    "type": "string",
+    "named": false
+  },
+  {
     "type": "true",
     "named": false
   },

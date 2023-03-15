@@ -1,4 +1,5 @@
 int putchar(int i)
+float cos (float x)
 int getchar()
 int i = getchar()
 putchar(i)

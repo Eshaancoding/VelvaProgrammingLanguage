@@ -7,8 +7,6 @@ optional<Value *> IntExpr::codegen(CompilationContext &ctx)
     return ConstantInt::get(*ctx.context, APInt(numBits, num));
 }
 
-optional<Value *>
-
 optional<Value *> FloatExpr::codegen(CompilationContext &ctx)
 {
     return ConstantFP::get(*ctx.context, APFloat(decimal));
@@ -57,7 +55,7 @@ optional<Value *> StringExpr::codegen(CompilationContext &ctx) {
     // basically i read a forum and for string literals we declare a pointer to an unnamed global variable, which is what this does
     //  link: https://discourse.llvm.org/t/using-value-to-represent-interger-or-string-type/61968/2
 
-    return ctx.builder->CreateGlobalString(text, ctx.mod);
+    return ctx.builder->CreateGlobalString(text);
 }
 
 static AllocaInst *CreateEntryBlockAlloca(CompilationContext &ctx,

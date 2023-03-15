@@ -124,7 +124,8 @@ module.exports = grammar({
         primitive_type: $ => choice(
             'int',
             'float',
-            'bool'
+            'bool',
+            'string' // oh? not a primitive type? who asked
         ),
 
         //functions
