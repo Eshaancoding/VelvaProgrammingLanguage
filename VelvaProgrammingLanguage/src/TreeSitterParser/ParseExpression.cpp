@@ -4,6 +4,10 @@
 
 std::string determineType (std::string firstType, std::string secondType) {
     if (firstType == "string") return "string"; 
+    if (firstType == "float" && secondType == "float") return "float";
+    if (firstType == "int" && secondType == "int") return "float";
+    if (firstType == "boolean" && secondType == "boolean") return "boolean";
+
     if (firstType == "float" && secondType == "int") return "float";
     if (firstType == "int" && secondType == "float") return "float";
     if (firstType == "boolean" && secondType == "int") return "int"; // boolean is just going to be treated as a number
