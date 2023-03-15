@@ -61,10 +61,9 @@ std::unique_ptr<Expr> Parser::ParseFuncCall() {
     std::string name = cursor.getSourceStr();
 
     cursor.goToSibling();
+    cursor.printNode();
     for (int i = 0; i < lenArguments; i++) {
-        cursor.goToChild();
         auto expr = ParseExpression();
-        cursor.goToParent();
         cursor.goToSibling();
         params.push_back(move(expr));
     }

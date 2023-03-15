@@ -1,0 +1,3 @@
+int printf(string fmt)
+string ab = "hi"
+printf(ab)

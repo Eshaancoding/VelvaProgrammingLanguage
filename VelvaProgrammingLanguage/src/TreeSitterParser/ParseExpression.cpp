@@ -48,8 +48,11 @@ unique_ptr<Expr> Parser::ParseExpression () {
         return result;
     }
     else if (type == "func_call") {
+        cursor.printNode();
         auto result = ParseFuncCall();
+        cursor.printNode();
         cursor.goToParent();
+        cursor.printNode();
         return result;
     }
     else {
@@ -115,7 +118,7 @@ unique_ptr<Expr> Parser::ParseAssigment() {
         
         var_name = cursor.getSourceStr();
         
-        cursor.goToSibling();
+        cursor.goToSibling(true);
 
         auto baseChild = make_unique<VarUseExpr>(var_name);
         auto increment = make_unique<IntExpr>(1);
@@ -126,6 +129,7 @@ unique_ptr<Expr> Parser::ParseAssigment() {
         else if (cursor.getSourceStr() == "--")
             expr = make_unique<BinaryOpExpr>("-", move(baseChild), move(increment), "nan");
 
+        cursor.goToParent();
     } else {
         var_name = cursor.getSourceStr();
 

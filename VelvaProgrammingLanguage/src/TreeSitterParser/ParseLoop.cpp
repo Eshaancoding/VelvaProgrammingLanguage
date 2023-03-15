@@ -17,15 +17,28 @@ unique_ptr<Expr> Parser::ParseWhile() {
 unique_ptr<Expr> Parser::ParseForLoop() {
     cursor.goToChild();
 
+    assert(cursor.getType() == "var_declaration");
     auto varDecl = ParseVarDecl();
     cursor.goToSibling();
+
+    assert(cursor.getType() == "condition");
     auto condition = ParseCondition();
     cursor.goToSibling();
+
+    cursor.printNode();
+    assert(cursor.getType() == "assignment");
     auto operation = ParseAssigment();
     cursor.goToSibling();
+
+    cursor.printNode();
+    assert(cursor.getType() == "block");
+    cursor.printNode();
+
     auto block = ParseBlock();
 
+    cursor.printNode();
     cursor.goToParent();
+    cursor.printNode();
 
     return make_unique<ForExpr>(move(varDecl), move(condition), move(operation), move(block));
 }

@@ -25,7 +25,7 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx)
         else
             return {}; // WE NEED ERROR HANDLING AHHHHHHHHHHHHHHHH
     }
-    return ctx.builder->CreateCall(calleeF, argv, "calltmp");
+    return ctx.builder->CreateCall(calleeF, argv);
 }
 
 optional<Value *> StringExpr::codegen(CompilationContext &ctx)

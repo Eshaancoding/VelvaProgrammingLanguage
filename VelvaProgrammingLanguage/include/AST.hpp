@@ -54,6 +54,8 @@ enum Types {
     BOOLEAN = 2,
 };
 
+class BlockExpr;
+
 /**
  * @brief This object stores variables for a compilation context. Only use this once per compile task.
  * 
@@ -406,9 +408,9 @@ class ForExpr : public Expr {
         unique_ptr<Expr> varDecl; // i = 3;
         unique_ptr<Expr> condition; // i < 6;
         unique_ptr<Expr> operation; // i++
-        unique_ptr<Expr> body;
+        unique_ptr<BlockExpr> body;
 
-        ForExpr(unique_ptr<Expr> varDecl, unique_ptr<Expr> condition, unique_ptr<Expr> operation, unique_ptr<Expr> body) : varDecl(move(varDecl)), condition(move(condition)), operation(move(operation)), body(move(body)) {}
+        ForExpr(unique_ptr<Expr> varDecl, unique_ptr<Expr> condition, unique_ptr<Expr> operation, unique_ptr<BlockExpr> body) : varDecl(move(varDecl)), condition(move(condition)), operation(move(operation)), body(move(body)) {}
 
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
