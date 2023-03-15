@@ -144,12 +144,13 @@ optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 
 // error stuff literally just dummy functions because it has to override shit
 optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
-    AllocaInst *inst = ctx.builder->CreateAlloca(/*type == "int" ? Type::getInt32Ty(*ctx.context)
-            : type == "double" ? Type::getDoubleTy(*ctx.context)
-            : type == "string" ? Type::getInt8PtrTy(*ctx.context)
-            : Type::getInt32Ty(*ctx.context)*/ Type::getInt32Ty(*ctx.context),
-            0,
-            name.c_str());
+    auto retType = type == "int" ? Type::getInt32Ty(*ctx.context)
+        : type == "float" ? Type::getFloatTy(*ctx.context)
+        : type == "double" ? Type::getDoubleTy(*ctx.context)
+        : type == "string" ? Type::getInt8PtrTy(*ctx.context)
+        : Type::getVoidTy(*ctx.context);   
+
+    AllocaInst *inst = ctx.builder->CreateAlloca(retType, 0, name.c_str());
     ctx.namedValues[name] = inst;
     auto rhs = value->codegen(ctx);
     if (!rhs)

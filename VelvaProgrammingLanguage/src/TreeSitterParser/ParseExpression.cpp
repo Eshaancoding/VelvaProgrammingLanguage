@@ -23,7 +23,6 @@ unique_ptr<Expr> Parser::ParseExpression () {
     auto node = cursor.goToChild();
     auto type = cursor.getType();
 
-
     if (type == "binary_expression") {
         auto result = ParseBinaryOp();
         cursor.goToParent(); // go back to the expr parent

@@ -40,8 +40,7 @@ string DeclareFunctionExpr::debug_info() {
 
 string VarDeclareExpr::debug_info() {
     string result = "Var Declare Expr with name " + name;
-    if (type)
-        result += " with type " + *type;
+    result += " with type " + type;
     result += " and with multability type: ";
     if (mutType == VAR_MUTABILITY_VAR)
         result += "var";
