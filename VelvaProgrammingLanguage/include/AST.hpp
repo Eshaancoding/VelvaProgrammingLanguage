@@ -358,7 +358,7 @@ class VarDeclareExpr : public Expr {
          */
         unique_ptr<Expr> value;
         // defined in BinaryOpIrGen.cpp
-        VarDeclareExpr(VarMutability mutType, string name, unique_ptr<Expr> value, optional<string> type);
+        VarDeclareExpr(VarMutability mutTypeArg, string nameArg, unique_ptr<Expr> valueArg, optional<string> typeArg);
         void alloc(CompilationContext &ctx);
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;

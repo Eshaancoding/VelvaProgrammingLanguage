@@ -1,2 +1,1 @@
-float x = 3.0
-string v = "hello"
+string x = "hello" 
