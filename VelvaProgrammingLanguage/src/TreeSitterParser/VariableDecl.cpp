@@ -2,14 +2,17 @@
 
 
 unique_ptr<Expr> Parser::ParseVarDecl () {
-   
     // get primitive type
+
     cursor.goToChild();
-    assert(cursor.getType() == "primitive_type");
-    std::string primitiveType = cursor.getSourceStr();
-    
+    std::optional<std::string> primitiveType = std::nullopt;
+    if (cursor.getType() == "primitive_type") {
+        primitiveType = cursor.getSourceStr();
+        cursor.goToSibling();
+    }
+        
+        
     // get identifier
-    cursor.goToSibling();
     assert(cursor.getType() == "identifier");
     std::string identifier = cursor.getSourceStr();
     
