@@ -728,14 +728,39 @@
           "value": "\""
         },
         {
-          "type": "SYMBOL",
-          "name": "identifier"
-        },
-        {
-          "type": "STRING",
-          "value": "\""
+          "type": "FIELD",
+          "name": "content",
+          "content": {
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "escape"
+                },
+                {
+                  "type": "PATTERN",
+                  "value": "."
+                }
+              ]
+            }
+          }
         }
       ]
+    },
+    "escape": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "\n"
+        }
+      ]
+    },
+    "anyVal": {
+      "type": "PATTERN",
+      "value": ".*"
     },
     "identifier": {
       "type": "PATTERN",

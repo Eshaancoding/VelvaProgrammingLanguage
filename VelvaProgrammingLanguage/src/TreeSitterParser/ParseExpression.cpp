@@ -78,9 +78,10 @@ unique_ptr<Expr> Parser::ParseNumber() {
 }
 
 unique_ptr<Expr> Parser::ParseString() {
-    cursor.goToChild();
-    auto src = cursor.getSourceStr();
-
+    auto src = cursor.getSourceStr(); 
+    src.erase(src.begin()); // remove the supporting ""
+    src.pop_back();
+    printf("src: %s\n", src.c_str());
     return make_unique<StringExpr>(src);
 }
 

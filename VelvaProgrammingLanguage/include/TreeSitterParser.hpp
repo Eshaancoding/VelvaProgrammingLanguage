@@ -2,8 +2,8 @@
 #define PARSER_HPP
 
 #include "AST.hpp"
-#include "Lexer.hpp"
-#include "Token.hpp"
+//#include "Lexer.hpp"
+//#include "Token.hpp"
 #include <string>
 #include <memory.h>
 #include <map>
@@ -13,6 +13,7 @@
 #include <tuple>
 #include <functional>
 #include <cassert>
+#include <fstream>
 #include <stdio.h>
 #include <tree_sitter/api.h>
 #include <tree_sitter/parser.h>
@@ -28,7 +29,6 @@ extern "C"
 {
     const TSLanguage *tree_sitter_Velva(void);
 }
-
 class Parser {
 private:
     TSParser *parser;

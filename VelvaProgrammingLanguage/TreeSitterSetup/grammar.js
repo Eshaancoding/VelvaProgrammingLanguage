@@ -107,6 +107,7 @@ module.exports = grammar({
             $.identifier,
             choice("++", "--")
         ),
+        
 
         // binary expression (needs testing)
         binary_expression: $ => choice(
@@ -115,7 +116,6 @@ module.exports = grammar({
             prec.left(1, seq($.expression, '-', $.expression)),
             prec.left(1, seq($.expression, '+', $.expression)),
         ),
-
         // _operator: $ => choice(
         //     "+", "-", "*", "/"
         // ),
@@ -191,9 +191,15 @@ module.exports = grammar({
         
         string: $ => seq(
             "\"",
-            $.identifier,
-            "\""  
-        ),
+            field("content", repeat(choice(
+                $.escape,
+                /./,
+
+            )),
+            "\""   
+        )),
+        escape: $ => seq("\\"),
+        anyVal: $ => /.*/,
         identifier: $ => /[a-zA-Z]+/,
         number: $ => /[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/,
         boolean: $ => choice("true", "false")

@@ -1,7 +1,9 @@
-#include <error.h>
+#include <errno.h>
 #include <vector>
 #include <future>
 #include <tuple>
+#include <iostream>
+#include <functional>
 using namespace std;
 
 class TestError : public exception {
@@ -41,9 +43,9 @@ class TestSuite {
          * @param fn The lambda to execute when calling your test.
          * @param name The name of your test case
          */
-        void add(function<void()> fn, string name) const noexcept {
-            const TestCase tc = {fn, name};
-            cases.push_back(&tc);
+        void add(function<void()> fn, string name) noexcept {
+            TestCase tc = {fn, move(name)};
+            cases.push_back(tc);
         }
         /**
          * @brief Executes the test suite, printing results in the console.
@@ -54,7 +56,6 @@ class TestSuite {
          */
         void run() const {
             vector<future<int>> results;
-            cout << name << ":" << endl;
             for (auto &_case: cases) {
                 results.push_back(async([=]() {
                     try {
@@ -80,6 +81,6 @@ class TestSuite {
  * @param e The boolean.
  * @param error_msg Message if false
  */
-void require(bool e, string error_msg) {
+void check(bool e, string error_msg) {
     if(!e) throw TestError(error_msg);
 }

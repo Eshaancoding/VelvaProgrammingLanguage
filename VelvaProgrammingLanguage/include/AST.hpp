@@ -431,7 +431,15 @@ class TernaryExpr: public Expr {
 
 class WhileExpr: public Expr {
     public:
+        /**
+         * @brief While loop condition
+         * 
+         */
         unique_ptr<Expr> cond;
+        /**
+         * @brief While loop body
+         * 
+         */
         unique_ptr<Expr> body;
 
         WhileExpr(unique_ptr<Expr> cond, unique_ptr<Expr> body) : cond(move(cond)), body(move(body)) {};
@@ -440,8 +448,16 @@ class WhileExpr: public Expr {
         string return_type() override;
 };
 
+/**
+ * @brief Returns
+ * 
+ */
 class ReturnExpr : public Expr {
     public: 
+        /**
+         * @brief The return value
+         * 
+         */
         optional<unique_ptr<Expr>> val;
 
         ReturnExpr (optional<unique_ptr<Expr>> val) : val(move(val)) {};

@@ -3,16 +3,17 @@
 #include <fstream>
 #include <ctype.h>
 #include <stdio.h>
-#include "Parser.hpp"
+#include "TreeSitterParser.hpp"
+#include "AST.hpp"
 #include "TestRunner.hpp"
 using namespace std;
 
 int main (int argc, char** argv) {
     TestSuite suite("The Barkshaan Test Suite");
     suite.add([]() {
-        Parser parse = Parser("test.vld");
-        auto result = parse.MainParser();
-        require(result, "Something wrong happened");
+        Parser parse("test.vld");
+        auto result = parse.ParseAST();
+        check(2+2==5, "Dogshaan screwed up");
     }, "The Barkshaan Test Case");
     suite.run();
 }
