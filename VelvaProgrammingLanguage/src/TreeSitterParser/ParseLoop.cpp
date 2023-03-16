@@ -25,20 +25,15 @@ unique_ptr<Expr> Parser::ParseForLoop() {
     auto condition = ParseCondition();
     cursor.goToSibling();
 
-    cursor.printNode();
     assert(cursor.getType() == "assignment");
     auto operation = ParseAssigment();
     cursor.goToSibling();
 
-    cursor.printNode();
     assert(cursor.getType() == "block");
-    cursor.printNode();
 
     auto block = ParseBlock();
 
-    cursor.printNode();
     cursor.goToParent();
-    cursor.printNode();
 
     return make_unique<ForExpr>(move(varDecl), move(condition), move(operation), move(block));
 }

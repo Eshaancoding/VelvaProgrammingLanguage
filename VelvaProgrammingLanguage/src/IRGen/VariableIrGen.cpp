@@ -129,7 +129,6 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 {
     auto v = ctx.namedValues[var];
-    cout << var;
     return ctx.builder->CreateLoad(Type::getInt32Ty(*ctx.context), v, var.c_str());
 }
 
@@ -143,12 +142,10 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
 
     AllocaInst *inst = ctx.builder->CreateAlloca(retType, 0, name.c_str());
     ctx.namedValues[name] = inst;
-    cout << value->debug_info();
     auto rhs = value->codegen(ctx);
     if (!rhs)
         return {};
     auto s = ctx.builder->CreateStore(*rhs, inst);
-    printf("done\n");
     // s->setVolatile(true);
     return s;
 };  

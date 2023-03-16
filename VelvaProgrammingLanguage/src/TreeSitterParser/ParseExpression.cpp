@@ -48,11 +48,7 @@ unique_ptr<Expr> Parser::ParseExpression () {
         return result;
     }
     else if (type == "func_call") {
-        cursor.printNode();
         auto result = ParseFuncCall();
-        cursor.printNode();
-        cursor.goToParent();
-        cursor.printNode();
         return result;
     }
     else {

@@ -23,7 +23,6 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
     } else if (op == "%") {
         return ctx.builder->CreateICmpEQ(*(LHS->codegen(ctx)), *(RHS->codegen(ctx)));
     } else if (op == "==") {
-        cout << "----\n";
         auto a = *(LHS->codegen(ctx));
         auto b = *(RHS->codegen(ctx));
         return ctx.builder->CreateICmpEQ(a, b);
@@ -77,5 +76,4 @@ VarDeclareExpr::VarDeclareExpr(VarMutability mutTypeArg, string nameArg, unique_
         throw invalid_argument("bruh not same type");
     }
     type = typeExpr;
-    printf("type: %s\n", type.c_str());
 };

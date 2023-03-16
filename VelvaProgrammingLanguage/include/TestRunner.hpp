@@ -81,6 +81,6 @@ class TestSuite {
  * @param e The boolean.
  * @param error_msg Message if false
  */
-void check(bool e, string error_msg) {
+void check(bool e, string error_msg="") {
     if(!e) throw TestError(error_msg);
 }

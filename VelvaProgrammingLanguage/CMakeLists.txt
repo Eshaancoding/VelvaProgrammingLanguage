@@ -3,7 +3,7 @@ project(Velva)
 
 # set names
 set(COMPILER_NAME veld)
-set(TEST_NAME testVelva)
+set(TEST_NAME VelvaTest)
 set(LIB_NAME velva)
 
 ########################## MAKE THE LLVM LIBRARY ##########################
