@@ -1,96 +1,87 @@
 cmake_minimum_required(VERSION 3.13.4)
 project(Velva)
 
-# Linker LLVM components
-set(LLVM_LINK_COMPONENTS
-  aarch64asmparser
-  armasmparser
-  avrasmparser
-  bpfasmparser
-  mipsasmparser
-  msp430asmparser
-  powerpcasmparser
-  riscvasmparser
-  sparcasmparser
-  systemzasmparser
-  veasmparser
-  webassemblyasmparser
-  x86asmparser
-  amdgpuasmparser
-)
+# set names
+set(COMPILER_NAME veld)
+set(TEST_NAME testVelva)
+set(LIB_NAME velva)
 
-# For cmake flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wreturn-type") # return type errs are annoying
-set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -Wreturn-type")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+########################## MAKE THE LLVM LIBRARY ##########################
 
-
-# Check if both files exist
-if (NOT EXISTS "../cmake_pre.sh") 
-	message (FATAL_ERROR "Requires ../cmake_pre.sh file")
-endif()
-
-# Run bash file to set CMAKE_PREFIX_PATH
-execute_process (
-    COMMAND bash ../cmake_pre.sh
-    OUTPUT FAKE_PREFIX_PATH
-)
-list(APPEND CMAKE_PREFIX_PATH FAKE_PREFIX_PATH)
-
-message(STATUS "Prefix path: $ENV{CMAKE_PREFIX_PATH}")
-execute_process (
-    COMMAND bash ../list_files.sh
-    OUTPUT_VARIABLE VELVA_FILE_PATH
-)
-
-message (STATUS "File path: ${VELVA_FILE_PATH}")
+# Find package
 find_package(LLVM REQUIRED CONFIG) #Make sure that LLVM is in your CMAKE_PREFIX_PATH
+message(STATUS "Found LLVM Package")
 
-set(COMPILER_NAME "veld")
-set(TEST_NAME "testvld")
-
+# Assert that the version of LLVM is good
 if (NOT ${LLVM_PACKAGE_VERSION} VERSION_GREATER_EQUAL "15.0.0")
-    message(FATAL_ERROR "LLVM Package Requires version > 15.0.0!")
+  message(FATAL_ERROR "LLVM Package Requires version > 15.0.0!")
 endif()
 
-message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
-
-#In the future we can prob create a bash script to look through the dir automatically
-include(CTest)
-add_executable(${COMPILER_NAME} ${VELVA_FILE_PATH} $ENV{TREE_SITTER_PARSER_FILE} ../src/Driver/TSDriver.cpp) 
-add_executable(${TEST_NAME} ${VELVA_FILE_PATH} $ENV{TREE_SITTER_PARSER_FILE} ../tests/TestVLD.cpp)
-set_property(TARGET ${COMPILER_NAME} PROPERTY CXX_STANDARD 17) #We can set this to 20 in the future
-set_property(TARGET ${TEST_NAME} PROPERTY CXX_STANDARD 17) #We can set this to 20 in the future
-add_test(vtf ${TEST_NAME})
-
+# For generating targets that will be used to link the libraries
 foreach(target ${LLVM_TARGETS_TO_BUILD})
   list(APPEND targets "LLVM${target}CodeGen")
 endforeach()
 
-include_directories(${LLVM_INCLUDE_DIRS} $ENV{TREE_SITTER_LIB_INCLUDE} $ENV{TREE_SITTER_PARSER_INCLUDE} include)
-#target_include_directories(${TEST_NAME} PRIVATE ${LLVM_INCLUDE_DIRS} $ENV{TREE_SITTER_LIB_INCLUDE} $ENV{TREE_SITTER_PARSER_INCLUDE} include)
-separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
+# find lib names
+set(LLVM_LINK_COMPONENTS aarch64asmparser armasmparser avrasmparser bpfasmparser mipsasmparser msp430asmparser powerpcasmparser riscvasmparser sparcasmparser systemzasmparser veasmparser webassemblyasmparser x86asmparser amdgpuasmparser asmparser analysis support core object irreader executionengine scalaropts instcombine orcjit runtimedyld interpreter mc nativecodegen)
 
-get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-foreach(dir ${dirs})
-  message(STATUS "dir='${dir}'")
-endforeach()
+# get lib name
+llvm_map_components_to_libnames(llvm_libraries ${LLVM_LINK_COMPONENTS})
 
-# add_definitions(${LLVM_DEFINITIONS_LIST}, -fstandalone-debug)
-target_compile_definitions(${COMPILER_NAME} PUBLIC ${LLVM_DEFINITIONS_LIST})
-target_compile_definitions(${TEST_NAME} PUBLIC ${LLVM_DEFINITIONS_LIST})
+########################## MAKE THE VELVA LIBRARY ##########################
 
-llvm_map_components_to_libnames(llvm_libraries asmparser ${LLVM_LINK_COMPONENTS}  analysis support core object irreader executionengine scalaropts instcombine orcjit runtimedyld interpreter mc nativecodegen)
-#llvm_map_components_to_libnames(llvm_libraries all)
-#asmparser analysis support core object irreader executionengine scalaropts instcombine orcjit runtimedyld interpreter mc nativecodegen)
+set(SRC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(INCLUDE 
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${LLVM_INCLUDE_DIRS}
+  $ENV{TREE_SITTER_LIB_INCLUDE}
+)
 
-# message(STATUS "llvm libs: ${llvm_libraries}")
-# message(STATUS "targets: ${targets}")
+add_library(${LIB_NAME} STATIC 
+  ${SRC}/TreeSitterParser/MainParser.cpp
+  ${SRC}/TreeSitterParser/ParseBlock.cpp
+  ${SRC}/TreeSitterParser/ParseExpression.cpp
+  ${SRC}/TreeSitterParser/ParseFunctionDeclare.cpp
+  ${SRC}/TreeSitterParser/ParseIfStatement.cpp
+  ${SRC}/TreeSitterParser/ParseLoop.cpp
+  ${SRC}/TreeSitterParser/ParserInit.cpp
+  ${SRC}/TreeSitterParser/TreeSitterCursor.cpp
+  ${SRC}/TreeSitterParser/VariableDecl.cpp
+  ${SRC}/AST/ASTDebug.cpp
+  ${SRC}/AST/ASTReturnType.cpp
+  ${SRC}/AST/BlockExpr.cpp
+  ${SRC}/AST/Functions.cpp
+  ${SRC}/AST/Utils.cpp
+  ${SRC}/IRGen/BinaryOpIRGen.cpp
+  ${SRC}/IRGen/BlockIrGen.cpp
+  ${SRC}/IRGen/CompilationContext.cpp
+  ${SRC}/IRGen/LoopIrGen.cpp
+  ${SRC}/IRGen/TreeSitterIRGen.cpp
+  ${SRC}/IRGen/VariableIrGen.cpp
+  $ENV{TREE_SITTER_PARSER_FILE} 
+)
 
-message(STATUS "Tree sietter lib: $ENV{TREE_SITTER_LIB_FILE}")
+target_include_directories(${LIB_NAME} PUBLIC ${INCLUDE})
 
-add_library(treesitter SHARED IMPORTED)
-set_target_properties(treesitter PROPERTIES IMPORTED_LOCATION $ENV{TREE_SITTER_LIB_FILE})
+target_link_libraries(${LIB_NAME} PUBLIC 
+  ${llvm_libraries}             # Libraries from llvm
+  ${targets}                    # Targets from llvm 
+  $ENV{TREE_SITTER_LIB_FILE}    # parser.c from tree sitter
+)
 
-target_link_libraries(${COMPILER_NAME} ${llvm_libraries} ${targets} $ENV{TREE_SITTER_LIB_FILE} treesitter)
-target_link_libraries(${TEST_NAME} ${llvm_libraries} ${targets} $ENV{TREE_SITTER_LIB_FILE} treesitter)
+set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17
+
+
+########################## RUN TEST CPP WITH LIBRARY ##########################
+
+add_executable(${TEST_NAME} ../src/Driver/TestVLD.cpp)
+target_include_directories(${TEST_NAME} PUBLIC ${INCLUDE})
+target_link_libraries(${TEST_NAME} PUBLIC ${LIB_NAME})
+set_property(TARGET ${TEST_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17
+
+########################## RUN COMPILER CPP WITH LIBRARY ##########################
+
+add_executable(${COMPILER_NAME} ../src/Driver/TSDriver.cpp)
+target_include_directories(${COMPILER_NAME} PUBLIC ${INCLUDE})
+target_link_libraries(${COMPILER_NAME} PUBLIC ${LIB_NAME})
+set_property(TARGET ${COMPILER_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17
