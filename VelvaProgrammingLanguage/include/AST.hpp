@@ -68,6 +68,7 @@ struct CompilationContext {
         map<string, AllocaInst*> namedValues;
         map<string, Function*> functions;
         //std::unique_ptr<FunctionPassManager> fpm;
+        bool lessVerbose=false;
         NameRegistry names;
 
         CompilationContext();

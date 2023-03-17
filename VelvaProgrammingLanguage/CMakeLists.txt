@@ -4,7 +4,6 @@ project(Velva)
 set( CMAKE_VERBOSE_MAKEFILE on )
 # set names
 set(COMPILER_NAME veld)
-set(TEST_NAME VelvaTest)
 set(LIB_NAME velva)
 
 ########################## MAKE THE LLVM LIBRARY ##########################
@@ -72,15 +71,6 @@ target_link_libraries(${LIB_NAME} PUBLIC
 
 
 set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17
-
-
-########################## RUN TEST CPP WITH LIBRARY ##########################
-
-add_executable(${TEST_NAME} ../src/Driver/TestVLD.cpp)
-target_compile_options(${TEST_NAME} PUBLIC -fPIE)
-target_include_directories(${TEST_NAME} PUBLIC ${INCLUDE})
-target_link_libraries(${TEST_NAME} PUBLIC ${LIB_NAME})
-set_property(TARGET ${TEST_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17
 
 ########################## RUN COMPILER CPP WITH LIBRARY ##########################
 

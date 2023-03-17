@@ -1,7 +1,6 @@
 #include "AST.hpp"
 #include "Utils.hpp"
 
-
 optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
     // to be implemented
     if (op == "+") {

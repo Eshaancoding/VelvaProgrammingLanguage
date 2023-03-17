@@ -55,10 +55,10 @@ public:
     unique_ptr<Expr> ParseString ();
     unique_ptr<Expr> ParseIfStatement();
     unique_ptr<Expr> ParseIdentifier();
-    unique_ptr<BlockExpr> ParseBlock ();
+    unique_ptr<BlockExpr> ParseBlock (bool lessVerbose=false);
     unique_ptr<Expr> ParseCondition ();
     unique_ptr<DeclareFunctionExpr> ParseFunctionDeclare ();
-    unique_ptr<DeclareFunctionExpr> ParseAST ();
+    unique_ptr<DeclareFunctionExpr> ParseAST (bool lessVerbose=false);
 
     
    void printTree (bool printNoNamedNodes=false, std::optional<TSNode> nodeInp = std::nullopt, int lvl=0);

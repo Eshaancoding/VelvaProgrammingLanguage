@@ -6,6 +6,7 @@ CompilationContext::CompilationContext() {
     context = std::make_unique<LLVMContext>();
     mod = std::make_unique<Module>("mod", *context);
     builder = std::make_unique<IRBuilder<>>(*context);
+    lessVerbose = false;
 
     // fpm = make_unique<FunctionPassManager>(mod.get());
     // fpm->add(createInstructionCombiningPass());
@@ -50,7 +51,6 @@ void CompilationContext::compile() {
     InitializeAllAsmPrinters();
     
     auto targetTriple = sys::getDefaultTargetTriple();
-    printf("Target triple: %s\n", targetTriple.c_str());
 
     string error;
     auto target = TargetRegistry::lookupTarget(targetTriple, error);

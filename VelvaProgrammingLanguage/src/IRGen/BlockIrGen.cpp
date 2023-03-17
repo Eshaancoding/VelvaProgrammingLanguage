@@ -10,7 +10,8 @@ optional<Value*> BlockExpr::codegen (CompilationContext &ctx) {
         else if (function_map.count(i) == 1) {
             auto prevBlock = ctx.builder->GetInsertBlock();
             auto x = function_map[i]->codegen(ctx);
-            if (x) (*x)->print(llvm::errs());
+            if (!ctx.lessVerbose)
+                if (x) (*x)->print(llvm::errs());
             ctx.builder->SetInsertPoint(prevBlock);
         }
     }

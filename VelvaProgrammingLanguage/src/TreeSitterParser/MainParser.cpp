@@ -1,8 +1,8 @@
 #include "TreeSitterParser.hpp"
 
-std::unique_ptr<DeclareFunctionExpr> Parser::ParseAST () {
+std::unique_ptr<DeclareFunctionExpr> Parser::ParseAST (bool lessVerbose) {
     
-    unique_ptr<BlockExpr> block = ParseBlock();
+    unique_ptr<BlockExpr> block = ParseBlock(lessVerbose);
 
     cursor.goToParent();
 
