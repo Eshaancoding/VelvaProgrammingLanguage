@@ -14,7 +14,7 @@ public:
     TreeSitterCursor(TSTree *tree, std::string src);
     
     int getNumChilds (bool noName=false);
-    void printNode ();
+    void printNode (std::string name="");
     std::string getSourceStr ();
     TSNode currentNode ();
     std::string getType ();

@@ -1,3 +1,0 @@
-int printf(string fmt)
-int printf(string a)
-printf("hello world\n")

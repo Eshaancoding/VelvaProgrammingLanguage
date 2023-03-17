@@ -740,8 +740,8 @@
                   "name": "escape"
                 },
                 {
-                  "type": "PATTERN",
-                  "value": "."
+                  "type": "SYMBOL",
+                  "name": "anyVal"
                 }
               ]
             }
@@ -750,11 +750,11 @@
       ]
     },
     "escape": {
-      "type": "CHOICE",
+      "type": "SEQ",
       "members": [
         {
           "type": "STRING",
-          "value": "\n"
+          "value": "\\"
         }
       ]
     },

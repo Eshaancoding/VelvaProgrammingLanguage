@@ -1,0 +1,3 @@
+int putchar (int i)
+int x = 3
+putchar(x+48)

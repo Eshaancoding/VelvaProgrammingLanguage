@@ -49,7 +49,7 @@ int main(int argc, const char **argv)
     ctx.compile();
     printf("Successfully compiled!\n");
 
-    system("clang output.o");
+    system("clang -fPIE -fpie output.o");
     printf("Successfully linked. Running executable...\n");
 
     system("./a.out");

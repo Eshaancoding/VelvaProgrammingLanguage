@@ -49,6 +49,7 @@ unique_ptr<Expr> Parser::ParseExpression () {
     }
     else if (type == "func_call") {
         auto result = ParseFuncCall();
+        cursor.goToParent(); // go back to the expr parent
         return result;
     }
     else {

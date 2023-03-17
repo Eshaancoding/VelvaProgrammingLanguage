@@ -27,7 +27,6 @@ std::string exec(string cmd, string inp="") {
     while (fgets(buffer.data(), buffer.size(), inputPipe.get()) != nullptr) {
         result += buffer.data();
     }
-    printf("Result: %s\n", result.c_str());
     return result;
 }
 
@@ -46,8 +45,11 @@ int main (int argc, char** argv) {
     TestSuite suite("The Barkshaan Test Suite");
     
     // test suites
-    // suite.add([](){check(getResult("test.vld")=="");}, "test.vld Test Case");
-    suite.add([](){check(getResult("put.vld", "a\r")=="a");}, "printf.vld Test Case");
+    suite.add([](){check(getResult("test.vld")=="");}, "test.vld Test Case");
+    suite.add([](){check(getResult("FunctionTest.vld")=="9");}, "Function Loop Test Case");
+    suite.add([](){check(getResult("ForLoop.vld")=="ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz");}, "For loop Test Case");
+    suite.add([](){check(getResult("Auto.vld")=="3");}, "Auto keyword loop Test Case");
+    suite.add([](){check(getResult("Printf.vld")=="");}, "Auto keyword loop Test Case");
 
     suite.run();
 }

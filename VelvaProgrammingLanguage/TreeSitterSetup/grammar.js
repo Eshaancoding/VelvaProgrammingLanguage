@@ -193,8 +193,7 @@ module.exports = grammar({
             "\"",
             field("content", repeat(choice(
                 $.escape,
-                /./,
-
+                $.anyVal
             )),
             "\""   
         )),

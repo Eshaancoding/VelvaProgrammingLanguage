@@ -1,0 +1,8 @@
+int putchar(int)
+func addToResult (int a, int b)  {
+    int result = a + b / 3 + 6
+    result--
+    putchar(48+result) 
+}
+
+addToResult(3,4)

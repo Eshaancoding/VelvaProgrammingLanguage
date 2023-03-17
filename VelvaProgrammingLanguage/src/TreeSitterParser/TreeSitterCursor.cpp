@@ -105,11 +105,14 @@ std::string TreeSitterCursor::getType () {
     return std::string(ts_node_type(currentNode()));
 }
 
-void TreeSitterCursor::printNode() {
+void TreeSitterCursor::printNode(std::string name) {
     auto node = currentNode();
     TSPoint start = ts_node_start_point(node);
     TSPoint end = ts_node_end_point(node);
 
     const char *string = ts_node_type(node);
+    if (name != "")
+        printf("====== NAME: %s ===== ", name.c_str());
     printf("%s: start: %d %d end %d %d\n", string, start.row, start.column, end.row, end.column);
+    
 } 

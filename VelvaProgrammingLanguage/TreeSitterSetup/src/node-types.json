@@ -450,6 +450,10 @@
         "required": false,
         "types": [
           {
+            "type": "anyVal",
+            "named": true
+          },
+          {
             "type": "escape",
             "named": true
           }
@@ -595,6 +599,14 @@
   {
     "type": ">=",
     "named": false
+  },
+  {
+    "type": "\\",
+    "named": false
+  },
+  {
+    "type": "anyVal",
+    "named": true
   },
   {
     "type": "auto",

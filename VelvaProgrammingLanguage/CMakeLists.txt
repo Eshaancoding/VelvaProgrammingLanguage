@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.13.4)
 project(Velva)
 
+set( CMAKE_VERBOSE_MAKEFILE on )
 # set names
 set(COMPILER_NAME veld)
 set(TEST_NAME VelvaTest)
@@ -62,12 +63,13 @@ add_library(${LIB_NAME} STATIC
 )
 
 target_include_directories(${LIB_NAME} PUBLIC ${INCLUDE})
-
+target_compile_options(${LIB_NAME} PUBLIC -fPIE -fpie)
 target_link_libraries(${LIB_NAME} PUBLIC 
   ${llvm_libraries}             # Libraries from llvm
   ${targets}                    # Targets from llvm 
   $ENV{TREE_SITTER_LIB_FILE}    # parser.c from tree sitter
 )
+
 
 set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17
 
@@ -75,6 +77,7 @@ set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17
 ########################## RUN TEST CPP WITH LIBRARY ##########################
 
 add_executable(${TEST_NAME} ../src/Driver/TestVLD.cpp)
+target_compile_options(${TEST_NAME} PUBLIC -fPIE)
 target_include_directories(${TEST_NAME} PUBLIC ${INCLUDE})
 target_link_libraries(${TEST_NAME} PUBLIC ${LIB_NAME})
 set_property(TARGET ${TEST_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17
@@ -82,6 +85,7 @@ set_property(TARGET ${TEST_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17
 ########################## RUN COMPILER CPP WITH LIBRARY ##########################
 
 add_executable(${COMPILER_NAME} ../src/Driver/TSDriver.cpp)
+target_compile_options(${COMPILER_NAME} PUBLIC -fPIE)
 target_include_directories(${COMPILER_NAME} PUBLIC ${INCLUDE})
 target_link_libraries(${COMPILER_NAME} PUBLIC ${LIB_NAME})
 set_property(TARGET ${COMPILER_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17

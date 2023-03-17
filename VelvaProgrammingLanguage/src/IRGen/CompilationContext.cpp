@@ -50,6 +50,7 @@ void CompilationContext::compile() {
     InitializeAllAsmPrinters();
     
     auto targetTriple = sys::getDefaultTargetTriple();
+    printf("Target triple: %s\n", targetTriple.c_str());
 
     string error;
     auto target = TargetRegistry::lookupTarget(targetTriple, error);
@@ -58,7 +59,7 @@ void CompilationContext::compile() {
     auto cpu = "generic";
     auto features = "";
     TargetOptions opt;
-    auto rm = Optional<Reloc::Model>();
+    auto rm = Optional<Reloc::Model>(Reloc::PIC_);
     auto targetMachine = target->createTargetMachine(targetTriple, cpu, features, opt, rm);
 
     mod->setDataLayout(targetMachine->createDataLayout());

@@ -1,5 +1,0 @@
-func a (int x, int y) {
-    return x + y
-}
-
-a(3+3, 5+5)
