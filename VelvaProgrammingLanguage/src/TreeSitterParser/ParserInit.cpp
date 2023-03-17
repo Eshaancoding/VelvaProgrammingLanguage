@@ -27,7 +27,9 @@ Parser::Parser(const char *filename)
         strlen(str.c_str())
     );
 
+    printf("cursor...\n");
     cursor = TreeSitterCursor(tree, str);
+    printf("don....");
 }
 
 Parser::~Parser()

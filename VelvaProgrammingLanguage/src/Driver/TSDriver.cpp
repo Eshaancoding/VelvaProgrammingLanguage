@@ -26,18 +26,11 @@ int main(int argc, const char **argv)
 
     CompilationContext ctx;
     ctx.lessVerbose = lessVerbose;
+    if (!lessVerbose) printf("Starting...\n");
+
     Parser pars(filename);
     if (!lessVerbose)
         pars.printTree(true);
-    // auto x = DeclareFunctionExpr(
-    //     true,
-    //     false,
-    //     EXIT_SYMBOL,
-    //     (vector<tuple<string, string>>) { {"int", "code"}},
-    //     std::nullopt,
-    //     std::nullopt
-    // ).codegen(ctx);
-    // (*x)->print(errs());
     auto main_fn = pars.ParseAST();
     if (!lessVerbose) printf("============================= CodeGen =======================\n");
     

@@ -62,7 +62,7 @@ add_library(${LIB_NAME} STATIC
 )
 
 target_include_directories(${LIB_NAME} PUBLIC ${INCLUDE})
-target_compile_options(${LIB_NAME} PUBLIC -fPIE -fpie)
+target_compile_options(${LIB_NAME} PUBLIC -fPIE -fpie -g)
 target_link_libraries(${LIB_NAME} PUBLIC 
   ${llvm_libraries}             # Libraries from llvm
   ${targets}                    # Targets from llvm 
@@ -75,7 +75,34 @@ set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17
 ########################## RUN COMPILER CPP WITH LIBRARY ##########################
 
 add_executable(${COMPILER_NAME} ../src/Driver/TSDriver.cpp)
-target_compile_options(${COMPILER_NAME} PUBLIC -fPIE)
+target_compile_options(${COMPILER_NAME} PUBLIC "-g")
 target_include_directories(${COMPILER_NAME} PUBLIC ${INCLUDE})
 target_link_libraries(${COMPILER_NAME} PUBLIC ${LIB_NAME})
 set_property(TARGET ${COMPILER_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17
+
+################################### SET TESTS #####################################
+include(CTest)
+
+add_test(
+  NAME FunctionTest
+  COMMAND ./veld ../tests/FunctionTest.vld ctest
+)
+set_property(TEST FunctionTest PROPERTY PASS_REGULAR_EXPRESSION "^9")
+
+add_test(
+  NAME ForLoop
+  COMMAND ./veld ../tests/ForLoop.vld ctest
+)
+set_property(TEST ForLoop PROPERTY PASS_REGULAR_EXPRESSION "^ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz")
+
+add_test(
+  NAME AutoKeyword
+  COMMAND ./veld ../tests/Auto.vld ctest
+)
+set_property(TEST AutoKeyword PROPERTY PASS_REGULAR_EXPRESSION "^3")
+
+add_test(
+  NAME Strings
+  COMMAND ./veld ../tests/Strings.vld ctest
+)
+set_property(TEST Strings PROPERTY PASS_REGULAR_EXPRESSION "^hello world")
