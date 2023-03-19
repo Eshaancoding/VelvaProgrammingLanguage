@@ -1,6 +1,0 @@
-build/
-.vscode/
-.DS_Store
-tree-sitter-velva/src
-tree-sitter-velva/bindings
-rel
