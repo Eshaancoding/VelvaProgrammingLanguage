@@ -1,0 +1,13 @@
+int putchar(int i)
+int ab = 3
+if (ab == 4) {
+    ab = 6
+}
+else if (ab == 3) {
+    ab = 2
+}
+else {
+    ab = 5
+}
+
+putchar(ab+48)

@@ -1,8 +1,0 @@
-func hello (int a, int b) -> int {
-    int x = 2*3
-    int y = x + 62
-    return y
-}
-
-int a = 3
-int b = 5

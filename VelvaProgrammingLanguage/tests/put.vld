@@ -1,0 +1,4 @@
+int putchar(int i)
+int getchar()
+int i = getchar()
+putchar(i)

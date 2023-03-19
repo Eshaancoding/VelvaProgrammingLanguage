@@ -6,6 +6,7 @@ CompilationContext::CompilationContext() {
     context = std::make_unique<LLVMContext>();
     mod = std::make_unique<Module>("mod", *context);
     builder = std::make_unique<IRBuilder<>>(*context);
+    lessVerbose = false;
 
     // fpm = make_unique<FunctionPassManager>(mod.get());
     // fpm->add(createInstructionCombiningPass());
@@ -49,7 +50,6 @@ void CompilationContext::compile() {
     InitializeAllAsmParsers();
     InitializeAllAsmPrinters();
     
-    printf("Test: %s\n", sys::getDefaultTargetTriple().c_str());
     auto targetTriple = sys::getDefaultTargetTriple();
 
     string error;
@@ -59,7 +59,7 @@ void CompilationContext::compile() {
     auto cpu = "generic";
     auto features = "";
     TargetOptions opt;
-    auto rm = Optional<Reloc::Model>();
+    auto rm = Optional<Reloc::Model>(Reloc::PIC_);
     auto targetMachine = target->createTargetMachine(targetTriple, cpu, features, opt, rm);
 
     mod->setDataLayout(targetMachine->createDataLayout());

@@ -48,6 +48,14 @@ using namespace llvm;
 using namespace llvm::sys;
 // IR generation variables
 
+enum Types {
+    INTEGER = 0,
+    FLOAT = 1,
+    BOOLEAN = 2,
+};
+
+class BlockExpr;
+
 /**
  * @brief This object stores variables for a compilation context. Only use this once per compile task.
  * 
@@ -58,7 +66,9 @@ struct CompilationContext {
         std::unique_ptr<IRBuilder<>> builder;
         std::unique_ptr<Module> mod;
         map<string, AllocaInst*> namedValues;
+        map<string, Function*> functions;
         //std::unique_ptr<FunctionPassManager> fpm;
+        bool lessVerbose=false;
         NameRegistry names;
 
         CompilationContext();
@@ -116,6 +126,17 @@ class IntExpr : public Expr {
         string debug_info () override;
         string return_type () override; // just returns string, declared in AST Constructors.cpp
 };
+
+// not implemented yet, just wondering if arrays would be something we want to implement in the future
+// class ArrayExpr : public Expr {
+//     public:
+//         vector<unique_ptr<Expr>> arr; // for now this is only being used for a string implementation, any-type arrays will be added later ig
+//         Types type;
+//         ArrayExpr(vector<unique_ptr<Expr>> arr) : arr(move(arr)), type(type) {};
+//         optional<Value*> codegen(CompilationContext &ctx) override;
+//         string debug_info() override;
+//         string return_type() override;
+// };
 
 /**
  * @brief An AST node that represents a float literal.
@@ -183,6 +204,23 @@ class BinaryOpExpr : public Expr {
         string return_type() override;
 };
 
+class DeclareFunctionExpr;
+
+class BlockExpr : public Expr {
+    private:
+        int counter = 0;
+        map<int, unique_ptr<Expr>> expr_map;
+        map<int, unique_ptr<DeclareFunctionExpr>> function_map; 
+    public: 
+        BlockExpr () = default;
+        void add (unique_ptr<Expr> expr); 
+        void add (vector<unique_ptr<Expr>> expr); 
+        void add (unique_ptr<DeclareFunctionExpr> func);   
+        string return_type () override;
+        string debug_info () override;
+        optional<Value*> codegen (CompilationContext &ctx) override;
+};
+
 /**
  * @brief An AST node representing a function prototype.
  * 
@@ -214,7 +252,7 @@ class DeclareFunctionExpr {
          */
         optional<std::string> returnType;
         bool isReal = true;
-        vector<unique_ptr<Expr>> body;
+        optional<unique_ptr<BlockExpr>> body;
 
         DeclareFunctionExpr(
             bool isExternal, 
@@ -222,7 +260,7 @@ class DeclareFunctionExpr {
             string name, 
             vector<tuple<string, string> > params, 
             optional<string> returnType, 
-            vector<unique_ptr<Expr>> body={}
+            optional<unique_ptr<BlockExpr>> body // <-- should be block expr
         ) : isPure(isPure), name(name), params(params), returnType(returnType), isExternal(isExternal), body(move(body)) {};
         optional<Function*> codegen(CompilationContext &ctx);
         string debug_info();
@@ -311,7 +349,7 @@ class VarDeclareExpr : public Expr {
          * @brief The type; if nullopt, then use type inference.
          * 
          */
-        optional<string> type;
+        string type;
         /**
          * @brief The name of the variable to be declared.
          * 
@@ -322,7 +360,8 @@ class VarDeclareExpr : public Expr {
          * 
          */
         unique_ptr<Expr> value;
-        VarDeclareExpr(VarMutability mutType, string name, unique_ptr<Expr> value, optional<string> type) : mutType(mutType), name(name), value(std::move(value)), type(type) {};
+        // defined in BinaryOpIrGen.cpp
+        VarDeclareExpr(VarMutability mutTypeArg, string nameArg, unique_ptr<Expr> valueArg, optional<string> typeArg);
         void alloc(CompilationContext &ctx);
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
@@ -357,25 +396,27 @@ class BranchExpr: public Expr {
         * @brief first argument in the map is the conditional statement (if it's null, then it's an else statement)
         * the other argument: vector<Expr> is the body of the if statement 
         */
-        vector<tuple<optional<unique_ptr<Expr>>, vector<unique_ptr<Expr>>>> ifMap;
-        BranchExpr(vector<tuple<optional<unique_ptr<Expr>>, vector<unique_ptr<Expr>>>> ifmaps) : ifMap(move(ifmaps)) {};
+        vector<tuple<optional<unique_ptr<Expr>>, unique_ptr<Expr>>> ifMap;
+        BranchExpr(vector<tuple<optional<unique_ptr<Expr>>, unique_ptr<Expr>>> ifmaps) : ifMap(move(ifmaps)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
         string return_type() override;
 };
 
-// class ForExpr : public Expr vector<tuple<optional<unique_ptr<Expr>>, vector<unique_ptr<Expr>>>>{
-//     public:
-//         unique_ptr<Expr> Start, End, Step;
-//         vector<unique_ptr<Expr>> body;
+class ForExpr : public Expr {
+    public:
+        // for (int i = 3; i < 6; i++)
+        unique_ptr<Expr> varDecl; // i = 3;
+        unique_ptr<Expr> condition; // i < 6;
+        unique_ptr<Expr> operation; // i++
+        unique_ptr<BlockExpr> body;
 
-//         ForExpr(unique_ptr<Expr>> Start, optional<unique_ptr<Expr>> End,
-//         optional<unique_ptr<Expr>> Step, optional<vector<unique_ptr<Expr>>> Body) : 
-//         Start(move(Start)), End(move(End)), Step(move(Step)), Body(move(Body)) {};
+        ForExpr(unique_ptr<Expr> varDecl, unique_ptr<Expr> condition, unique_ptr<Expr> operation, unique_ptr<BlockExpr> body) : varDecl(move(varDecl)), condition(move(condition)), operation(move(operation)), body(move(body)) {}
 
-//         optional<Value*> codegen(CompilationContext &ctx) override;
-//         string debug_info() override;
-// };
+        optional<Value*> codegen(CompilationContext &ctx) override;
+        string debug_info() override;
+        string return_type() override;
+};
 
 
 // ex: i == 3 ? 0 : 1
@@ -391,20 +432,39 @@ class TernaryExpr: public Expr {
 
 class WhileExpr: public Expr {
     public:
+        /**
+         * @brief While loop condition
+         * 
+         */
         unique_ptr<Expr> cond;
-        vector<unique_ptr<Expr>> body;
+        /**
+         * @brief While loop body
+         * 
+         */
+        unique_ptr<Expr> body;
 
-        WhileExpr(unique_ptr<Expr> cond, vector<unique_ptr<Expr>> body) : cond(move(cond)), body(move(body)) {};
+        WhileExpr(unique_ptr<Expr> cond, unique_ptr<Expr> body) : cond(move(cond)), body(move(body)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
         string return_type() override;
 };
 
-class ReturnStateExpr : public Expr {
+/**
+ * @brief Returns
+ * 
+ */
+class ReturnExpr : public Expr {
     public: 
-        unique_ptr<Expr> val_return;
-        ReturnStateExpr(unique_ptr<Expr> val) : val_return(move(val)) {};
-        optional<Value*> codegen (CompilationContext &ctx) override;
+        /**
+         * @brief The return value
+         * 
+         */
+        optional<unique_ptr<Expr>> val;
+
+        ReturnExpr (optional<unique_ptr<Expr>> val) : val(move(val)) {};
+        optional<Value*> codegen (CompilationContext &ctx ) override; 
+        string debug_info() override;
+        string return_type() override;
 };
 
 #endif

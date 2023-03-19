@@ -8,6 +8,8 @@ string AssignExpr::debug_info() { return "Assign Expr with variable name " + var
 string BinaryOpExpr::debug_info() { return "Binary Operation expr with LHS [" + LHS->debug_info() + "] and RHS [" + RHS->debug_info() + "] with operation: " + op + " and with result type: " + rt; }
 string StringExpr::debug_info() { return "String Expr with text: " + text; }
 string ErrorExpr::debug_info() { return "Error Expr!"; }
+string BlockExpr::debug_info() { return "Block expr"; }
+string ForExpr::debug_info() { return "For loop"; }
 
 // hi daniel you want me to compile it for you?
 
@@ -38,8 +40,7 @@ string DeclareFunctionExpr::debug_info() {
 
 string VarDeclareExpr::debug_info() {
     string result = "Var Declare Expr with name " + name;
-    if (type)
-        result += " with type " + *type;
+    result += " with type " + type;
     result += " and with multability type: ";
     if (mutType == VAR_MUTABILITY_VAR)
         result += "var";
@@ -48,4 +49,8 @@ string VarDeclareExpr::debug_info() {
     result += " and with value: [" + value->debug_info() + "]";
 
     return result;
+}
+
+string ReturnExpr::debug_info() {
+    return "Return expr";
 }

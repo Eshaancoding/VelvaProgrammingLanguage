@@ -1,5 +1,0 @@
-func addToResult (int a, int b)  {
-    int result = a + b
-}
-
-f(3,4)

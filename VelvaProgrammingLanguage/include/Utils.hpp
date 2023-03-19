@@ -123,16 +123,16 @@ using namespace std;
 //     throw "this function call does not work";
 // }
 
-/**
- * @brief Use this in order to overload lambdas.
- * Simply type Overload { [](char a) { ... lambda 1 ... }, [](int a) { ... lambda 1 ... } , ...} for whatever types, and it just works!
- * @tparam Ts An internal type representing the types of all of the lambdas
- */
-template<typename ... Ts>                                  
-struct Overload : Ts ... { 
-    using Ts::operator() ...;
-};
-template<class... Ts> Overload(Ts...) -> Overload<Ts...>; 
+// /**
+//  * @brief Use this in order to overload lambdas.
+//  * Simply type Overload { [](char a) { ... lambda 1 ... }, [](int a) { ... lambda 1 ... } , ...} for whatever types, and it just works!
+//  * @tparam Ts An internal type representing the types of all of the lambdas
+//  */
+// template<typename ... Ts>                                  
+// struct Overload : Ts ... { 
+//     using Ts::operator() ...;
+// };
+// template<class... Ts> Overload(Ts...) -> Overload<Ts...>; 
 
 
 class NameRegistry {

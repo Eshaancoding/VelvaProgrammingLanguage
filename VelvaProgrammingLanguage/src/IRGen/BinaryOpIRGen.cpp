@@ -22,7 +22,6 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
     } else if (op == "%") {
         return ctx.builder->CreateICmpEQ(*(LHS->codegen(ctx)), *(RHS->codegen(ctx)));
     } else if (op == "==") {
-        cout << "----\n";
         auto a = *(LHS->codegen(ctx));
         auto b = *(RHS->codegen(ctx));
         return ctx.builder->CreateICmpEQ(a, b);
@@ -65,3 +64,15 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
         return nullopt;
     }
 }
+
+VarDeclareExpr::VarDeclareExpr(VarMutability mutTypeArg, string nameArg, unique_ptr<Expr> valueArg, optional<string> typeArg) {
+    value = move(valueArg); 
+    mutType = mutTypeArg;
+    name = nameArg;
+
+    auto typeExpr = value->return_type();
+    if (typeArg && *typeArg != typeExpr) {
+        throw invalid_argument("bruh not same type");
+    }
+    type = typeExpr;
+};

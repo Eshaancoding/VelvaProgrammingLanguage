@@ -25,36 +25,36 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx)
         else
             return {}; // WE NEED ERROR HANDLING AHHHHHHHHHHHHHHHH
     }
-    return ctx.builder->CreateCall(calleeF, argv, "calltmp");
+    return ctx.builder->CreateCall(calleeF, argv);
 }
 
-// optional<Value *> StringExpr::codegen(CompilationContext &ctx)
-// {
-//     auto i8 = IntegerType::get(*ctx.context, 8);
-//     vector<Constant*> chars(text.size());
-//     for(int i = 0; i < text.size(); ++i) {
-//         chars[i] = ConstantInt::get(i8, text[i]);
-//     }
-//     chars.push_back(ConstantInt::get(i8, 0));
+optional<Value *> StringExpr::codegen(CompilationContext &ctx)
+{
+    auto i8 = IntegerType::get(*ctx.context, 8);
+    vector<Constant*> chars(text.size());
+    for(int i = 0; i < text.size(); ++i) {
+        chars[i] = ConstantInt::get(i8, text[i]);
+    }
+    chars.push_back(ConstantInt::get(i8, 0));
 
-//     auto stringType = ArrayType::get(i8, chars.size());
+    auto stringType = ArrayType::get(i8, chars.size());
 
-//     auto globalDecl = (GlobalVariable*) ctx.mod->getOrInsertGlobal(".str" + to_string(StringExpr::STR_TOTAL), stringType);
-//     globalDecl->setInitializer(ConstantArray::get(stringType, chars));
-//     globalDecl->setConstant(true);
-//     globalDecl->setLinkage(GlobalValue::LinkageTypes::PrivateLinkage);
-//     globalDecl->setUnnamedAddr(GlobalValue::UnnamedAddr::Global);
+    auto globalDecl = (GlobalVariable*) ctx.mod->getOrInsertGlobal(ctx.names.use(".str"), stringType);
+    globalDecl->setInitializer(ConstantArray::get(stringType, chars));
+    globalDecl->setConstant(true);
+    globalDecl->setLinkage(GlobalValue::LinkageTypes::PrivateLinkage);
+    globalDecl->setUnnamedAddr(GlobalValue::UnnamedAddr::Global);
 
-//     return ConstantExpr::getBitCast(v, i8->getPointerTo());
-// }
-optional<Value *> StringExpr::codegen(CompilationContext &ctx) {
-    return nullopt; // the original function has bugs :/
+    return ConstantExpr::getBitCast(globalDecl, i8->getPointerTo());
+}
 
-    // plus, string might be a little bit weird to implement. For example, we might have to redeclare/declare our string
-    // See here: https://mapping-high-level-constructs-to-llvm-ir.readthedocs.io/en/latest/appendix-a-how-to-implement-a-string-type-in-llvm/index.html?highlight=string#how-to-implement-a-string-type-in-llvm
 
-    // also, why are you setting initializerconstant linkage? Is that mandatory
-    // Plus parser doesn't implement string anyway :shrug:
+static AllocaInst *CreateEntryBlockAlloca(CompilationContext &ctx,
+                                        Function *TheFunction,
+                                        const std::string &VarName) {
+  IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
+                   TheFunction->getEntryBlock().begin());
+  return TmpB.CreateAlloca(Type::getDoubleTy(*ctx.context), nullptr, VarName);
 }
 
 optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
@@ -68,8 +68,8 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         if  (get<0>(param) == "int") {
             paramTypes.push_back(Type::getInt32Ty(*ctx.context));
         } 
-        else if (get<0>(param) == "double") {
-            paramTypes.push_back(Type::getDoubleTy(*ctx.context));
+        else if (get<0>(param) == "float") {
+            paramTypes.push_back(Type::getFloatTy(*ctx.context));
         } 
         else if (get<0>(param) == "string") {
             paramTypes.push_back(Type::getInt8PtrTy(*ctx.context));
@@ -79,7 +79,9 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         // ctx.namedValues[name] = inst;
     }
 
+
     auto retType = returnType == "int" ? Type::getInt32Ty(*ctx.context)
+            : returnType == "float" ? Type::getFloatTy(*ctx.context)
             : returnType == "double" ? Type::getDoubleTy(*ctx.context)
             : returnType == "string" ? Type::getInt8PtrTy(*ctx.context)
             : Type::getVoidTy(*ctx.context);
@@ -94,25 +96,36 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         Arg.setName(get<1>(params[Idx]));
         Idx++;
     }
-    BasicBlock *bb = BasicBlock::Create(*ctx.context, name, F);
-    ctx.builder->SetInsertPoint(bb);
-    
-    // ctx.namedValues.clear() ; // Functions need to be declared before any vars ; we should prob do a scoping thing in the future
-    // for(auto &arg : F->args()) {
-    //     ctx.namedValues[arg.getName().str()] = &arg;
-    // }
+    if(!isExternal) {
+        auto block = ctx.builder->GetInsertBlock();
 
-    // codegen through all expressions
-    
-    for (auto &expr: body) { 
-        expr->codegen(ctx); 
+        BasicBlock *bb = BasicBlock::Create(*ctx.context, name, F);
+        ctx.builder->SetInsertPoint(bb);
+        
+        // ctx.namedValues.clear() ; // Functions need to be declared before any vars ; we should prob do a scoping thing in the future
+        for(auto &arg : F->args()) {
+
+            // Create an alloca for this variable.
+            AllocaInst *Alloca = CreateEntryBlockAlloca(ctx, F, arg.getName().str());
+
+            // Store the initial value into the alloca.
+            ctx.builder->CreateStore(&arg, Alloca);
+
+            // Add arguments to variable symbol table.
+            ctx.namedValues[arg.getName().str()] = Alloca;
+        }
+        // codegen through all expressions
+        (*body)->codegen(ctx);
+
+        if (!returnType) {
+            ctx.builder->CreateRetVoid();
+        }
+
+        ctx.builder->SetInsertPoint(block);
     }
-
-    // if we do not return anything, then we just return nothing. However if we do return, then we have the return statement handle that (parsed by runner and created by AST)
-    if (!returnType)
-        ctx.builder->CreateRet(nullptr);
-
     verifyFunction(*F);
+
+    
 
     return F;
 }
@@ -125,18 +138,19 @@ optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 
 // error stuff literally just dummy functions because it has to override shit
 optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
-    AllocaInst *inst = ctx.builder->CreateAlloca(/*type == "int" ? Type::getInt32Ty(*ctx.context)
-            : type == "double" ? Type::getDoubleTy(*ctx.context)
-            : type == "string" ? Type::getInt8PtrTy(*ctx.context)
-            : Type::getInt32Ty(*ctx.context)*/ Type::getInt32Ty(*ctx.context),
-            0,
-            name.c_str());
+    auto retType = type == "int" ? Type::getInt32Ty(*ctx.context)
+        : type == "float" ? Type::getFloatTy(*ctx.context)
+        : type == "double" ? Type::getDoubleTy(*ctx.context)
+        : type == "string" ? Type::getInt8PtrTy(*ctx.context)
+        : Type::getVoidTy(*ctx.context);   
+
+    AllocaInst *inst = ctx.builder->CreateAlloca(retType, 0, name.c_str());
     ctx.namedValues[name] = inst;
     auto rhs = value->codegen(ctx);
     if (!rhs)
         return {};
     auto s = ctx.builder->CreateStore(*rhs, inst);
-    s->setVolatile(true);
+    // s->setVolatile(true);
     return s;
 };  
 

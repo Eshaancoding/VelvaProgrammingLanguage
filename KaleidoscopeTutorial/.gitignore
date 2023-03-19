@@ -1,5 +1,0 @@
-.\llvm-project
-build
-.DS_Store
-CMakeCache.txt
-cmake.check_cache
