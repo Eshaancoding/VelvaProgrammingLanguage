@@ -1,13 +1,13 @@
-int putchar(int)
+int putchar(int i)
 int ab = 3
-if (ab == 3) {
-    ab = 9 
+if (ab == 4) {
+    ab = 6
 }
-else if (ab == 4) {
-    ab = 8
+else if (ab == 3) {
+    ab = 2
 }
 else {
-    ab = 1
+    ab = 5
 }
 
 putchar(ab+48)

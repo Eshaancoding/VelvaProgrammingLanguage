@@ -106,3 +106,9 @@ add_test(
   COMMAND ./veld ../tests/Strings.vld ctest
 )
 set_property(TEST Strings PROPERTY PASS_REGULAR_EXPRESSION "^hello world")
+
+add_test(
+  NAME IfStatement
+  COMMAND ./veld ../tests/IfStatements.vld ctest
+)
+set_property(TEST IfStatement PROPERTY PASS_REGULAR_EXPRESSION "^2")

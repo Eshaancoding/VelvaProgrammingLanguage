@@ -44,9 +44,7 @@ std::string TreeSitterCursor::getSourceStr() {
 }
 
 TreeSitterCursor::TreeSitterCursor (TSTree *tree, std::string src) {
-    printf("Tree initialize\n");
     cursor = ts_tree_cursor_new(ts_tree_root_node(tree));
-    printf("cursor\n");
     source = src; 
 }
     

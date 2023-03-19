@@ -191,13 +191,9 @@ module.exports = grammar({
         
         string: $ => seq(
             "\"",
-            field("content", repeat(choice(
-                $.escape,
-                $.anyVal
-            )),
+            field("content", repeat(/./)),
             "\""   
-        )),
-        escape: $ => seq("\\"),
+        ),
         anyVal: $ => /.*/,
         identifier: $ => /[a-zA-Z]+/,
         number: $ => /[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/,

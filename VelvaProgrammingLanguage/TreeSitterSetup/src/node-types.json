@@ -144,11 +144,6 @@
     }
   },
   {
-    "type": "escape",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "expression",
     "named": true,
     "fields": {},
@@ -444,22 +439,7 @@
   {
     "type": "string",
     "named": true,
-    "fields": {
-      "content": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "anyVal",
-            "named": true
-          },
-          {
-            "type": "escape",
-            "named": true
-          }
-        ]
-      }
-    }
+    "fields": {}
   },
   {
     "type": "var_declaration",
@@ -599,14 +579,6 @@
   {
     "type": ">=",
     "named": false
-  },
-  {
-    "type": "\\",
-    "named": false
-  },
-  {
-    "type": "anyVal",
-    "named": true
   },
   {
     "type": "auto",

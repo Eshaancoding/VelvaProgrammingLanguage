@@ -22,45 +22,43 @@ optional<Value*> BlockExpr::codegen (CompilationContext &ctx) {
 optional<Value*> ErrorExpr::codegen(CompilationContext &ctx) { return nullopt; }
 
 
-optional<Value*> BranchExpr::codegen(CompilationContext &ctx) {
-    Function *f = ctx.builder->GetInsertBlock()->getParent();
-    BasicBlock *ifBB = ctx.builder->GetInsertBlock();
-    BasicBlock *thenBB = BasicBlock::Create(*ctx.context, ctx.names.use("then"), f);
-    BasicBlock *elseBB = BasicBlock::Create(*ctx.context, ctx.names.use("else"), f);
-    vector<BasicBlock*> blocks;
-    for(auto const &block: ifMap) {
+optional<Value*> BranchExpr::codegen (CompilationContext &ctx)  {
+    auto *main = ctx.builder->GetInsertBlock();
+    auto *f = main->getParent();
+
+    BasicBlock *endingBlock = BasicBlock::Create(*ctx.context, ctx.names.use("if_end"), f);
+
+    for (const auto &block : ifMap) {
+        auto originalInsert = ctx.builder->GetInsertBlock();
+
         if (get<0>(block).has_value()) {
-            blocks.push_back(thenBB);
-            blocks.push_back(elseBB);
-            ctx.builder->SetInsertPoint(ifBB);
+            // first create conditional
             auto condV = (*get<0>(block))->codegen(ctx);
             if (!condV) return nullopt;
 
-            // actual code
-            auto cond = ctx.builder->CreateICmpEQ(*condV, ConstantInt::get(*ctx.context, APInt(1, 1)), ctx.names.use("ifcond")); // CreateICmpONE doesn't exist, did you mean CreateICmp
-            ctx.builder->CreateCondBr(cond, thenBB, elseBB);
+            // add the then basic block
+            BasicBlock *thenBB = BasicBlock::Create(*ctx.context, ctx.names.use("then"), f);
             ctx.builder->SetInsertPoint(thenBB);
-            // codegne body
             get<1>(block)->codegen(ctx);
-            
-            ifBB = elseBB;
+            ctx.builder->CreateBr(endingBlock);
+
+            // then add else block
+            BasicBlock *elseBB = block == ifMap.back() ? endingBlock :  BasicBlock::Create(*ctx.context, ctx.names.use("else"), f);
+
+            // go back to the main block and then insert the cond br
+            ctx.builder->SetInsertPoint(originalInsert);
+            ctx.builder->CreateCondBr(*condV, thenBB, elseBB);
+
+            // point back to next if/else statement or ending block
+            ctx.builder->SetInsertPoint(elseBB);
         } else {
-            ctx.builder->SetInsertPoint(ifBB);
-
-            // codegne body
+            // parsing an else conditional
             get<1>(block)->codegen(ctx);
-
-            blocks.push_back(ifBB);
+            ctx.builder->CreateBr(endingBlock);
+            ctx.builder->SetInsertPoint(endingBlock);
         }
-        thenBB = BasicBlock::Create(*ctx.context, ctx.names.use("then"), f);
-        elseBB = BasicBlock::Create(*ctx.context, ctx.names.use("else"), f);
     }
-    BasicBlock *mergeBB = BasicBlock::Create(*ctx.context, ctx.names.use("if_merge"), f);
-    for (auto block: blocks) {
-        ctx.builder->SetInsertPoint(block);
-        ctx.builder->CreateBr(mergeBB);
-    }
-    ctx.builder->SetInsertPoint(mergeBB);
+
     return nullopt;
 }
 

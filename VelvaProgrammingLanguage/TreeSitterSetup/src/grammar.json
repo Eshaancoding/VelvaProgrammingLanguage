@@ -733,28 +733,14 @@
           "content": {
             "type": "REPEAT",
             "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "escape"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "anyVal"
-                }
-              ]
+              "type": "PATTERN",
+              "value": "."
             }
           }
-        }
-      ]
-    },
-    "escape": {
-      "type": "SEQ",
-      "members": [
+        },
         {
           "type": "STRING",
-          "value": "\\"
+          "value": "\""
         }
       ]
     },
