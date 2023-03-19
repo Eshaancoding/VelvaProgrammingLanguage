@@ -40,34 +40,27 @@ target_link_libraries(${COMPILER_NAME} PUBLIC ${llvm_libraries} ${targets} $ENV{
 set_property(TARGET ${COMPILER_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17
 
 ################################### SET TESTS #####################################
+
+# first word before space is the name of test in path
+# everything after is the expected result of the test
+set(TestList 
+  "FunctionTest 9"
+  "ForLoop ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz"
+  "WhileLoop ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz"
+  "Auto 3"
+  "Strings hello world"
+  "IfStatements 2"
+  "Assign 1"
+)
+
 include(CTest)
-
-add_test(
-  NAME FunctionTest
-  COMMAND ./veld ../tests/FunctionTest.vld ctest
-)
-set_property(TEST FunctionTest PROPERTY PASS_REGULAR_EXPRESSION "^9")
-
-add_test(
-  NAME ForLoop
-  COMMAND ./veld ../tests/ForLoop.vld ctest
-)
-set_property(TEST ForLoop PROPERTY PASS_REGULAR_EXPRESSION "^ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz")
-
-add_test(
-  NAME AutoKeyword
-  COMMAND ./veld ../tests/Auto.vld ctest
-)
-set_property(TEST AutoKeyword PROPERTY PASS_REGULAR_EXPRESSION "^3")
-
-add_test(
-  NAME Strings
-  COMMAND ./veld ../tests/Strings.vld ctest
-)
-set_property(TEST Strings PROPERTY PASS_REGULAR_EXPRESSION "^hello world")
-
-add_test(
-  NAME IfStatement
-  COMMAND ./veld ../tests/IfStatements.vld ctest
-)
-set_property(TEST IfStatement PROPERTY PASS_REGULAR_EXPRESSION "^2")
+foreach (X IN LISTS TestList) 
+  separate_arguments(X) 
+  list(POP_FRONT X NameTest)
+  string(REPLACE ";" " " ExpectedResult "${X}")
+  add_test(
+    NAME ${NameTest}
+    COMMAND ./veld ../tests/${NameTest}.vld ctest
+  )
+  set_property(TEST ${NameTest} PROPERTY PASS_REGULAR_EXPRESSION "^${ExpectedResult}")
+endforeach()

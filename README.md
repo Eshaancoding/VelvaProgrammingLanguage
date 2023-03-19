@@ -13,18 +13,13 @@ The Velva Programming Language is a low-level programming language designed for 
 
 ## Implemented so far:
 
-* Only `int` (integer) variables declaration:
-    * `int a = 3`
-* `print` statements with the int variable
-    * Expressions (ex: operations `+`, `-`, etc.) are not supported! Yet..
-* `vild main.vtk` will just print out the IR code, won't actually create an object file (that's like in chapter 8 of Kaleidoscope, which we will do later)
-
-* Example Code: 
-
-```
-int a = 3
-print(a)
-```
+* Int, string, & float variable declarations
+* Variable using, declaring, and assigning
+* For loops + while loops
+* Binary Operations (with precedence)
+* String types + declarations
+* Conditions (If statements + return statements)
+* Function declares (no returns as of right now, parameters work)
 
 ## How to run?
 
@@ -51,6 +46,7 @@ print(a)
 ## How long will this take? 
 
 * Like forever.
+* No seriously. Like forever
 
 ## Target Syntax:
 

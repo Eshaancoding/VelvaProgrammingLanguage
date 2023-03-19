@@ -1,0 +1,9 @@
+int putchar(int i)
+
+int i = 3
+
+i = 6
+i = 2
+i = 1
+
+putchar(48+i)

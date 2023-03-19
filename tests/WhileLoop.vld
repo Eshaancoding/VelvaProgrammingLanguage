@@ -1,0 +1,13 @@
+int putchar(int i)
+
+int i = 0
+while (i < 26) {
+    putchar(65+i)
+    i++
+}
+putchar(10)
+i = 0
+while (i < 26) {
+    putchar(97+i)
+    i++
+}
