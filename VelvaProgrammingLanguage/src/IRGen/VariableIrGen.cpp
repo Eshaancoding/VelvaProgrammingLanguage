@@ -161,14 +161,3 @@ optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {
 optional<Value*> Expr::codegen (CompilationContext &ctx) {
     return nullopt;
 }
-
-optional<Value*> ReturnStateExpr::codegen (CompilationContext &ctx) {
-    // empty because the function will automatically try to search for the return statemnent
-    auto cg = this->val_return->codegen(ctx);
-    if (cg) {
-        ctx.builder->CreateRet(*cg);
-        return *cg; // <-- kinda cheeky, but we don't use the value anyways :man_shrugging:
-    }
-    else
-        return std::nullopt;
-}
