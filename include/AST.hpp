@@ -11,7 +11,6 @@
 #include <functional>
 #include <variant>
 #include "Functions.hpp"
-#include "Utils.hpp"
 #include "llvm-c/Core.h"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
@@ -38,7 +37,6 @@
 #include "llvm/Transforms/Scalar/SimplifyCFG.h"
 #include "llvm/Transforms/Scalar/GVN.h"
 #include <cmath>
-#include "Utils.hpp"
 #include "llvm/MC/TargetRegistry.h"
 #include "llvm/Analysis/InstructionSimplify.h"
 #include "llvm/IR/LegacyPassManager.h"
@@ -52,6 +50,13 @@ enum Types {
     INTEGER = 0,
     FLOAT = 1,
     BOOLEAN = 2,
+};
+
+class NameRegistry {
+    private:
+        map<string, int> names;
+    public:
+        string use(const string &prefix);
 };
 
 class BlockExpr;
@@ -70,7 +75,6 @@ struct CompilationContext {
         //std::unique_ptr<FunctionPassManager> fpm;
         bool lessVerbose=false;
         NameRegistry names;
-
         CompilationContext();
         void compile();
         // ModulePassManager setOptimize(ModuleAnalysisManager& MAM);

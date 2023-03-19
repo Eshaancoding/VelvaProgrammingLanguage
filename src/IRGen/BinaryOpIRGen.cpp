@@ -1,5 +1,4 @@
 #include "AST.hpp"
-#include "Utils.hpp"
 
 optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
     // to be implemented
@@ -65,14 +64,3 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
     }
 }
 
-VarDeclareExpr::VarDeclareExpr(VarMutability mutTypeArg, string nameArg, unique_ptr<Expr> valueArg, optional<string> typeArg) {
-    value = move(valueArg); 
-    mutType = mutTypeArg;
-    name = nameArg;
-
-    auto typeExpr = value->return_type();
-    if (typeArg && *typeArg != typeExpr) {
-        throw invalid_argument("bruh not same type");
-    }
-    type = typeExpr;
-};

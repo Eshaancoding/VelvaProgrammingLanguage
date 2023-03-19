@@ -1,7 +1,7 @@
 #include "AST.hpp"
 #include "llvm/Passes/PassBuilder.h"
 
-
+// ********************************** TYPES **********************************
 optional<Value *> IntExpr::codegen(CompilationContext &ctx)
 {
     return ConstantInt::get(*ctx.context, APInt(numBits, num));
@@ -10,22 +10,6 @@ optional<Value *> IntExpr::codegen(CompilationContext &ctx)
 optional<Value *> FloatExpr::codegen(CompilationContext &ctx)
 {
     return ConstantFP::get(*ctx.context, APFloat(decimal));
-}
-
-std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx)
-{
-    Function *calleeF = ctx.mod->getFunction(functionName);
-    vector<Value *> argv;
-
-    for (int i = 0; i != params.size(); ++i)
-    {
-        std::optional<Value*> codeGenParam = params[i]->codegen(ctx);
-        if (codeGenParam)
-            argv.push_back(*codeGenParam);
-        else
-            return {}; // WE NEED ERROR HANDLING AHHHHHHHHHHHHHHHH
-    }
-    return ctx.builder->CreateCall(calleeF, argv);
 }
 
 optional<Value *> StringExpr::codegen(CompilationContext &ctx)
@@ -49,87 +33,7 @@ optional<Value *> StringExpr::codegen(CompilationContext &ctx)
 }
 
 
-static AllocaInst *CreateEntryBlockAlloca(CompilationContext &ctx,
-                                        Function *TheFunction,
-                                        const std::string &VarName) {
-  IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
-                   TheFunction->getEntryBlock().begin());
-  return TmpB.CreateAlloca(Type::getDoubleTy(*ctx.context), nullptr, VarName);
-}
-
-optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
-{
-    // TODO: Later we have to check if the function has already been declared or not, and check if it has an empty body (if not, we give error)
-
-    std::vector<Type *> paramTypes;
-    for (auto &param : params)
-    {
-        printf("Params: %s and %s\n", get<0>(param).c_str(), get<1>(param).c_str());
-        if  (get<0>(param) == "int") {
-            paramTypes.push_back(Type::getInt32Ty(*ctx.context));
-        } 
-        else if (get<0>(param) == "float") {
-            paramTypes.push_back(Type::getFloatTy(*ctx.context));
-        } 
-        else if (get<0>(param) == "string") {
-            paramTypes.push_back(Type::getInt8PtrTy(*ctx.context));
-        }
-
-        // AllocaInst *inst = ctx.builder->CreateAlloca(Type::getInt32Ty(*ctx.context));
-        // ctx.namedValues[name] = inst;
-    }
-
-
-    auto retType = returnType == "int" ? Type::getInt32Ty(*ctx.context)
-            : returnType == "float" ? Type::getFloatTy(*ctx.context)
-            : returnType == "double" ? Type::getDoubleTy(*ctx.context)
-            : returnType == "string" ? Type::getInt8PtrTy(*ctx.context)
-            : Type::getVoidTy(*ctx.context);
-
-    FunctionType *FT = FunctionType::get(retType, paramTypes, false);
-
-    Function *F = Function::Create(FT, Function::ExternalLinkage, name, ctx.mod.get());
-
-    unsigned Idx = 0;
-    for (auto &Arg : F->args())
-    {
-        Arg.setName(get<1>(params[Idx]));
-        Idx++;
-    }
-    if(!isExternal) {
-        auto block = ctx.builder->GetInsertBlock();
-
-        BasicBlock *bb = BasicBlock::Create(*ctx.context, name, F);
-        ctx.builder->SetInsertPoint(bb);
-        
-        // ctx.namedValues.clear() ; // Functions need to be declared before any vars ; we should prob do a scoping thing in the future
-        for(auto &arg : F->args()) {
-
-            // Create an alloca for this variable.
-            AllocaInst *Alloca = CreateEntryBlockAlloca(ctx, F, arg.getName().str());
-
-            // Store the initial value into the alloca.
-            ctx.builder->CreateStore(&arg, Alloca);
-
-            // Add arguments to variable symbol table.
-            ctx.namedValues[arg.getName().str()] = Alloca;
-        }
-        // codegen through all expressions
-        (*body)->codegen(ctx);
-
-        if (!returnType) {
-            ctx.builder->CreateRetVoid();
-        }
-
-        ctx.builder->SetInsertPoint(block);
-    }
-    verifyFunction(*F);
-
-    
-
-    return F;
-}
-
+// ********************************** Variable uses/decl/assign **********************************
 optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 {
     auto v = ctx.namedValues[var];
@@ -156,8 +60,4 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
 
 optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {
     return ctx.builder->CreateStore(*(value->codegen(ctx)), ctx.namedValues[varName]);
-}
-
-optional<Value*> Expr::codegen (CompilationContext &ctx) {
-    return nullopt;
 }

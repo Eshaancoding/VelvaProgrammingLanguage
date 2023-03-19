@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.13.4)
 project(Velva)
 
-set( CMAKE_VERBOSE_MAKEFILE on )
+# get all file names
+
+file(GLOB_RECURSE lib_srcs ${CMAKE_SOURCE_DIR}/src/*.cpp ${CMAKE_SOURCE_DIR}/src/TreeSitter/*.c)
+
 # set names
 set(COMPILER_NAME veld)
 set(LIB_NAME velva)
@@ -28,56 +31,12 @@ set(LLVM_LINK_COMPONENTS aarch64asmparser armasmparser avrasmparser bpfasmparser
 # get lib name
 llvm_map_components_to_libnames(llvm_libraries ${LLVM_LINK_COMPONENTS})
 
-########################## MAKE THE VELVA LIBRARY ##########################
-
-set(SRC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-set(INCLUDE 
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-  ${LLVM_INCLUDE_DIRS}
-  $ENV{TREE_SITTER_LIB_INCLUDE}
-)
-
-add_library(${LIB_NAME} STATIC 
-  ${SRC}/TreeSitterParser/MainParser.cpp
-  ${SRC}/TreeSitterParser/ParseBlock.cpp
-  ${SRC}/TreeSitterParser/ParseExpression.cpp
-  ${SRC}/TreeSitterParser/ParseFunctionDeclare.cpp
-  ${SRC}/TreeSitterParser/ParseIfStatement.cpp
-  ${SRC}/TreeSitterParser/ParseLoop.cpp
-  ${SRC}/TreeSitterParser/ParserInit.cpp
-  ${SRC}/TreeSitterParser/TreeSitterCursor.cpp
-  ${SRC}/TreeSitterParser/VariableDecl.cpp
-  ${SRC}/AST/ASTDebug.cpp
-  ${SRC}/AST/ASTReturnType.cpp
-  ${SRC}/AST/BlockExpr.cpp
-  ${SRC}/AST/Functions.cpp
-  ${SRC}/AST/Utils.cpp
-  ${SRC}/IRGen/BinaryOpIRGen.cpp
-  ${SRC}/IRGen/BlockIrGen.cpp
-  ${SRC}/IRGen/CompilationContext.cpp
-  ${SRC}/IRGen/LoopIrGen.cpp
-  ${SRC}/IRGen/TreeSitterIRGen.cpp
-  ${SRC}/IRGen/VariableIrGen.cpp
-  $ENV{TREE_SITTER_PARSER_FILE} 
-)
-
-target_include_directories(${LIB_NAME} PUBLIC ${INCLUDE})
-target_compile_options(${LIB_NAME} PUBLIC -fPIE -fpie -g)
-target_link_libraries(${LIB_NAME} PUBLIC 
-  ${llvm_libraries}             # Libraries from llvm
-  ${targets}                    # Targets from llvm 
-  $ENV{TREE_SITTER_LIB_FILE}    # parser.c from tree sitter
-)
-
-
-set_property(TARGET ${LIB_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17
-
 ########################## RUN COMPILER CPP WITH LIBRARY ##########################
 
-add_executable(${COMPILER_NAME} ../src/Driver/TSDriver.cpp)
+add_executable(${COMPILER_NAME} ${lib_srcs})
 target_compile_options(${COMPILER_NAME} PUBLIC "-g")
-target_include_directories(${COMPILER_NAME} PUBLIC ${INCLUDE})
-target_link_libraries(${COMPILER_NAME} PUBLIC ${LIB_NAME})
+target_include_directories(${COMPILER_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${LLVM_INCLUDE_DIRS} $ENV{TREE_SITTER_LIB_INCLUDE})
+target_link_libraries(${COMPILER_NAME} PUBLIC ${llvm_libraries} ${targets} $ENV{TREE_SITTER_LIB_FILE})
 set_property(TARGET ${COMPILER_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17
 
 ################################### SET TESTS #####################################
