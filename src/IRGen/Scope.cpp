@@ -10,17 +10,18 @@ void ProgramScope::deleteLastFrame() {
 }
 
 // variable handling
-string ProgramScope::createVarName (string varName) {
-    scopes[scopes.size()-1].varNames[varName] = 1;
-    return varName;
+string ProgramScope::createVarName (string varName, Variable var) {
+    auto scope = scopes.back();
+    scope.varNames[varName] = var;
 }
 
-string ProgramScope::findVarName (string varName) {
+Variable ProgramScope::findVarName (string varName) {
     for(vector<Scope>::reverse_iterator i = scopes.rbegin(); i != scopes.rend(); ++i) {
-        if(i.varNames.count(varName) != 0) {
-            return i.varNames[varName];
+        if(*i.varNames.count(varName) != 0) {
+            return *i.varNames[varName];
         }
     }
+    throw invalid_argument("No variable by the name of '" + varName + "'");
 }
 
 // function type
