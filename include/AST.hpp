@@ -10,37 +10,8 @@
 #include <optional>
 #include <functional>
 #include <variant>
-#include "Functions.hpp"
-#include "llvm-c/Core.h"
-#include "llvm/ADT/APFloat.h"
-#include "llvm/ADT/STLExtras.h"
-#include "llvm/IR/BasicBlock.h"
-#include "llvm/IR/Constants.h" 
-#include "llvm/IR/DerivedTypes.h"
-#include "llvm/IR/Function.h"
-#include "llvm/IR/IRBuilder.h"
-#include "llvm/IR/LLVMContext.h"
-#include "llvm/IR/Module.h"
-#include "llvm/IR/Type.h"
-#include "llvm/IR/Verifier.h"
-#include "llvm/IR/Value.h"
-#include "llvm/IR/Function.h"
-#include "llvm/IR/Module.h"
-#include "llvm/Support/FileSystem.h"
-#include "llvm/Support/Host.h"
-#include "llvm/Support/TargetSelect.h"
-#include "llvm/Support/raw_ostream.h"
-#include "llvm/Target/TargetMachine.h"
-#include "llvm/Target/TargetOptions.h"
-#include "llvm/MC/TargetRegistry.h"
-#include "llvm/Transforms/Scalar/InstSimplifyPass.h"
-#include "llvm/Transforms/Scalar/SimplifyCFG.h"
-#include "llvm/Transforms/Scalar/GVN.h"
-#include <cmath>
-#include "llvm/MC/TargetRegistry.h"
-#include "llvm/Analysis/InstructionSimplify.h"
-#include "llvm/IR/LegacyPassManager.h"
 
+#include "CompilationContext.hpp"
 using namespace std;
 using namespace llvm;
 using namespace llvm::sys;
@@ -52,34 +23,10 @@ enum Types {
     BOOLEAN = 2,
 };
 
-class NameRegistry {
-    private:
-        map<string, int> names;
-    public:
-        string use(const string &prefix);
-};
 
 class BlockExpr;
 
-/**
- * @brief This object stores variables for a compilation context. Only use this once per compile task.
- * 
- */
-struct CompilationContext {
-    public:
-        std::unique_ptr<LLVMContext> context;
-        std::unique_ptr<IRBuilder<>> builder;
-        std::unique_ptr<Module> mod;
-        map<string, AllocaInst*> namedValues;
-        map<string, Function*> functions;
-        //std::unique_ptr<FunctionPassManager> fpm;
-        bool lessVerbose=false;
-        NameRegistry names;
-        CompilationContext();
-        void compile();
-        // ModulePassManager setOptimize(ModuleAnalysisManager& MAM);
-        //void defaultOptimize();
-};
+
 
 /**
  * @brief The base class for all AST variables.

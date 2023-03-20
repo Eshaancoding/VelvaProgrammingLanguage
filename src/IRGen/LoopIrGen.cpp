@@ -7,8 +7,8 @@ optional<Value*> ForExpr::codegen (CompilationContext &ctx) {
     BasicBlock *forCond = BasicBlock::Create(*ctx.context, ctx.names.use("for_cond"), f);
     BasicBlock *bodyBB = BasicBlock::Create(*ctx.context, ctx.names.use("for"), f);
     BasicBlock *endBB = BasicBlock::Create(*ctx.context, ctx.names.use("for_end"), f);
-
     ctx.builder->CreateBr(forCond);
+    ctx.pushFrame();
     ctx.builder->SetInsertPoint(forCond);
     ctx.builder->CreateCondBr(*(condition->codegen(ctx)), bodyBB, endBB);
     ctx.builder->SetInsertPoint(bodyBB);
@@ -16,6 +16,7 @@ optional<Value*> ForExpr::codegen (CompilationContext &ctx) {
     operation->codegen(ctx);
     ctx.builder->CreateBr(forCond);
     ctx.builder->SetInsertPoint(endBB);
+    ctx.popFrame();
     return nullopt;
 }
 

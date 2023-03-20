@@ -36,7 +36,7 @@ optional<Value *> StringExpr::codegen(CompilationContext &ctx)
 // ********************************** Variable uses/decl/assign **********************************
 optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 {
-    auto v = ctx.namedValues[var];
+    auto v = ctx.findVarName(var).value;
     return ctx.builder->CreateLoad(Type::getInt32Ty(*ctx.context), v, var.c_str());
 }
 
@@ -49,7 +49,8 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
         : Type::getVoidTy(*ctx.context);   
 
     AllocaInst *inst = ctx.builder->CreateAlloca(retType, 0, name.c_str());
-    ctx.namedValues[name] = inst;
+    ctx.createVarName(name, Variable { value->return_type() , inst});
+    // ctx.namedValues[name] = inst;
     auto rhs = value->codegen(ctx);
     if (!rhs)
         return {};
@@ -59,5 +60,5 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
 };  
 
 optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {
-    return ctx.builder->CreateStore(*(value->codegen(ctx)), ctx.namedValues[varName]);
+    return ctx.builder->CreateStore(*(value->codegen(ctx)), ctx.findVarName(varName).value);
 }

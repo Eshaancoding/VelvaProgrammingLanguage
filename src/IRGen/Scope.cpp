@@ -1,31 +1,35 @@
-#include "Scope.hpp"
+#include "CompilationContext.hpp"
 
+void CompilationContext::pushFrame() {
+    scopes.push_back(Scope());
+}
 // add frame
-void ProgramScope::addFrame (Scope &frame) {
+void CompilationContext::pushFrame(Scope &frame) {
     scopes.push_back(frame);
 }
 
-void ProgramScope::deleteLastFrame() {
+void CompilationContext::popFrame() {
     scopes.pop_back();
 }
 
 // variable handling
-string ProgramScope::createVarName (string varName, Variable var) {
-    auto scope = scopes.back();
-    scope.varNames[varName] = var;
+Variable CompilationContext::createVarName(string varName, Variable var) {
+    scopes.back().varNames[varName] = var;
+    return var;
 }
 
-Variable ProgramScope::findVarName (string varName) {
+Variable CompilationContext::findVarName(string varName) {
     for(vector<Scope>::reverse_iterator i = scopes.rbegin(); i != scopes.rend(); ++i) {
-        if(*i.varNames.count(varName) != 0) {
-            return *i.varNames[varName];
+        if(i->varNames.count(varName) != 0) {
+            return i->varNames[varName];
         }
     }
+    if(globals.varNames.count(varName) != 0) return globals.varNames[varName];
     throw invalid_argument("No variable by the name of '" + varName + "'");
 }
 
 // function type
-string ProgramScope::createFunctionName (string funcName, vector<string> types) {
+string CompilationContext::createFunctionName (string funcName, vector<string> types) {
 
 }
 

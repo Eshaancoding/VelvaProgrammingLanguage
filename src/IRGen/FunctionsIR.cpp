@@ -51,7 +51,8 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         for(auto &arg : F->args()) {
             AllocaInst *Alloca = CreateEntryBlockAlloca(ctx, F, arg.getName().str());
             ctx.builder->CreateStore(&arg, Alloca);
-            ctx.namedValues[arg.getName().str()] = Alloca;
+            ctx.createVarName(arg.getName().str(), Variable { "TODO", Alloca});
+            // ctx.namedValues[arg.getName().str()] = Alloca;
         }
         (*body)->codegen(ctx);
 

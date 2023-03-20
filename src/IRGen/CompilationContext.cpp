@@ -1,5 +1,19 @@
 #include "AST.hpp"
 #include "llvm/Bitcode/BitcodeWriter.h"
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/Host.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
+#include "llvm/MC/TargetRegistry.h"
+#include "llvm/Transforms/Scalar/InstSimplifyPass.h"
+#include "llvm/Transforms/Scalar/SimplifyCFG.h"
+#include "llvm/Transforms/Scalar/GVN.h"
+#include <cmath>
+#include "llvm/MC/TargetRegistry.h"
+#include "llvm/Analysis/InstructionSimplify.h"
+#include "llvm/IR/LegacyPassManager.h"
 
 
 CompilationContext::CompilationContext() {
@@ -7,6 +21,8 @@ CompilationContext::CompilationContext() {
     mod = std::make_unique<Module>("mod", *context);
     builder = std::make_unique<IRBuilder<>>(*context);
     lessVerbose = false;
+    Scope baseFrame;
+    pushFrame(baseFrame);
 }
 
 void CompilationContext::compile() {

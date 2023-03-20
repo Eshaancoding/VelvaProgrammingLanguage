@@ -1,4 +1,5 @@
 #include "AST.hpp"
+#include "CompilationContext.hpp"
 
 // Declare Variable expression
 VarDeclareExpr::VarDeclareExpr(VarMutability mutTypeArg, string nameArg, unique_ptr<Expr> valueArg, optional<string> typeArg) {
