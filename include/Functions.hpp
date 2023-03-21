@@ -1,16 +1,25 @@
 #ifndef FUNCTIONS
 #define FUNCTIONS
-#include <cstdio>
-#include <cmath> 
-#include <string>
+#include "AST.hpp"
 
-extern "C" namespace FFI_Functions {
-    void printi(int i);
-    void printd(double d);
-    void prints(const char *s);
-    double cos_v(double x);
-    double sin_v(double x);
-    double tan_v(double x);
-};
+void initializeFunction (CompilationContext &ctx, string name, vector<tuple<string, string>> params,optional<string> returnType) {
+    auto result = DeclareFunctionExpr(
+        true, 
+        false,
+        name, 
+        params,
+        returnType,
+        nullopt
+    ).codegen(ctx);
+}
+
+void initializeAllFFIFunc (CompilationContext &ctx) {
+    initializeFunction(ctx, "cos", {{"float", "x"}}, "float");
+    initializeFunction(ctx, "sin", {{"float", "x"}}, "float");
+    initializeFunction(ctx, "cos", {{"int", "x"}}, "float");
+    initializeFunction(ctx, "sin", {{"int", "x"}}, "float");
+    initializeFunction(ctx, "putchar", {{"int", "x"}}, "int");
+    initializeFunction(ctx, "printf", {{"string", "x"}}, "int");
+}
 
 #endif

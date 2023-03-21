@@ -9,6 +9,7 @@
 #include <cstring>
 #include "TreeSitterParser.hpp"
 #include "AST.hpp"
+#include "Functions.hpp"
 using namespace std;
 
 int main(int argc, const char **argv)
@@ -28,6 +29,10 @@ int main(int argc, const char **argv)
     ctx.lessVerbose = lessVerbose;
     if (!lessVerbose) printf("Starting...\n");
 
+    // initialize ffi functions
+    initializeAllFFIFunc(ctx);
+
+    // start parsing actual file
     Parser pars(filename);
     if (!lessVerbose)
         pars.printTree(true);

@@ -1,2 +1,1 @@
-int printf(string fmt)
 printf("hello world")

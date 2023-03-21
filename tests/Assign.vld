@@ -1,5 +1,3 @@
-int putchar(int i)
-
 int i = 3
 
 i = 6

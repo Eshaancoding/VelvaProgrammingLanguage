@@ -1,4 +1,3 @@
-int putchar(int i)
 int ab = 3
 if (ab == 4) {
     ab = 6

@@ -1,4 +1,3 @@
-int putchar(int)
 func addToResult (int a, int b)  {
     int result = a + b / 3 + 6
     result--

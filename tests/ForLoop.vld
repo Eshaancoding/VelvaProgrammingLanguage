@@ -1,4 +1,3 @@
-int putchar(int i)
 for (int i = 0; i < 26; i++) {
     putchar(65+i)
 }
