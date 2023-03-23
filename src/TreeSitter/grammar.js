@@ -14,7 +14,17 @@ module.exports = grammar({
             $.func_call,
             $.function_declare,
             $.for,
-            $.while
+            $.while,
+            $._singleComment,
+            $._multiLineComment
+        ),
+
+        _singleComment: $ => seq('//', /.*/),
+
+        _multiLineComment: $ => seq(
+            '/*',
+            repeat(/./),
+            '*/'
         ),
 
         ternaryStatement: $ => seq(
