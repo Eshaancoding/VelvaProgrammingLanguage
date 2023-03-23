@@ -8,7 +8,7 @@ module.exports = grammar({
         _statement: $ => choice(
             $.if_statement,
             $.var_declaration,
-            $.assignment,
+            seq($.assignment, $._endLn),
             $.block,
             $.return_statement,
             $.func_call,
@@ -30,9 +30,8 @@ module.exports = grammar({
             "for",
             "(",
             $.var_declaration,
-            ";",
             $.condition,
-            ";",
+            ';',
             $.assignment,
             ")",
             $.block
@@ -122,7 +121,6 @@ module.exports = grammar({
         inc_dec: $ => seq(
             $.identifier,
             choice("++", "--"),
-            $._endLn
         ),
         
 

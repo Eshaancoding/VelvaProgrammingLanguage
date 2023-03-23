@@ -20,8 +20,17 @@
           "name": "var_declaration"
         },
         {
-          "type": "SYMBOL",
-          "name": "assignment"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "assignment"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_endLn"
+            }
+          ]
         },
         {
           "type": "SYMBOL",
@@ -88,10 +97,6 @@
         {
           "type": "SYMBOL",
           "name": "var_declaration"
-        },
-        {
-          "type": "STRING",
-          "value": ";"
         },
         {
           "type": "SYMBOL",
@@ -407,10 +412,6 @@
               "value": "--"
             }
           ]
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_endLn"
         }
       ]
     },
