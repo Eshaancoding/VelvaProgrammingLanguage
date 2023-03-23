@@ -51,6 +51,7 @@ set(TestList
   "Strings hello world"
   "IfStatements 2"
   "Assign 1"
+  "Ternary 4"
 )
 
 include(CTest)
