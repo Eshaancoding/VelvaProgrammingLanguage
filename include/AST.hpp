@@ -26,8 +26,6 @@ enum Types {
 
 class BlockExpr;
 
-
-
 /**
  * @brief The base class for all AST variables.
  * Expr is the base class for all AST nodes. It provides fundamental methods and types.
@@ -373,9 +371,10 @@ class ForExpr : public Expr {
 // ex: i == 3 ? 0 : 1
 class TernaryExpr: public Expr {
     public:
+        string retType;
         unique_ptr<Expr> _if, then, _else;
 
-        TernaryExpr(unique_ptr<Expr> _if, unique_ptr<Expr> then, unique_ptr<Expr> _else) : _if(move(_if)), then(move(then)), _else(move(_else)) {};
+        TernaryExpr(unique_ptr<Expr> ifP, unique_ptr<Expr> thenP, unique_ptr<Expr> elseP);
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
         string return_type() override;

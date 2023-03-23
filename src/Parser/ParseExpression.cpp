@@ -27,34 +27,19 @@ unique_ptr<Expr> Parser::ParseExpression () {
     auto node = cursor.goToChild();
     auto type = cursor.getType();
 
-    if (type == "binary_expression") {
-        auto result = ParseBinaryOp();
-        cursor.goToParent(); // go back to the expr parent
-        return result;
-    }
-    else if (type == "number") {
-        auto result = ParseNumber();
-        cursor.goToParent(); // go back to the expr parent
-        return result;
-    }
-    else if (type == "string") {
-        auto result = ParseString();
-        cursor.goToParent();
-        return result;
-    }
-    else if (type == "identifier") {
-        auto result = ParseIdentifier();
-        cursor.goToParent(); // go back to the expr parent
-        return result;
-    }
-    else if (type == "func_call") {
-        auto result = ParseFuncCall();
-        cursor.goToParent(); // go back to the expr parent
-        return result;
-    }
+    unique_ptr<Expr> result;
+    if (type == "parathensisExpr") result = ParseParanthesis();
+    else if (type == "binary_expression") result = ParseBinaryOp();
+    else if (type == "number") result = ParseNumber();
+    else if (type == "string") result = ParseString();
+    else if (type == "identifier") result = ParseIdentifier();
+    else if (type == "ternaryStatement") result = ParseTernary();
+    else if (type == "func_call") result = ParseFuncCall();
     else {
-        throw invalid_argument("Parsing expression invalid type");
+        throw invalid_argument((std::string("Parsing expression invalid type: ") + type).c_str());
     }
+    cursor.goToParent();
+    return result;
 }
 
 unique_ptr<Expr> Parser::ParseNumber() {
@@ -84,9 +69,15 @@ unique_ptr<Expr> Parser::ParseString() {
 unique_ptr<Expr> Parser::ParseBinaryOp() {
     auto src = cursor.currentNode();
 
-
     // get first expression 
     cursor.goToChild();
+
+    if (cursor.getType() == "parathensisExpr") {
+        auto result = ParseParanthesis();
+        cursor.goToParent();
+        return move(result);
+    }
+    
     auto firstExpression = ParseExpression();  
 
     // get op type

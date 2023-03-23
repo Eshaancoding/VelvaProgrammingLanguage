@@ -49,6 +49,31 @@
         }
       ]
     },
+    "ternaryStatement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "condition"
+        },
+        {
+          "type": "STRING",
+          "value": "?"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expression"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expression"
+        }
+      ]
+    },
     "for": {
       "type": "SEQ",
       "members": [
@@ -211,12 +236,20 @@
             "type": "SYMBOL",
             "name": "expression"
           }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_endLn"
         }
       ]
     },
     "expression": {
       "type": "CHOICE",
       "members": [
+        {
+          "type": "SYMBOL",
+          "name": "ternaryStatement"
+        },
         {
           "type": "SYMBOL",
           "name": "identifier"
@@ -244,8 +277,42 @@
         {
           "type": "SYMBOL",
           "name": "string"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "parathensisExpr"
         }
       ]
+    },
+    "parathensisExpr": {
+      "type": "PREC",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "("
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "expression"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "binary_expression"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": ")"
+          }
+        ]
+      }
     },
     "_unary_expression": {
       "type": "CHOICE",
@@ -340,12 +407,24 @@
               "value": "--"
             }
           ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_endLn"
         }
       ]
     },
     "binary_expression": {
       "type": "CHOICE",
       "members": [
+        {
+          "type": "PREC_LEFT",
+          "value": 3,
+          "content": {
+            "type": "SYMBOL",
+            "name": "parathensisExpr"
+          }
+        },
         {
           "type": "PREC_LEFT",
           "value": 2,
@@ -556,8 +635,8 @@
               "name": "block"
             },
             {
-              "type": "STRING",
-              "value": "\n"
+              "type": "SYMBOL",
+              "name": "_endLn"
             }
           ]
         }
@@ -610,6 +689,10 @@
         {
           "type": "STRING",
           "value": ")"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_endLn"
         }
       ]
     },
@@ -653,21 +736,25 @@
       ]
     },
     "condition": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "expression"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "comparison_op"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "expression"
-        }
-      ]
+      "type": "PREC",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "expression"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "comparison_op"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "expression"
+          }
+        ]
+      }
     },
     "comparison_op": {
       "type": "CHOICE",
@@ -713,10 +800,13 @@
               "name": "expression"
             },
             {
-              "type": "STRING",
-              "value": "\n"
+              "type": "BLANK"
             }
           ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_endLn"
         }
       ]
     },
@@ -741,6 +831,19 @@
         {
           "type": "STRING",
           "value": "\""
+        }
+      ]
+    },
+    "_endLn": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "\n"
+        },
+        {
+          "type": "STRING",
+          "value": ";"
         }
       ]
     },

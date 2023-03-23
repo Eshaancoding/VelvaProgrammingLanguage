@@ -16,6 +16,14 @@ module.exports = grammar({
             $.for,
             $.while
         ),
+
+        ternaryStatement: $ => seq(
+            $.condition,
+            '?',
+            $.expression,
+            ':',
+            $.expression
+        ),
         
         // for loop.
         for: $ => seq(
@@ -62,19 +70,27 @@ module.exports = grammar({
             field("name", $.identifier),
             '=',
             field("value", $.expression),
-            
+            $._endLn, 
         ),
 
         //expressions
         expression: $ => choice(
+            $.ternaryStatement,
             $.identifier,
             $.binary_expression,
             $._unary_expression,
             $.number,
             $.boolean,
             $.func_call,
-            $.string
+            $.string,
+            $.parathensisExpr
         ),
+
+        parathensisExpr: $ => prec(2, seq(
+            '(',
+            choice($.expression, $.binary_expression),
+            ')'
+        )),
 
         // includes not function and integer invert function
         _unary_expression: $ => choice(
@@ -99,18 +115,20 @@ module.exports = grammar({
                 "=",
                 $.expression,
             ),
-            $.inc_dec
+            $.inc_dec,
         ),
 
         // increment and decrement for assignment
         inc_dec: $ => seq(
             $.identifier,
-            choice("++", "--")
+            choice("++", "--"),
+            $._endLn
         ),
         
 
         // binary expression (needs testing)
         binary_expression: $ => choice(
+            prec.left(3, $.parathensisExpr),
             prec.left(2, seq($.expression, '*', $.expression)),
             prec.left(2, seq($.expression, '/', $.expression)),
             prec.left(1, seq($.expression, '-', $.expression)),
@@ -145,14 +163,15 @@ module.exports = grammar({
             choice("func", $.primitive_type),
             $.identifier,
             $.parameter_list,  
-            choice($.block, "\n")
+            choice($.block, $._endLn)
         ),
 
         func_call: $ => seq(
             $.identifier,
             '(',
             commaSep($.expression),
-            ')'
+            ')',
+            $._endLn
         ),
 
         // // general block & statements (probably need to be updated), used in loops, conditionals, functions
@@ -174,11 +193,11 @@ module.exports = grammar({
             $.if_statement
         ),
 
-        condition: $ => seq(
+        condition: $ => prec(2, seq(
             $.expression,
             $.comparison_op,
             $.expression,
-        ),
+        )),
 
         comparison_op: $ => choice(
             "==", "!=", "<", ">", "<=", ">="
@@ -186,7 +205,8 @@ module.exports = grammar({
 
         return_statement: $ => seq(
             "return",
-            choice($.expression, '\n')
+            optional($.expression),
+            $._endLn
         ),
         
         string: $ => seq(
@@ -194,6 +214,7 @@ module.exports = grammar({
             field("content", repeat(/./)),
             "\""   
         ),
+        _endLn: $ => choice("\n", ";"), 
         anyVal: $ => /.*/,
         identifier: $ => /[a-zA-Z]+/,
         number: $ => /[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/,

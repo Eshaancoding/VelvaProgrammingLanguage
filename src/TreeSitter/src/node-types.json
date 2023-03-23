@@ -33,6 +33,10 @@
         {
           "type": "expression",
           "named": true
+        },
+        {
+          "type": "parathensisExpr",
+          "named": true
         }
       ]
     }
@@ -180,7 +184,15 @@
           "named": true
         },
         {
+          "type": "parathensisExpr",
+          "named": true
+        },
+        {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "ternaryStatement",
           "named": true
         }
       ]
@@ -417,6 +429,25 @@
     }
   },
   {
+    "type": "parathensisExpr",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "primitive_type",
     "named": true,
     "fields": {}
@@ -440,6 +471,25 @@
     "type": "string",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "ternaryStatement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "condition",
+          "named": true
+        },
+        {
+          "type": "expression",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "var_declaration",
@@ -553,6 +603,10 @@
     "named": false
   },
   {
+    "type": ":",
+    "named": false
+  },
+  {
     "type": ";",
     "named": false
   },
@@ -578,6 +632,10 @@
   },
   {
     "type": ">=",
+    "named": false
+  },
+  {
+    "type": "?",
     "named": false
   },
   {

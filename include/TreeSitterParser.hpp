@@ -56,6 +56,8 @@ public:
     unique_ptr<Expr> ParseIfStatement();
     unique_ptr<Expr> ParseIdentifier();
     unique_ptr<BlockExpr> ParseBlock (bool lessVerbose=false);
+    unique_ptr<Expr> ParseParanthesis ();
+    unique_ptr<Expr> ParseTernary ();
     unique_ptr<Expr> ParseCondition ();
     unique_ptr<DeclareFunctionExpr> ParseFunctionDeclare ();
     unique_ptr<DeclareFunctionExpr> ParseAST (bool lessVerbose=false);

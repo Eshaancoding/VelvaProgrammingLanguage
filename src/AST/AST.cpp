@@ -41,3 +41,15 @@ string NameRegistry::use(const string &prefix) {
 
 // expr
 optional<Value*> Expr::codegen(CompilationContext &ctx) {return std::nullopt;}
+
+// ternary
+TernaryExpr :: TernaryExpr(unique_ptr<Expr> ifP, unique_ptr<Expr> thenP, unique_ptr<Expr> elseP) {
+    _if = move(ifP);
+    then = move(thenP);
+    _else = move(elseP);
+
+    if (then->return_type() == _else->return_type()) {
+        retType = then->return_type();
+    }
+    else throw invalid_argument("Invalid return type when parsing ternary statements!");
+}

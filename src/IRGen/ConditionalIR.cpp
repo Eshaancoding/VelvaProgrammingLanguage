@@ -40,8 +40,6 @@ optional<Value*> BranchExpr::codegen (CompilationContext &ctx)  {
     return nullopt;
 }
 
-
-
 optional<Value*> TernaryExpr::codegen(CompilationContext &ctx) {
     if (!_if) return nullopt;
     if (!then) return nullopt;
