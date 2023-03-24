@@ -27,37 +27,12 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
     }
     else if (op == "and") {
         // expr1 ? expr2 : false
-        auto F = ctx.builder->GetInsertBlock()->getParent();
-        BasicBlock *lbb = BasicBlock::Create(*ctx.context, ctx.names.use("or_lhs"), F);
-        ctx.builder->SetInsertPoint(lbb);
-        auto lhs = *(LHS->codegen(ctx));
-        BasicBlock *rbb = BasicBlock::Create(*ctx.context, ctx.names.use("or_rhs"), F);
-        BasicBlock *merge = BasicBlock::Create(*ctx.context, ctx.names.use("or_merge"), F);
-        ctx.builder->CreateCondBr(lhs, rbb, merge);
-        ctx.builder->SetInsertPoint(rbb);
-        auto rhs = *(RHS->codegen(ctx));
-        ctx.builder->SetInsertPoint(merge);
-
-        auto pn = ctx.builder->CreatePHI(Type::getInt32Ty(*ctx.context), 2, ctx.names.use("or_phi"));
-        pn->addIncoming(ConstantInt::get(*ctx.context, APInt(8, 0)), lbb);
-        pn->addIncoming(rhs, rbb);
-        return pn;
+        auto tn = TernaryExpr(move(LHS), move(RHS), make_unique<IntExpr>(IntExpr(0)));
+        return tn.codegen(ctx);
     } else if (op == "or") {
-        auto F = ctx.builder->GetInsertBlock()->getParent();
-        BasicBlock *lbb = BasicBlock::Create(*ctx.context, ctx.names.use("or_lhs"), F);
-        ctx.builder->SetInsertPoint(lbb);
-        auto lhs = *(LHS->codegen(ctx));
-        BasicBlock *rbb = BasicBlock::Create(*ctx.context, ctx.names.use("or_rhs"), F);
-        BasicBlock *merge = BasicBlock::Create(*ctx.context, ctx.names.use("or_merge"), F);
-        ctx.builder->CreateCondBr(lhs, merge, rbb);
-        ctx.builder->SetInsertPoint(rbb);
-        auto rhs = *(RHS->codegen(ctx));
-        ctx.builder->SetInsertPoint(merge);
-
-        auto pn = ctx.builder->CreatePHI(Type::getInt32Ty(*ctx.context), 2, ctx.names.use("or_phi"));
-        pn->addIncoming(ConstantInt::get(*ctx.context, APInt(8, 1)), lbb);
-        pn->addIncoming(rhs, rbb);
-        return pn;
+        //expr1 ? true : expr2
+        auto tn = TernaryExpr(move(LHS), make_unique<IntExpr>(IntExpr(1)), move(RHS));
+        return tn.codegen(ctx);
     }
     else {
         return nullopt;

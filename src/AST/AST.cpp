@@ -51,5 +51,11 @@ TernaryExpr :: TernaryExpr(unique_ptr<Expr> ifP, unique_ptr<Expr> thenP, unique_
     if (then->return_type() == _else->return_type()) {
         retType = then->return_type();
     }
-    else throw invalid_argument("Invalid return type when parsing ternary statements!");
+    else {
+        string returnArg = "Invalid return type when parsing ternary statements; first expr: ";
+        returnArg += then->return_type();
+        returnArg += " second expr: ";
+        returnArg += _else->return_type();
+        throw invalid_argument(returnArg);
+    }
 }
