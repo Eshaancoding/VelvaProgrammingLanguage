@@ -4,19 +4,29 @@ unique_ptr<Expr> Parser::ParseCondition () {
 
     cursor.goToChild();
 
-    assert(cursor.getType() == "expression");
-    auto firstExpr = ParseExpression();
+    string op;
+    unique_ptr<Expr> firstExpr;
+    unique_ptr<Expr> secondExpr;
+    if (cursor.getType() == "expression") {
+        firstExpr = ParseExpression();
 
-    cursor.goToSibling();
-    assert(cursor.getType() == "comparison_op");
-    std::string op = cursor.getSourceStr();
+        cursor.goToSibling();
+        assert(cursor.getType() == "comparison_op");
+        op = cursor.getSourceStr();
 
-    cursor.goToSibling();
-    assert(cursor.getType() == "expression");
-    auto secondExpr = ParseExpression();
-
+        cursor.goToSibling();
+        assert(cursor.getType() == "expression");
+        secondExpr = ParseExpression();
+    }
+    else if (cursor.getType() == "condition") {
+        firstExpr = ParseCondition();
+        cursor.goToSibling();
+        op = cursor.getType();
+        cursor.goToSibling();
+        secondExpr = ParseCondition();
+    }
     cursor.goToParent();
-
+    printf("op: %s\n", op.c_str());
     return make_unique<BinaryOpExpr>(op, move(firstExpr), move(secondExpr), "nan");
 }
 

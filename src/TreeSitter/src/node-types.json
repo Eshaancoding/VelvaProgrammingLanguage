@@ -1,5 +1,10 @@
 [
   {
+    "type": "and",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "assignment",
     "named": true,
     "fields": {},
@@ -107,11 +112,23 @@
       "required": true,
       "types": [
         {
+          "type": "and",
+          "named": true
+        },
+        {
           "type": "comparison_op",
           "named": true
         },
         {
+          "type": "condition",
+          "named": true
+        },
+        {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "or",
           "named": true
         }
       ]
@@ -395,6 +412,11 @@
     }
   },
   {
+    "type": "or",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "parameter",
     "named": true,
     "fields": {},
@@ -567,6 +589,10 @@
     "named": false
   },
   {
+    "type": "&&",
+    "named": false
+  },
+  {
     "type": "(",
     "named": false
   },
@@ -651,6 +677,10 @@
     "named": false
   },
   {
+    "type": "and",
+    "named": false
+  },
+  {
     "type": "auto",
     "named": false
   },
@@ -695,6 +725,10 @@
     "named": true
   },
   {
+    "type": "or",
+    "named": false
+  },
+  {
     "type": "pure",
     "named": false
   },
@@ -716,6 +750,10 @@
   },
   {
     "type": "{",
+    "named": false
+  },
+  {
+    "type": "||",
     "named": false
   },
   {

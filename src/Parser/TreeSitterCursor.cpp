@@ -1,7 +1,10 @@
 #include "TreeSitterCursor.hpp"
 
-std::string TreeSitterCursor::getSourceStr() {
-    auto node = currentNode();
+std::string TreeSitterCursor::getSourceStr(TSNode* nodeArg) {
+    TSNode node;
+    if (nodeArg == nullptr) node = currentNode();
+    else node = *nodeArg;
+    
 
     TSPoint start = ts_node_start_point(node);
     TSPoint end = ts_node_end_point(node);
@@ -50,6 +53,12 @@ TreeSitterCursor::TreeSitterCursor (TSTree *tree, std::string src) {
     
 TSNode TreeSitterCursor::currentNode () {
     return ts_tree_cursor_current_node(&cursor);
+}
+    
+    
+std::string TreeSitterCursor::getFieldContents (std::string field) {
+    auto node = ts_node_child_by_field_name(currentNode(), field.c_str(), field.length());
+    return getSourceStr(&node);
 }
     
 int TreeSitterCursor::getNumChilds (bool noName) {

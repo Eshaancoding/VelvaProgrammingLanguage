@@ -15,7 +15,8 @@ public:
     
     int getNumChilds (bool noName=false);
     void printNode (std::string name="");
-    std::string getSourceStr ();
+    std::string getSourceStr (TSNode* nodeArg=nullptr);
+    std::string getFieldContents (std::string field);
     TSNode currentNode ();
     std::string getType ();
     std::optional<TSNode> goToParent ();

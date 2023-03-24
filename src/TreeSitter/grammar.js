@@ -201,11 +201,14 @@ module.exports = grammar({
             $.if_statement
         ),
 
-        condition: $ => prec(2, seq(
-            $.expression,
-            $.comparison_op,
-            $.expression,
-        )),
+        and: $ => choice("and", "&&"),
+        or: $ => choice("or", "||"),
+
+        condition: $ => choice(
+            prec.left(3, seq($.expression, $.comparison_op, $.expression)),
+            prec.left(2, seq($.condition, $.and, $.condition)),
+            prec.left(1, seq($.condition, $.or, $.condition)),
+        ),
 
         comparison_op: $ => choice(
             "==", "!=", "<", ">", "<=", ">="
@@ -239,3 +242,12 @@ function commaSep(rule) {
 function commaSep1(rule) {
   return seq(rule, repeat(seq(',', rule)));
 }
+
+function sep(rule, deliminator) {
+  return optional(sep1(rule, deliminator));
+}
+
+function sep1(rule, deliminator) {
+  return seq(rule, repeat(seq(deliminator, rule)));
+}
+
