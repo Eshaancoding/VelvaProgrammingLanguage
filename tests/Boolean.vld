@@ -1,15 +1,23 @@
-/*
 bool test = true
-
 if (test) {
-    putchar(48)
+    putchar(49)
 }
-*/
 
 bool one = true
 bool two = false
 bool three = true
 
-if (one and two and three) {
+if (one and two or three) {
+    putchar(49)
+}
+
+if (one or two and three) {
+    putchar(49)
+}
+
+if (one and two) {
+    putchar(49)
+} 
+else {
     putchar(48)
 }

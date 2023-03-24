@@ -67,6 +67,8 @@ struct CompilationContext {
 
         bool functionNameExists (string functionname, vector<string> types); 
         string createFunctionName (string funcName, vector<string> types);
+
+        llvm::Type* convertToLLVMType (optional<string> type);
 };
 
 

@@ -33,6 +33,17 @@ string CompilationContext::createFunctionName (string funcName, vector<string> t
 
 }
 
+// return type
+llvm::Type* CompilationContext::convertToLLVMType (optional<string> type) {
+    if (!type) return Type::getVoidTy(*context);
+    return *type == "int" ? Type::getInt32Ty(*context)
+        : *type == "float" ? Type::getFloatTy(*context)
+        : *type == "double" ? Type::getDoubleTy(*context)
+        : *type == "string" ? Type::getInt8PtrTy(*context)
+        : *type == "bool" ? Type::getInt1Ty(*context)
+        : Type::getVoidTy(*context);
+}
+
 /*
 List of rules:
 

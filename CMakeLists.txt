@@ -53,6 +53,7 @@ set(TestList
   "Assign 1"
   "Ternary 4"
   "MultipleConditions 315"
+  "Boolean 1110"
 )
 
 include(CTest)

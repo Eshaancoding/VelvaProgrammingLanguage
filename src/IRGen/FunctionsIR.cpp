@@ -14,24 +14,9 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 
     std::vector<Type *> paramTypes;
     for (auto &param : params)
-    {
-        if  (get<0>(param) == "int") {
-            paramTypes.push_back(Type::getInt32Ty(*ctx.context));
-        } 
-        else if (get<0>(param) == "float") {
-            paramTypes.push_back(Type::getFloatTy(*ctx.context));
-        } 
-        else if (get<0>(param) == "string") {
-            paramTypes.push_back(Type::getInt8PtrTy(*ctx.context));
-        }
-    }
+        paramTypes.push_back(ctx.convertToLLVMType(get<0>(param)));
 
-
-    auto retType = returnType == "int" ? Type::getInt32Ty(*ctx.context)
-            : returnType == "float" ? Type::getFloatTy(*ctx.context)
-            : returnType == "double" ? Type::getDoubleTy(*ctx.context)
-            : returnType == "string" ? Type::getInt8PtrTy(*ctx.context)
-            : Type::getVoidTy(*ctx.context);
+    auto retType = ctx.convertToLLVMType(returnType);
 
     FunctionType *FT = FunctionType::get(retType, paramTypes, false);
 
@@ -48,11 +33,15 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         BasicBlock *bb = BasicBlock::Create(*ctx.context, name, F);
         ctx.builder->SetInsertPoint(bb);
         
+        int i = 0;
         for(auto &arg : F->args()) {
             AllocaInst *Alloca = CreateEntryBlockAlloca(ctx, F, arg.getName().str());
             ctx.builder->CreateStore(&arg, Alloca);
-            ctx.createVarName(arg.getName().str(), Variable { "TODO", Alloca});
+            ctx.createVarName(arg.getName().str(), Variable { 
+                get<0>(params[i]), Alloca
+            });
             // ctx.namedValues[arg.getName().str()] = Alloca;
+            i += 1;
         }
         (*body)->codegen(ctx);
 

@@ -36,21 +36,16 @@ optional<Value *> StringExpr::codegen(CompilationContext &ctx)
 // ********************************** Variable uses/decl/assign **********************************
 optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 {
-    auto v = ctx.findVarName(var).value;
-    return ctx.builder->CreateLoad(Type::getInt32Ty(*ctx.context), v, var.c_str());
+    auto v = ctx.findVarName(var);
+    return ctx.builder->CreateLoad(ctx.convertToLLVMType(v.type), v.value, var.c_str());
 }
 
 // error stuff literally just dummy functions because it has to override shit
 optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
-    auto retType = type == "int" ? Type::getInt32Ty(*ctx.context)
-        : type == "float" ? Type::getFloatTy(*ctx.context)
-        : type == "double" ? Type::getDoubleTy(*ctx.context)
-        : type == "string" ? Type::getInt8PtrTy(*ctx.context)
-        : type == "bool" ? Type::getInt1Ty(*ctx.context)
-        : Type::getVoidTy(*ctx.context);   
+    auto retType = ctx.convertToLLVMType(type);
 
     AllocaInst *inst = ctx.builder->CreateAlloca(retType, 0, name.c_str());
-    ctx.createVarName(name, Variable { value->return_type() , inst});
+    ctx.createVarName(name, Variable { type, inst});
     // ctx.namedValues[name] = inst;
     auto rhs = value->codegen(ctx);
     if (!rhs)
