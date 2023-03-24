@@ -37,6 +37,8 @@ private:
     std::string src;
 public: 
     
+    static string determineType (std::string firstType, std::string secondType);
+    
     /**
      * @brief Initializes Parser. Declared in ParserInit.cpp
      * @param filename the path to the filename that it should be parsing.

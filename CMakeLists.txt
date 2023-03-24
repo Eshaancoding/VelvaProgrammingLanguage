@@ -52,6 +52,7 @@ set(TestList
   "IfStatements 2"
   "Assign 1"
   "Ternary 4"
+  "MultipleConditions 315"
 )
 
 include(CTest)

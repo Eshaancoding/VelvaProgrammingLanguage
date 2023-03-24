@@ -1,6 +1,0 @@
-int i = 3
-
-if (i == 3 or i == 2) {
-    putchar(48)
-}
-

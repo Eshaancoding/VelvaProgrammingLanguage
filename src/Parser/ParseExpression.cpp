@@ -2,7 +2,7 @@
 #include <cstring>
 #include <string>
 
-std::string determineType (std::string firstType, std::string secondType) {
+std::string Parser::determineType (std::string firstType, std::string secondType) {
     if (firstType == "string") return "string"; 
     if (firstType == "float" && secondType == "float") return "float";
     if (firstType == "int" && secondType == "int") return "int";

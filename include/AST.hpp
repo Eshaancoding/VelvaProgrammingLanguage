@@ -70,7 +70,7 @@ class IntExpr : public Expr {
          */
         int num;
         unsigned int numBits;
-        IntExpr(int i) : num(i), numBits(32) {}; // defaults to 32 for int
+        IntExpr(int i, int numBits=32) : num(i), numBits(numBits) {}; // defaults to 32 for int
         optional<Value*> codegen(CompilationContext &ctx) override; 
         string debug_info () override;
         string return_type () override; // just returns string, declared in AST Constructors.cpp

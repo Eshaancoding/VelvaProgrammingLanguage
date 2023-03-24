@@ -27,11 +27,11 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
     }
     else if (op == "and") {
         // expr1 ? expr2 : false
-        auto tn = TernaryExpr(move(LHS), move(RHS), make_unique<IntExpr>(IntExpr(0)));
+        auto tn = TernaryExpr(move(LHS), move(RHS), make_unique<IntExpr>(IntExpr(0, 1)));
         return tn.codegen(ctx);
     } else if (op == "or") {
         //expr1 ? true : expr2
-        auto tn = TernaryExpr(move(LHS), make_unique<IntExpr>(IntExpr(1)), move(RHS));
+        auto tn = TernaryExpr(move(LHS), make_unique<IntExpr>(IntExpr(1, 1)), move(RHS));
         return tn.codegen(ctx);
     }
     else {

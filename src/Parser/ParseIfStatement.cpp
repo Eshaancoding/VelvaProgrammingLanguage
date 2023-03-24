@@ -26,8 +26,7 @@ unique_ptr<Expr> Parser::ParseCondition () {
         secondExpr = ParseCondition();
     }
     cursor.goToParent();
-    printf("op: %s\n", op.c_str());
-    return make_unique<BinaryOpExpr>(op, move(firstExpr), move(secondExpr), "nan");
+    return make_unique<BinaryOpExpr>(op, move(firstExpr), move(secondExpr), Parser::determineType(firstExpr->return_type(), secondExpr->return_type()));
 }
 
 unique_ptr<Expr> Parser::ParseIfStatement () {
