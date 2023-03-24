@@ -1,3 +1,4 @@
+/*
 int i = 3
 int v = 2
 
@@ -13,6 +14,11 @@ if (i == 1 or v == 2) {
 
 i = 5
 v = 5
-if (i == 1 and v == 3 or i == 5 and v == 5) {
+if ((i == 1 and v == 3) or (i == 5 and v == 5)) {
+    putchar(48+i)
+}
+*/
+
+if ((i == 2) && (i == 1)) {
     putchar(48+i)
 }

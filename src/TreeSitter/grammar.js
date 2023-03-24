@@ -57,10 +57,13 @@ module.exports = grammar({
         ),
 
         // block with curly braces (used in conditionals, loops, and functions, but can also be included to group a scope)
-        block: $ => seq(
-            "{",
-            repeat($._statement),
-            "}"
+        block: $ => choice(
+            seq(
+                "{",
+                repeat($._statement),
+                "}"
+            ),
+            $._statement
         ),
 
         // conditional
@@ -182,7 +185,6 @@ module.exports = grammar({
             $._endLn
         ),
 
-        // // general block & statements (probably need to be updated), used in loops, conditionals, functions
 
         // conditionals
 
@@ -205,6 +207,7 @@ module.exports = grammar({
         or: $ => choice("or", "||"),
 
         condition: $ => choice(
+            prec.left(4, seq('(', $.condition, ')')),
             prec.left(3, seq($.expression, $.comparison_op, $.expression)),
             prec.left(2, seq($.condition, $.and, $.condition)),
             prec.left(2, seq($.condition, $.or, $.condition)),
