@@ -25,7 +25,7 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
         auto b = *(RHS->codegen(ctx));
         return ctx.builder->CreateICmpEQ(a, b);
     }
-    else if (op == "&&") {
+    else if (op == "and") {
         // expr1 ? expr2 : false
         auto F = ctx.builder->GetInsertBlock()->getParent();
         BasicBlock *lbb = BasicBlock::Create(*ctx.context, ctx.names.use("or_lhs"), F);
@@ -42,7 +42,7 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
         pn->addIncoming(ConstantInt::get(*ctx.context, APInt(8, 0)), lbb);
         pn->addIncoming(rhs, rbb);
         return pn;
-    } else if (op == "||") {
+    } else if (op == "or") {
         auto F = ctx.builder->GetInsertBlock()->getParent();
         BasicBlock *lbb = BasicBlock::Create(*ctx.context, ctx.names.use("or_lhs"), F);
         ctx.builder->SetInsertPoint(lbb);
