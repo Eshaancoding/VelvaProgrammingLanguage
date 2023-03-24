@@ -38,4 +38,3 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
         return nullopt;
     }
 }
-

@@ -7,7 +7,17 @@ unique_ptr<Expr> Parser::ParseCondition () {
     string op;
     unique_ptr<Expr> firstExpr;
     unique_ptr<Expr> secondExpr;
-    if (cursor.getType() == "expression") {
+    if (cursor.getType() == "identifier") {
+        auto ret = make_unique<VarUseExpr>(cursor.getSourceStr());
+        cursor.goToParent();
+        return ret;
+    }
+    else if (cursor.getType() == "boolean") {
+        auto ret = ParseBoolean();
+        cursor.goToParent();
+        return ret;
+    }
+    else if (cursor.getType() == "expression") {
         firstExpr = ParseExpression();
 
         cursor.goToSibling();

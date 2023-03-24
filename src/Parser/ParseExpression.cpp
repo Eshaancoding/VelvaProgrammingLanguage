@@ -35,6 +35,7 @@ unique_ptr<Expr> Parser::ParseExpression () {
     else if (type == "identifier") result = ParseIdentifier();
     else if (type == "ternaryStatement") result = ParseTernary();
     else if (type == "func_call") result = ParseFuncCall();
+    else if (type == "boolean") result = ParseBoolean();
     else {
         throw invalid_argument((std::string("Parsing expression invalid type: ") + type).c_str());
     }
@@ -141,4 +142,14 @@ unique_ptr<Expr> Parser::ParseReturn () {
     cursor.goToParent();
 
     return make_unique<ReturnExpr>(move(val));
+}
+
+unique_ptr<Expr> Parser::ParseBoolean () {
+    unique_ptr<Expr> ret;
+    cursor.goToChild();
+    if (cursor.getType() == "true") ret = make_unique<IntExpr>(1, 1);
+    else if (cursor.getType() == "false") ret = make_unique<IntExpr>(0, 1);
+    else throw invalid_argument("this should never happen");
+    cursor.goToParent();
+    return move(ret);
 }

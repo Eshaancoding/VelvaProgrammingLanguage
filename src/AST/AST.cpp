@@ -8,10 +8,13 @@ VarDeclareExpr::VarDeclareExpr(VarMutability mutTypeArg, string nameArg, unique_
     name = nameArg;
 
     auto typeExpr = value->return_type();
-    if (typeArg && *typeArg != typeExpr) {
+    // allow casting between bool and int
+    bool isIntBool = typeArg && (*typeArg == "bool" && typeExpr == "int");
+    if (typeArg && *typeArg != typeExpr && !isIntBool) {
         throw invalid_argument("bruh not same type");
     }
-    type = typeExpr;
+    if (isIntBool) type = "bool";
+    else type = typeExpr;
 };
 
 // Block expr decl

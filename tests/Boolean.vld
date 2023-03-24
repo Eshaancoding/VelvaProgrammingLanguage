@@ -1,0 +1,15 @@
+/*
+bool test = true
+
+if (test) {
+    putchar(48)
+}
+*/
+
+bool one = true
+bool two = false
+bool three = true
+
+if (one and two and three) {
+    putchar(48)
+}

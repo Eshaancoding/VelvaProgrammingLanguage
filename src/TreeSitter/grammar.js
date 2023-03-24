@@ -207,7 +207,8 @@ module.exports = grammar({
         condition: $ => choice(
             prec.left(3, seq($.expression, $.comparison_op, $.expression)),
             prec.left(2, seq($.condition, $.and, $.condition)),
-            prec.left(1, seq($.condition, $.or, $.condition)),
+            prec.left(2, seq($.condition, $.or, $.condition)),
+            prec.left(1, choice($.identifier, $.boolean))
         ),
 
         comparison_op: $ => choice(
@@ -229,7 +230,9 @@ module.exports = grammar({
         anyVal: $ => /.*/,
         identifier: $ => /[a-zA-Z]+/,
         number: $ => /[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/,
-        boolean: $ => choice("true", "false")
+        true: $ => choice("true", "True"),
+        false: $ => choice("false", "False"),
+        boolean: $ => choice($.true, $.false)
     }
 });
 

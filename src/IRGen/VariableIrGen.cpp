@@ -46,6 +46,7 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
         : type == "float" ? Type::getFloatTy(*ctx.context)
         : type == "double" ? Type::getDoubleTy(*ctx.context)
         : type == "string" ? Type::getInt8PtrTy(*ctx.context)
+        : type == "bool" ? Type::getInt1Ty(*ctx.context)
         : Type::getVoidTy(*ctx.context);   
 
     AllocaInst *inst = ctx.builder->CreateAlloca(retType, 0, name.c_str());

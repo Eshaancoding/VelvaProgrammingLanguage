@@ -11,7 +11,6 @@ unique_ptr<Expr> Parser::ParseVarDecl () {
         cursor.goToSibling();
     }
         
-        
     // get identifier
     assert(cursor.getType() == "identifier");
     std::string identifier = cursor.getSourceStr();
