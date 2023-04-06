@@ -28,6 +28,29 @@
     }
   },
   {
+    "type": "binary_condition",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "and",
+          "named": true
+        },
+        {
+          "type": "condition",
+          "named": true
+        },
+        {
+          "type": "or",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "binary_expression",
     "named": true,
     "fields": {},
@@ -56,10 +79,6 @@
       "types": [
         {
           "type": "assignment",
-          "named": true
-        },
-        {
-          "type": "block",
           "named": true
         },
         {
@@ -126,7 +145,7 @@
       "required": true,
       "types": [
         {
-          "type": "and",
+          "type": "binary_condition",
           "named": true
         },
         {
@@ -147,10 +166,6 @@
         },
         {
           "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "or",
           "named": true
         }
       ]
@@ -252,10 +267,6 @@
       "types": [
         {
           "type": "assignment",
-          "named": true
-        },
-        {
-          "type": "block",
           "named": true
         },
         {

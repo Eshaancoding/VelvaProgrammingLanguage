@@ -62,6 +62,7 @@ public:
     unique_ptr<Expr> ParseParanthesis ();
     unique_ptr<Expr> ParseTernary ();
     unique_ptr<Expr> ParseCondition ();
+    unique_ptr<Expr> ParseBinaryCondition ();
     unique_ptr<DeclareFunctionExpr> ParseFunctionDeclare ();
     unique_ptr<DeclareFunctionExpr> ParseAST (bool lessVerbose=false);
 

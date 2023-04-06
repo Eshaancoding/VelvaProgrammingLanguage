@@ -1,5 +1,19 @@
 #include "TreeSitterParser.hpp"
 
+unique_ptr<Expr> Parser::ParseBinaryCondition () {
+    cursor.goToChild();
+    // parse condition
+    auto firstExpr = ParseCondition();
+    cursor.goToSibling();
+    auto op = cursor.getType();
+    cursor.goToSibling();
+    auto secondExpr = ParseCondition();
+    
+    cursor.goToParent();
+
+    return make_unique<BinaryOpExpr>(op, move(firstExpr), move(secondExpr), Parser::determineType(firstExpr->return_type(), secondExpr->return_type()));
+}
+
 unique_ptr<Expr> Parser::ParseCondition () {
 
     cursor.goToChild();
@@ -7,36 +21,31 @@ unique_ptr<Expr> Parser::ParseCondition () {
     string op;
     unique_ptr<Expr> firstExpr;
     unique_ptr<Expr> secondExpr;
-    if (cursor.getType() == "identifier") {
-        auto ret = make_unique<VarUseExpr>(cursor.getSourceStr());
-        cursor.goToParent();
-        return ret;
-    }
-    else if (cursor.getType() == "boolean") {
-        auto ret = ParseBoolean();
-        cursor.goToParent();
-        return ret;
-    }
-    else if (cursor.getType() == "expression") {
+    if (cursor.getType() == "expression") {
         firstExpr = ParseExpression();
-
         cursor.goToSibling();
-        assert(cursor.getType() == "comparison_op");
         op = cursor.getSourceStr();
-
         cursor.goToSibling();
-        assert(cursor.getType() == "expression");
         secondExpr = ParseExpression();
+        cursor.goToParent();
+        return make_unique<BinaryOpExpr>(op, move(firstExpr), move(secondExpr), Parser::determineType(firstExpr->return_type(), secondExpr->return_type()));
+    }
+    else if (cursor.getType() == "binary_condition") {
+        auto result = ParseBinaryCondition(); 
+        cursor.goToParent();
+        return move(result);
     }
     else if (cursor.getType() == "condition") {
-        firstExpr = ParseCondition();
-        cursor.goToSibling();
-        op = cursor.getType();
-        cursor.goToSibling();
-        secondExpr = ParseCondition();
+        auto result = ParseCondition(); 
+        cursor.goToParent();
+        return move(result);
     }
-    cursor.goToParent();
-    return make_unique<BinaryOpExpr>(op, move(firstExpr), move(secondExpr), Parser::determineType(firstExpr->return_type(), secondExpr->return_type()));
+    else {
+        cursor.printNode();
+        std::string res = "Invalid type of: " + cursor.getType();
+        throw invalid_argument(res.c_str());
+    }
+    
 }
 
 unique_ptr<Expr> Parser::ParseIfStatement () {

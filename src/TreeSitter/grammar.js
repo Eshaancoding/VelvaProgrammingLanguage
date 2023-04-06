@@ -9,7 +9,6 @@ module.exports = grammar({
             $.if_statement,
             $.var_declaration,
             seq($.assignment, $._endLn),
-            $.block,
             $.return_statement,
             $.func_call,
             $.function_declare,
@@ -63,7 +62,7 @@ module.exports = grammar({
                 repeat($._statement),
                 "}"
             ),
-            $._statement
+            // $._statement
         ),
 
         // conditional
@@ -189,8 +188,8 @@ module.exports = grammar({
         // conditionals
 
         _if_continuation: $ => choice(
-            $.else_if,
-            $.else,
+            prec.left(2, $.else_if),
+            prec.left(1, $.else)
         ),
 
         else: $ => seq(
@@ -206,11 +205,15 @@ module.exports = grammar({
         and: $ => choice("and", "&&"),
         or: $ => choice("or", "||"),
 
+        binary_condition: $ => choice(
+            prec.left(2, seq($.condition, $.and, $.condition)),
+            prec.left(1, seq($.condition, $.or, $.condition))
+        ),
+
         condition: $ => choice(
             prec.left(4, seq('(', $.condition, ')')),
             prec.left(3, seq($.expression, $.comparison_op, $.expression)),
-            prec.left(2, seq($.condition, $.and, $.condition)),
-            prec.left(2, seq($.condition, $.or, $.condition)),
+            prec.left(2, $.binary_condition),
             prec.left(1, choice($.identifier, $.boolean))
         ),
 
@@ -229,7 +232,10 @@ module.exports = grammar({
             field("content", repeat(/./)),
             "\""   
         ),
-        _endLn: $ => choice("\n", ";"), 
+        _endLn: $ => choice(
+            "\n", 
+            ";",
+        ), 
         anyVal: $ => /.*/,
         identifier: $ => /[a-zA-Z]+/,
         number: $ => /[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/,
