@@ -37,19 +37,31 @@ optional<Value *> StringExpr::codegen(CompilationContext &ctx)
 optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 {
     auto v = ctx.findVarName(var);
+    retType = v.type;
     return ctx.builder->CreateLoad(ctx.convertToLLVMType(v.type), v.value, var.c_str());
 }
 
 // error stuff literally just dummy functions because it has to override shit
 optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
-    auto retType = ctx.convertToLLVMType(type);
-
-    AllocaInst *inst = ctx.builder->CreateAlloca(retType, 0, name.c_str());
-    ctx.createVarName(name, Variable { type, inst});
-    // ctx.namedValues[name] = inst;
     auto rhs = value->codegen(ctx);
     if (!rhs)
         return {};
+    
+    auto typeExpr = value->return_type();
+    // allow casting between bool and int
+    bool isIntBool = typeArg && (*typeArg == "bool" && typeExpr == "int");
+    if (typeArg && *typeArg != typeExpr && !isIntBool) {
+        throw invalid_argument("bruh not same type");
+    }
+    string type = "";
+    if (isIntBool) type = "bool";
+    else type = typeExpr;
+
+    auto retType = ctx.convertToLLVMType(type);
+
+    AllocaInst *inst = ctx.builder->CreateAlloca(retType, 0, name.c_str());
+    ctx.createVarName(name, VariableScope { type, inst});
+    
     auto s = ctx.builder->CreateStore(*rhs, inst);
     // s->setVolatile(true);
     return s;

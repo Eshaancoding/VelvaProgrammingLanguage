@@ -52,6 +52,17 @@ optional<Value*> TernaryExpr::codegen(CompilationContext &ctx) {
     auto else_Codegen = _else->codegen(ctx);
     if (!else_Codegen) return nullopt;
 
+    if (then->return_type() == _else->return_type()) {
+        retType = then->return_type();
+    }
+    else {
+        string returnArg = "Invalid return type when parsing ternary statements; first expr: ";
+        returnArg += then->return_type();
+        returnArg += " second expr: ";
+        returnArg += _else->return_type();
+        throw invalid_argument(returnArg);
+    }
+
     return ctx.builder->CreateSelect(*if_Codegen, *then_Codegen, *else_Codegen);
 }
 

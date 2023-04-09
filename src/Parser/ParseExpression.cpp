@@ -2,20 +2,7 @@
 #include <cstring>
 #include <string>
 
-std::string Parser::determineType (std::string firstType, std::string secondType) {
-    if (firstType == "string") return "string"; 
-    if (firstType == "float" && secondType == "float") return "float";
-    if (firstType == "int" && secondType == "int") return "int";
-    if (firstType == "boolean" && secondType == "boolean") return "boolean";
 
-    if (firstType == "float" && secondType == "int") return "float";
-    if (firstType == "int" && secondType == "float") return "float";
-    if (firstType == "boolean" && secondType == "int") return "int"; // boolean is just going to be treated as a number
-    if (firstType == "boolean" && secondType == "float") return "float"; // boolean is going to be treated as a number
-    if (firstType == "int" && secondType == "boolean") return "int"; // boolean is just going to be treated as a number
-    if (firstType == "float" && secondType == "boolean") return "int"; // boolean is just going to be treated as a number
-    throw invalid_argument((std::string("Unsupported type ") + firstType + " " + secondType + " types.").c_str());
-}
 
 unique_ptr<Expr> Parser::ParseIdentifier () {
     std::string name = cursor.getSourceStr();
@@ -91,8 +78,7 @@ unique_ptr<Expr> Parser::ParseBinaryOp() {
     
     cursor.goToParent(); // redirect back to the binary expression
     
-    auto typeResult = determineType(firstExpression->return_type(), secondExpression->return_type());
-    return make_unique<BinaryOpExpr>(op, move(firstExpression), move(secondExpression), typeResult);
+    return make_unique<BinaryOpExpr>(op, move(firstExpression), move(secondExpression));
 }
 
 unique_ptr<Expr> Parser::ParseAssigment() {

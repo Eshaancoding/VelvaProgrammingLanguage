@@ -11,7 +11,7 @@ unique_ptr<Expr> Parser::ParseBinaryCondition () {
     
     cursor.goToParent();
 
-    return make_unique<BinaryOpExpr>(op, move(firstExpr), move(secondExpr), Parser::determineType(firstExpr->return_type(), secondExpr->return_type()));
+    return make_unique<BinaryOpExpr>(op, move(firstExpr), move(secondExpr));
 }
 
 unique_ptr<Expr> Parser::ParseCondition () {
@@ -28,7 +28,7 @@ unique_ptr<Expr> Parser::ParseCondition () {
         cursor.goToSibling();
         secondExpr = ParseExpression();
         cursor.goToParent();
-        return make_unique<BinaryOpExpr>(op, move(firstExpr), move(secondExpr), Parser::determineType(firstExpr->return_type(), secondExpr->return_type()));
+        return make_unique<BinaryOpExpr>(op, move(firstExpr), move(secondExpr));
     }
     else if (cursor.getType() == "binary_condition") {
         auto result = ParseBinaryCondition(); 

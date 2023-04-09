@@ -29,14 +29,21 @@ class NameRegistry {
         string use(const string &prefix);
 };
 
-struct Variable {
+struct VariableScope {
     string type;
     Value *value;
 };
 
+struct FunctionScope {
+    string prefixName;
+    string name;
+    vector<string> params;
+    string returnType;
+};
+
 struct Scope {
-    unordered_map<string, Variable> varNames;                // first str: name, second int: just a palceholder 
-    unordered_map<string, Variable> functionDecl; // first str: name, second str: list of types, first type is the return statement ("null" if no type)
+    unordered_map<string, VariableScope> varNames;                // first str: name, second int: just a palceholder 
+    vector<FunctionScope> functions;
     bool isFunction; // if it is a function, then it doesn't include variables previous of the scope.
 };
 /**
@@ -62,15 +69,13 @@ struct CompilationContext {
         void pushFrame();
         void pushFrame(Scope &frame);
         void popFrame();
-        Variable createVarName (string name, Variable varName);   // will return the variable name if it exists
-        Variable findVarName (string varName);
+        VariableScope createVarName (string name, VariableScope varName);   // will return the variable name if it exists
+        VariableScope findVarName (string varName);
 
-        bool functionNameExists (string functionname, vector<string> types); 
-        string createFunctionName (string funcName, vector<string> types);
+        FunctionScope findFuncName (string funcName, vector<string> types);
+        string createFunctionName (optional<string> returnType, string funcName, vector<string> types);
 
         llvm::Type* convertToLLVMType (optional<string> type);
 };
-
-
 
 #endif 

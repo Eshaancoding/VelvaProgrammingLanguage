@@ -1,22 +1,6 @@
 #include "AST.hpp"
 #include "CompilationContext.hpp"
 
-// Declare Variable expression
-VarDeclareExpr::VarDeclareExpr(VarMutability mutTypeArg, string nameArg, unique_ptr<Expr> valueArg, optional<string> typeArg) {
-    value = move(valueArg); 
-    mutType = mutTypeArg;
-    name = nameArg;
-
-    auto typeExpr = value->return_type();
-    // allow casting between bool and int
-    bool isIntBool = typeArg && (*typeArg == "bool" && typeExpr == "int");
-    if (typeArg && *typeArg != typeExpr && !isIntBool) {
-        throw invalid_argument("bruh not same type");
-    }
-    if (isIntBool) type = "bool";
-    else type = typeExpr;
-};
-
 // Block expr decl
 void BlockExpr::add (unique_ptr<Expr> expr) {
     expr_map[counter] = move(expr);
@@ -44,21 +28,3 @@ string NameRegistry::use(const string &prefix) {
 
 // expr
 optional<Value*> Expr::codegen(CompilationContext &ctx) {return std::nullopt;}
-
-// ternary
-TernaryExpr :: TernaryExpr(unique_ptr<Expr> ifP, unique_ptr<Expr> thenP, unique_ptr<Expr> elseP) {
-    _if = move(ifP);
-    then = move(thenP);
-    _else = move(elseP);
-
-    if (then->return_type() == _else->return_type()) {
-        retType = then->return_type();
-    }
-    else {
-        string returnArg = "Invalid return type when parsing ternary statements; first expr: ";
-        returnArg += then->return_type();
-        returnArg += " second expr: ";
-        returnArg += _else->return_type();
-        throw invalid_argument(returnArg);
-    }
-}

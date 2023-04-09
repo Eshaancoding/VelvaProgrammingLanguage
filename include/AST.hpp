@@ -120,6 +120,8 @@ class CallFuncExpr : public Expr {
          * 
          */
         vector<unique_ptr<Expr>> params;
+        string retType;
+
         CallFuncExpr(string name, vector<unique_ptr<Expr>> params) : functionName(name), params(std::move(params)) {};
         std::optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
@@ -142,12 +144,9 @@ class BinaryOpExpr : public Expr {
         */
         unique_ptr<Expr> LHS, RHS;
 
-        /**
-         * @brief stores the type information (string, int, char, double, int, etc.)
-         */
-        string rt;
+        string retType; 
 
-        BinaryOpExpr (string op, unique_ptr<Expr> LHS, unique_ptr<Expr> RHS, string result_type) : op(op), LHS(move(LHS)), RHS(move(RHS)), rt(result_type) {}
+        BinaryOpExpr (string op, unique_ptr<Expr> LHS, unique_ptr<Expr> RHS) : op(op), LHS(move(LHS)), RHS(move(RHS)) {}
         std::optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
         string return_type() override;
@@ -256,6 +255,7 @@ class VarUseExpr : public Expr {
          * @brief The variable used
          *        */
         string var;
+        string retType;
         VarUseExpr(string var) : var(var) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
@@ -298,7 +298,7 @@ class VarDeclareExpr : public Expr {
          * @brief The type; if nullopt, then use type inference.
          * 
          */
-        string type;
+        unique_ptr<string> typeArg;
         /**
          * @brief The name of the variable to be declared.
          * 
@@ -310,7 +310,7 @@ class VarDeclareExpr : public Expr {
          */
         unique_ptr<Expr> value;
         // defined in BinaryOpIrGen.cpp
-        VarDeclareExpr(VarMutability mutTypeArg, string nameArg, unique_ptr<Expr> valueArg, optional<string> typeArg);
+        VarDeclareExpr(VarMutability mutTypeArg, string nameArg, unique_ptr<Expr> valueArg, optional<string> typeArg) : value(move(valueArg)), mutType(mutTypeArg), name(nameArg), typeArg(typeArg) {};
         void alloc(CompilationContext &ctx);
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
@@ -374,7 +374,7 @@ class TernaryExpr: public Expr {
         string retType;
         unique_ptr<Expr> _if, then, _else;
 
-        TernaryExpr(unique_ptr<Expr> ifP, unique_ptr<Expr> thenP, unique_ptr<Expr> elseP);
+        TernaryExpr(unique_ptr<Expr> ifP, unique_ptr<Expr> thenP, unique_ptr<Expr> elseP) : _if(move(ifP)), then(move(thenP)), _else(move(elseP)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
         string return_type() override;
