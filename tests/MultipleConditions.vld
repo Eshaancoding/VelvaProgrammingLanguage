@@ -1,5 +1,22 @@
 int i = 3
-int v = 3
-if ((v == 3 && i == 2) && v == 2) {
-    putchar(48+v)
+int v = 2
+
+if (i == 3 and v == 2) {
+    putchar(48+i)
+}
+
+i = 1
+v = 62
+if (i == 1 or v == 2) {
+    putchar(48+i)
+}
+
+i = 5
+v = 5
+if ((i == 1 and v == 3) or (i == 5 and v == 5)) {
+    putchar(48+i)
+}
+
+if ((i == 2) && (i == 1)) {
+    putchar(48+i)
 }

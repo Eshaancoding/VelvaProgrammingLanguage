@@ -254,12 +254,3 @@ function commaSep(rule) {
 function commaSep1(rule) {
   return seq(rule, repeat(seq(',', rule)));
 }
-
-function sep(rule, deliminator) {
-  return optional(sep1(rule, deliminator));
-}
-
-function sep1(rule, deliminator) {
-  return seq(rule, repeat(seq(deliminator, rule)));
-}
-

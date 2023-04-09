@@ -28,13 +28,15 @@ The Velva Programming Language is a low-level programming language designed for 
 
 ## How to build manually?
 
-1. make a `build` folder in the `VelvaProgrammingLang` directory (`mkdir build`)
-2. Go into the `build` folder by `cd build` 
-3. Run `cmake -G [Generator of Your Choice] ../`
+1. Create the tree sitter cli via going to the `src/TreeSitter` directory and run `npm install`  (<--- TODO: Maybe add this in CMake later)
+2. Add `src/TreeSitter/node_modules/tree-sitter-cli/` to path, this will generate the CLI needed for generating the tree sitter source code
+3. In the `src/TreeSitter` directory, run `tree-sitter generate`
+4. make a `build` folder in the `VelvaProgrammingLang` directory (`mkdir build`) and go into it (`cd build`)
+5. Run `cmake -G [Generator of Your Choice] ../`
     * The generator can be Unix Makefiles, Ninja, Visual Studio, or any other (you could check your available options by typing `cmake --help`)
     * Recommended is Ninja, since it has default parrallel-worker support (faster).
-4. Then build the program using `make`, `ninja`, etc. (depends on the generator of your choice) 
-5. Use `vild main.vtk` to run the program
+6. Then build the program using `make`, `ninja`, etc. (depends on the generator of your choice) 
+7. Use `veld main.vtk` to run the program
 
 ## Why are we doing this?
 

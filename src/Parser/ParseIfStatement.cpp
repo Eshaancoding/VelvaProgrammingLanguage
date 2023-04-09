@@ -40,6 +40,16 @@ unique_ptr<Expr> Parser::ParseCondition () {
         cursor.goToParent();
         return move(result);
     }
+    else if (cursor.getType() == "identifier") {
+        auto result = ParseIdentifier();
+        cursor.goToParent();
+        return move(result);
+    }
+    else if (cursor.getType() == "boolean") {
+        auto result = ParseBoolean();
+        cursor.goToParent();
+        return move(result);
+    }
     else {
         cursor.printNode();
         std::string res = "Invalid type of: " + cursor.getType();
