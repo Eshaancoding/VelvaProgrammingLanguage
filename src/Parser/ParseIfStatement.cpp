@@ -45,8 +45,8 @@ unique_ptr<Expr> Parser::ParseCondition () {
         cursor.goToParent();
         return move(result);
     }
-    else if (cursor.getType() == "boolean") {
-        auto result = ParseBoolean();
+    else if (cursor.getType() == "bool") {
+        auto result = ParseBool();
         cursor.goToParent();
         return move(result);
     }
@@ -81,7 +81,7 @@ unique_ptr<Expr> Parser::ParseIfStatement () {
             cursor.goToChild();
             auto otherBranchExpr = static_cast<BranchExpr*>(ParseIfStatement().release());
             
-            // isnert to if map
+            // insert to if map
             for (int i = 0; i < otherBranchExpr->ifMap.size(); i++) {
                 ifMap.push_back(move(otherBranchExpr->ifMap[i]));
             }

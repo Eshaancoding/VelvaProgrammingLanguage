@@ -1,0 +1,20 @@
+int i = 3
+if (i == 3) {
+    int v = 2
+    if (v == 2) {
+        i = 7
+    }
+}
+
+func a (int x) {
+    int i = 6
+    putchar(x+i)
+}
+
+func a (int x, int b) {
+    putchar(x+b+48+x)
+}
+
+putchar(i+48)
+a(48)
+a(4,4)

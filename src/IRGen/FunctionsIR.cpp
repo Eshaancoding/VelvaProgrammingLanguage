@@ -21,7 +21,6 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         paramTypes.push_back(ctx.convertToLLVMType(p));
     }
 
-    for (auto i : params) types.push_back(get<0>(i));
     string newName = ctx.createFunctionName(returnType, name, types); // get function name from scoping
 
     auto retType = ctx.convertToLLVMType(returnType);
@@ -37,6 +36,8 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         Idx++;
     }
     if(!isExternal) {
+        ctx.pushFrame(true);
+
         auto block = ctx.builder->GetInsertBlock();
         BasicBlock *bb = BasicBlock::Create(*ctx.context, newName, F);
         ctx.builder->SetInsertPoint(bb);
@@ -56,6 +57,8 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
             ctx.builder->CreateRetVoid();
         }
         ctx.builder->SetInsertPoint(block);
+
+        ctx.popFrame();
     }
     verifyFunction(*F);
     return F;

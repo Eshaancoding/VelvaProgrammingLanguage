@@ -4,7 +4,6 @@ optional<Value*> ErrorExpr::codegen(CompilationContext &ctx) { return nullopt; }
 
 
 optional<Value*> BlockExpr::codegen (CompilationContext &ctx) {
-    ctx.pushFrame();
     for (int i = 0; i < counter; i++) {
         if (expr_map.count(i) == 1) {
             // exists in expr_map
@@ -18,7 +17,6 @@ optional<Value*> BlockExpr::codegen (CompilationContext &ctx) {
             ctx.builder->SetInsertPoint(prevBlock);
         }
     }
-    ctx.popFrame();
     return nullopt;
 }
 

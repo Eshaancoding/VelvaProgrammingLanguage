@@ -315,7 +315,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "boolean"
+          "name": "bool"
         },
         {
           "type": "SYMBOL",
@@ -390,7 +390,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "boolean"
+              "name": "bool"
             }
           ]
         }
@@ -924,7 +924,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "boolean"
+                "name": "bool"
               }
             ]
           }
@@ -1060,7 +1060,7 @@
         }
       ]
     },
-    "boolean": {
+    "bool": {
       "type": "CHOICE",
       "members": [
         {

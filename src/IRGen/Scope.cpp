@@ -1,7 +1,9 @@
 #include "CompilationContext.hpp"
 
-void CompilationContext::pushFrame() {
-    scopes.push_back(Scope());
+void CompilationContext::pushFrame(bool isFunction) {
+    auto sc = Scope();
+    sc.isFunction = isFunction;
+    scopes.push_back(sc);
 }
 // add frame
 void CompilationContext::pushFrame(Scope &frame) {

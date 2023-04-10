@@ -5,6 +5,7 @@ optional<Value*> BranchExpr::codegen (CompilationContext &ctx)  {
     auto *f = main->getParent();
 
     BasicBlock *endingBlock = BasicBlock::Create(*ctx.context, ctx.names.use("if_end"), f);
+    bool didInsertFrame = false;
 
     for (const auto &block : ifMap) {
         auto originalInsert = ctx.builder->GetInsertBlock();
@@ -13,15 +14,27 @@ optional<Value*> BranchExpr::codegen (CompilationContext &ctx)  {
             // first create conditional
             auto condV = (*get<0>(block))->codegen(ctx);
             if (!condV) return nullopt;
+            if (didInsertFrame) ctx.popFrame();
 
             // add the then basic block
+            ctx.pushFrame(false);
             BasicBlock *thenBB = BasicBlock::Create(*ctx.context, ctx.names.use("then"), f);
             ctx.builder->SetInsertPoint(thenBB);
             get<1>(block)->codegen(ctx);
             ctx.builder->CreateBr(endingBlock);
+            ctx.popFrame();
 
             // then add else block
-            BasicBlock *elseBB = block == ifMap.back() ? endingBlock :  BasicBlock::Create(*ctx.context, ctx.names.use("else"), f);
+
+            BasicBlock *elseBB;
+            if (block == ifMap.back()) {
+                didInsertFrame = false;
+                elseBB = endingBlock;
+            } else {
+                ctx.pushFrame(false);
+                didInsertFrame = true;
+                elseBB = BasicBlock::Create(*ctx.context, ctx.names.use("else"), f);
+            }
 
             // go back to the main block and then insert the cond br
             ctx.builder->SetInsertPoint(originalInsert);
@@ -34,6 +47,7 @@ optional<Value*> BranchExpr::codegen (CompilationContext &ctx)  {
             get<1>(block)->codegen(ctx);
             ctx.builder->CreateBr(endingBlock);
             ctx.builder->SetInsertPoint(endingBlock);
+            ctx.popFrame();
         }
     }
 
@@ -52,14 +66,19 @@ optional<Value*> TernaryExpr::codegen(CompilationContext &ctx) {
     auto else_Codegen = _else->codegen(ctx);
     if (!else_Codegen) return nullopt;
 
-    if (then->return_type() == _else->return_type()) {
-        retType = then->return_type();
+    auto thenRetType = then->return_type();
+    auto elseRetType = _else->return_type();
+    
+    bool isIntBool = (thenRetType == "bool" && elseRetType == "int") || (thenRetType == "int" && elseRetType == "bool");
+    if (isIntBool) retType = "bool";
+    else if (thenRetType == elseRetType) {
+        retType = thenRetType;
     }
     else {
         string returnArg = "Invalid return type when parsing ternary statements; first expr: ";
-        returnArg += then->return_type();
+        returnArg += thenRetType;
         returnArg += " second expr: ";
-        returnArg += _else->return_type();
+        returnArg += elseRetType;
         throw invalid_argument(returnArg);
     }
 

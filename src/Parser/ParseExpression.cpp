@@ -22,7 +22,7 @@ unique_ptr<Expr> Parser::ParseExpression () {
     else if (type == "identifier") result = ParseIdentifier();
     else if (type == "ternaryStatement") result = ParseTernary();
     else if (type == "func_call") result = ParseFuncCall();
-    else if (type == "boolean") result = ParseBoolean();
+    else if (type == "bool") result = ParseBool();
     else {
         throw invalid_argument((std::string("Parsing expression invalid type: ") + type).c_str());
     }
@@ -100,9 +100,9 @@ unique_ptr<Expr> Parser::ParseAssigment() {
 
         // ================= INFERENCE TYPE NOT SUPPORTED============ because var use expr doesn't work :9
         if (cursor.getSourceStr() == "++")
-            expr = make_unique<BinaryOpExpr>("+", move(baseChild), move(increment), "nan");
+            expr = make_unique<BinaryOpExpr>("+", move(baseChild), move(increment));
         else if (cursor.getSourceStr() == "--")
-            expr = make_unique<BinaryOpExpr>("-", move(baseChild), move(increment), "nan");
+            expr = make_unique<BinaryOpExpr>("-", move(baseChild), move(increment));
 
         cursor.goToParent();
     } else {
@@ -130,7 +130,7 @@ unique_ptr<Expr> Parser::ParseReturn () {
     return make_unique<ReturnExpr>(move(val));
 }
 
-unique_ptr<Expr> Parser::ParseBoolean () {
+unique_ptr<Expr> Parser::ParseBool () {
     unique_ptr<Expr> ret;
     cursor.goToChild();
     if (cursor.getType() == "true") ret = make_unique<IntExpr>(1, 1);

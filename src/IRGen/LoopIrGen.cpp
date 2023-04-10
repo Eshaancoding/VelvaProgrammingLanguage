@@ -1,6 +1,7 @@
 #include "AST.hpp"
 
 optional<Value*> ForExpr::codegen (CompilationContext &ctx) {
+    ctx.pushFrame();
     auto f = ctx.builder->GetInsertBlock()->getParent();
     varDecl->codegen(ctx);
 
@@ -8,7 +9,6 @@ optional<Value*> ForExpr::codegen (CompilationContext &ctx) {
     BasicBlock *bodyBB = BasicBlock::Create(*ctx.context, ctx.names.use("for"), f);
     BasicBlock *endBB = BasicBlock::Create(*ctx.context, ctx.names.use("for_end"), f);
     ctx.builder->CreateBr(forCond);
-    ctx.pushFrame();
     ctx.builder->SetInsertPoint(forCond);
     ctx.builder->CreateCondBr(*(condition->codegen(ctx)), bodyBB, endBB);
     ctx.builder->SetInsertPoint(bodyBB);
@@ -21,6 +21,7 @@ optional<Value*> ForExpr::codegen (CompilationContext &ctx) {
 }
 
 optional<Value*> WhileExpr::codegen(CompilationContext &ctx) {
+    ctx.pushFrame();
     Function *f = ctx.builder->GetInsertBlock()->getParent();
     BasicBlock *whileCond = BasicBlock::Create(*ctx.context, ctx.names.use("while_cond"), f);
     BasicBlock *bodyBB = BasicBlock::Create(*ctx.context, ctx.names.use("while"), f);
@@ -32,5 +33,6 @@ optional<Value*> WhileExpr::codegen(CompilationContext &ctx) {
     body->codegen(ctx);
     ctx.builder->CreateBr(whileCond);
     ctx.builder->SetInsertPoint(endBB);
+    ctx.popFrame();
     return nullopt;
 }

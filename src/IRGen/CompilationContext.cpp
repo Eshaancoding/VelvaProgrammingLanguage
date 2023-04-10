@@ -21,8 +21,7 @@ CompilationContext::CompilationContext() {
     mod = std::make_unique<Module>("mod", *context);
     builder = std::make_unique<IRBuilder<>>(*context);
     lessVerbose = false;
-    Scope baseFrame;
-    pushFrame(baseFrame);
+    pushFrame(); // add main frame
 }
 
 void CompilationContext::compile() {

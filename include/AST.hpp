@@ -298,7 +298,7 @@ class VarDeclareExpr : public Expr {
          * @brief The type; if nullopt, then use type inference.
          * 
          */
-        unique_ptr<string> typeArg;
+        optional<string> typeArg;
         /**
          * @brief The name of the variable to be declared.
          * 

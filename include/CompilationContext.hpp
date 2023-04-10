@@ -66,7 +66,7 @@ struct CompilationContext {
         void compile();
         // ModulePassManager setOptimize(ModuleAnalysisManager& MAM);
         //void defaultOptimize();
-        void pushFrame();
+        void pushFrame(bool isFunction=false);
         void pushFrame(Scope &frame);
         void popFrame();
         VariableScope createVarName (string name, VariableScope varName);   // will return the variable name if it exists

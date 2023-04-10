@@ -91,7 +91,7 @@ module.exports = grammar({
             $.binary_expression,
             $._unary_expression,
             $.number,
-            $.boolean,
+            $.bool,
             $.func_call,
             $.string,
             $.parathensisExpr
@@ -112,7 +112,7 @@ module.exports = grammar({
 
         not: $ => seq(
             "!",
-            choice($.identifier, $.boolean)
+            choice($.identifier, $.bool)
         ),
 
         negative: $ => seq(
@@ -214,7 +214,7 @@ module.exports = grammar({
             prec.left(4, seq('(', $.condition, ')')),
             prec.left(3, seq($.expression, $.comparison_op, $.expression)),
             prec.left(2, $.binary_condition),
-            prec.left(1, choice($.identifier, $.boolean))
+            prec.left(1, choice($.identifier, $.bool))
         ),
 
         comparison_op: $ => choice(
@@ -241,7 +241,7 @@ module.exports = grammar({
         number: $ => /[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/,
         true: $ => choice("true", "True"),
         false: $ => choice("false", "False"),
-        boolean: $ => choice($.true, $.false)
+        bool: $ => choice($.true, $.false)
     }
 });
 

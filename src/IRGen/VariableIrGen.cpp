@@ -49,18 +49,14 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
     
     auto typeExpr = value->return_type();
     // allow casting between bool and int
-    bool isIntBool = typeArg && (*typeArg == "bool" && typeExpr == "int");
-    if (typeArg && *typeArg != typeExpr && !isIntBool) {
+    bool isIntBool = (*typeArg == "bool" && typeExpr == "int");
+    if (typeArg && *typeArg != typeExpr && !isIntBool)
         throw invalid_argument("bruh not same type");
-    }
-    string type = "";
-    if (isIntBool) type = "bool";
-    else type = typeExpr;
-
-    auto retType = ctx.convertToLLVMType(type);
+    if (isIntBool) typeExpr = "bool";
+    auto retType = ctx.convertToLLVMType(typeExpr);
 
     AllocaInst *inst = ctx.builder->CreateAlloca(retType, 0, name.c_str());
-    ctx.createVarName(name, VariableScope { type, inst});
+    ctx.createVarName(name, VariableScope { typeExpr, inst });
     
     auto s = ctx.builder->CreateStore(*rhs, inst);
     // s->setVolatile(true);
