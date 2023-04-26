@@ -15,7 +15,8 @@ module.exports = grammar({
             $.for,
             $.while,
             $._singleComment,
-            $._multiLineComment
+            $._multiLineComment,
+            $.classDecl
         ),
 
         _singleComment: $ => seq('//', /.*/),
@@ -135,6 +136,21 @@ module.exports = grammar({
             choice("++", "--"),
         ),
         
+        publicPrivate: $ => choice("public:", "private:"),
+        
+        classDecl: $ => seq(
+            'class',
+            $.identifier,
+            '{',
+            repeat(
+                choice(
+                    $.var_declaration,
+                    $.function_declare,
+                    $.publicPrivate
+                )
+            ),
+            '}'
+        ),
 
         // binary expression (needs testing)
         binary_expression: $ => choice(
