@@ -1,0 +1,9 @@
+class Hello {
+private:
+    int x = 0
+
+public:
+    int y = 0 
+
+    func hello () {}
+}

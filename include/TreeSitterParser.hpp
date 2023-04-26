@@ -51,16 +51,17 @@ public:
     unique_ptr<Expr> ParseExpression ();
     unique_ptr<Expr> ParseWhile();
     unique_ptr<Expr> ParseForLoop ();
-    unique_ptr<Expr> ParseVarDecl ();
     unique_ptr<Expr> ParseNumber ();  
     unique_ptr<Expr> ParseString ();
     unique_ptr<Expr> ParseIfStatement();
     unique_ptr<Expr> ParseIdentifier();
-    unique_ptr<BlockExpr> ParseBlock (bool lessVerbose=false);
     unique_ptr<Expr> ParseParanthesis ();
     unique_ptr<Expr> ParseTernary ();
     unique_ptr<Expr> ParseCondition ();
     unique_ptr<Expr> ParseBinaryCondition ();
+    unique_ptr<Expr> ParseClass ();
+    unique_ptr<BlockExpr> ParseBlock (bool lessVerbose=false);
+    unique_ptr<VarDeclareExpr> ParseVarDecl ();
     unique_ptr<DeclareFunctionExpr> ParseFunctionDeclare ();
     unique_ptr<DeclareFunctionExpr> ParseAST (bool lessVerbose=false);
 

@@ -82,6 +82,10 @@
           "named": true
         },
         {
+          "type": "classDecl",
+          "named": true
+        },
+        {
           "type": "for",
           "named": true
         },
@@ -126,6 +130,33 @@
         },
         {
           "type": "true",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "classDecl",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "function_declare",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "publicPrivate",
+          "named": true
+        },
+        {
+          "type": "var_declaration",
           "named": true
         }
       ]
@@ -267,6 +298,10 @@
       "types": [
         {
           "type": "assignment",
+          "named": true
+        },
+        {
+          "type": "classDecl",
           "named": true
         },
         {
@@ -513,6 +548,11 @@
     "fields": {}
   },
   {
+    "type": "publicPrivate",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "return_statement",
     "named": true,
     "fields": {},
@@ -740,6 +780,10 @@
     "named": false
   },
   {
+    "type": "class",
+    "named": false
+  },
+  {
     "type": "else",
     "named": false
   },
@@ -777,6 +821,14 @@
   },
   {
     "type": "or",
+    "named": false
+  },
+  {
+    "type": "private:",
+    "named": false
+  },
+  {
+    "type": "public:",
     "named": false
   },
   {

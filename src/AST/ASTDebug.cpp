@@ -78,3 +78,7 @@ string VarDeclareExpr::debug_info() {
 
     return result;
 }
+
+string ClassExpr::debug_info() {
+    return "Class Expr";
+}

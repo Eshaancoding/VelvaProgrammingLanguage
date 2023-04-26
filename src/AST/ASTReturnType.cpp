@@ -1,8 +1,8 @@
 #include "AST.hpp" 
 
 
-
 string Expr::return_type() { return ""; }
+string ClassExpr::return_type() { return "class"; }
 string IntExpr::return_type() { return "int"; }
 string FloatExpr::return_type() { return "float"; }
 string StringExpr::return_type() { return "string"; }
@@ -14,6 +14,7 @@ string WhileExpr::return_type() { return "WhileExpr"; }
 string BlockExpr::return_type() { return "block"; }
 string ForExpr::return_type() { return "for"; }
 string ReturnExpr::return_type() { return "return"; }
+
 
 string TernaryExpr::return_type() { return retType; } 
 string BinaryOpExpr::return_type() { return retType; }

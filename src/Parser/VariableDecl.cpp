@@ -1,7 +1,7 @@
 #include "TreeSitterParser.hpp"
 
 
-unique_ptr<Expr> Parser::ParseVarDecl () {
+unique_ptr<VarDeclareExpr> Parser::ParseVarDecl () {
     // get primitive type
 
     cursor.goToChild();

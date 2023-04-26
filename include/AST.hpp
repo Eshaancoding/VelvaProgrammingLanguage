@@ -416,4 +416,33 @@ class ReturnExpr : public Expr {
         string debug_info() override;
         string return_type() override;
 };
+
+/**
+ * @brief Class
+ * 
+ */
+
+struct VarTemplate {
+    unique_ptr<Expr> expr ;
+    bool isPublic;
+};
+
+struct FuncTemplate {
+    unique_ptr<DeclareFunctionExpr> expr;
+    bool isPublic;
+};
+
+class ClassExpr : public Expr {
+    public: 
+        string className;
+        vector<VarTemplate> variables;
+        vector<FuncTemplate> functions;
+        
+        ClassExpr (vector<VarTemplate> vars, vector<FuncTemplate> funcs) : variables(vars), functions(move(funcs)) {}
+
+        optional<Value*> codegen (CompilationContext &ctx) override;
+        string debug_info() override;
+        string return_type() override;
+};
+
 #endif
