@@ -48,21 +48,25 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
 
     // get value & type
     if (value) {  // value defined
-        auto typeExpr = (*value)->return_type();
-
-        // allow casting between bool and int
-        bool isIntBool = (typeArg && *typeArg == "bool" && typeExpr == "int");
-        if (typeArg && *typeArg != typeExpr && !isIntBool)
-            throw invalid_argument("not same type");
-        if (isIntBool) typeExpr = "bool";
-        ty = typeExpr;
-        retType = ctx.convertToLLVMType(typeExpr);
-
         // codegen value
         auto res = (*value)->codegen(ctx);
         if (!res) throw invalid_argument("Value undefined");
         
-        val = *res;
+        // return type
+        val = *res;       
+        auto typeExpr = (*value)->return_type();
+
+        // allow casting between bool and int
+        bool isIntBool = (typeArg && *typeArg == "bool" && typeExpr == "int");
+        if (typeArg && *typeArg != typeExpr && !isIntBool) {
+            string msg = "Not same type. First type: " + *typeArg + " and second type: " + typeExpr;
+            throw invalid_argument(msg);
+        }
+        if (isIntBool) typeExpr = "bool";
+        ty = typeExpr;
+        retType = ctx.convertToLLVMType(typeExpr);
+
+        
 
     } else if (!typeArg && !value) {
         throw invalid_argument("Cannot declare auto with no assigment.");

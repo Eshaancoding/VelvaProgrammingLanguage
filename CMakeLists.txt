@@ -47,7 +47,7 @@ set(TestList
   "FunctionTest 9"
   "ForLoop ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz"
   "WhileLoop ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz"
-  "Auto 3"
+  "Auto 363"
   "Strings hello world"
   "IfStatements 2"
   "Assign 1"
