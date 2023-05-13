@@ -42,22 +42,44 @@ optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 
 // error stuff literally just dummy functions because it has to override shit
 optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
-    auto rhs = value->codegen(ctx);
-    if (!rhs)
-        return {};
-    
-    auto typeExpr = value->return_type();
-    // allow casting between bool and int
-    bool isIntBool = (*typeArg == "bool" && typeExpr == "int");
-    if (typeArg && *typeArg != typeExpr && !isIntBool)
-        throw invalid_argument("bruh not same type");
-    if (isIntBool) typeExpr = "bool";
-    auto retType = ctx.convertToLLVMType(typeExpr);
+    string ty;
+    llvm::Type* retType; 
+    llvm::Value* val;
+
+    // get value & type
+    if (value) {  // value defined
+        auto typeExpr = (*value)->return_type();
+
+        // allow casting between bool and int
+        bool isIntBool = (typeArg && *typeArg == "bool" && typeExpr == "int");
+        if (typeArg && *typeArg != typeExpr && !isIntBool)
+            throw invalid_argument("not same type");
+        if (isIntBool) typeExpr = "bool";
+        ty = typeExpr;
+        retType = ctx.convertToLLVMType(typeExpr);
+
+        // codegen value
+        auto res = (*value)->codegen(ctx);
+        if (!res) throw invalid_argument("Value undefined");
+        
+        val = *res;
+
+    } else if (!typeArg && !value) {
+        throw invalid_argument("Cannot declare auto with no assigment.");
+    }
+    else {
+        // we have a type defined, but no value; get from default value
+        ty = *typeArg;
+        retType = ctx.convertToLLVMType(ty);
+        auto res = ctx.getDefaultValue(ty);
+        if (!res) throw invalid_argument("Default value undefined.");
+        val = *res;
+    }
 
     AllocaInst *inst = ctx.builder->CreateAlloca(retType, 0, name.c_str());
-    ctx.createVarName(name, VariableScope { typeExpr, inst });
+    ctx.createVarName(name, VariableScope { ty, inst });
     
-    auto s = ctx.builder->CreateStore(*rhs, inst);
+    auto s = ctx.builder->CreateStore(val, inst);
     // s->setVolatile(true);
     return s;
 };  

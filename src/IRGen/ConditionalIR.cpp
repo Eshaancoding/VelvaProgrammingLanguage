@@ -36,7 +36,7 @@ optional<Value*> BranchExpr::codegen (CompilationContext &ctx)  {
                 elseBB = BasicBlock::Create(*ctx.context, ctx.names.use("else"), f);
             }
 
-            // go back to the main block and then insert the cond br
+            // go back to the main block and then insert the cond brs
             ctx.builder->SetInsertPoint(originalInsert);
             ctx.builder->CreateCondBr(*condV, thenBB, elseBB);
 
@@ -84,8 +84,6 @@ optional<Value*> TernaryExpr::codegen(CompilationContext &ctx) {
 
     return ctx.builder->CreateSelect(*if_Codegen, *then_Codegen, *else_Codegen);
 }
-
-
 
 // not really a conditional but it's fairly prelevant in conditions so
 optional<Value*> ReturnExpr::codegen (CompilationContext &ctx) {

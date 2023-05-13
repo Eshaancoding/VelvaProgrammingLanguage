@@ -76,6 +76,7 @@ struct CompilationContext {
         string createFunctionName (optional<string> returnType, string funcName, vector<string> types);
 
         llvm::Type* convertToLLVMType (optional<string> type);
+        optional<llvm::Value*> getDefaultValue (string type);
 };
 
 #endif 

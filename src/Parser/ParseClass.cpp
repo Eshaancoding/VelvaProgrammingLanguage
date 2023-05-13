@@ -6,7 +6,6 @@ unique_ptr<Expr> Parser::ParseClass () {
     vector<FuncTemplate> functions;
     string funcName;
 
-
     int numChilds = cursor.getNumChilds();
     cursor.goToChild();
 
@@ -37,7 +36,6 @@ unique_ptr<Expr> Parser::ParseClass () {
                 isPublic
             });
         }
-        
         if (i < numChilds-1)
             cursor.goToSibling();
     }

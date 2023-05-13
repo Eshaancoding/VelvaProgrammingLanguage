@@ -63,3 +63,23 @@ void CompilationContext::compile() {
     dest.flush();
     delete targetMachine;
 }
+
+// return type
+llvm::Type* CompilationContext::convertToLLVMType (optional<string> type) {
+    if (!type) return Type::getVoidTy(*context);
+    return *type == "int" ? Type::getInt32Ty(*context)
+        : *type == "float" ? Type::getFloatTy(*context)
+        : *type == "double" ? Type::getDoubleTy(*context)
+        : *type == "string" ? Type::getInt8PtrTy(*context)
+        : *type == "bool" ? Type::getInt1Ty(*context)
+        : Type::getVoidTy(*context);
+}
+
+// get default value
+optional<llvm::Value*> CompilationContext::getDefaultValue (string type) {
+    return  type == "int" ? IntExpr(0).codegen(*this) :
+            type == "float" ? FloatExpr(0).codegen(*this) :
+            type == "string" ? StringExpr("").codegen(*this) : 
+            type == "bool" ? IntExpr(0, 1).codegen(*this) :
+            nullopt;
+}

@@ -1,10 +1,9 @@
 int x = 3
 putchar(x+48)
 
+int y
+y = 6
+putchar(y+48)
 
-// f(x) = x + y => f'(x) = 1 
-// g(x) = x^2 => g'(x) = 2x
-// (x+y)^2 = g(f(x))
-
-// d/dx g(f(x)) = g'(f(x))f'(x) = 2
-// 2(x+y) * 1 = 2x + 2y
+auto b = 3 
+putchar(b+48)

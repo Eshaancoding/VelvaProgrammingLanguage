@@ -80,8 +80,10 @@ module.exports = grammar({
         var_declaration: $ => seq(
             field("type", choice($.primitive_type, "auto")),
             field("name", $.identifier),
-            '=',
-            field("value", $.expression),
+            optional(seq(
+                '=',
+                field("value", $.expression),
+            )),
             $._endLn, 
         ),
 
@@ -134,6 +136,7 @@ module.exports = grammar({
         inc_dec: $ => seq(
             $.identifier,
             choice("++", "--"),
+            $._endLn
         ),
         
         publicPrivate: $ => choice("public:", "private:"),

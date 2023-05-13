@@ -283,9 +283,6 @@ typedef enum {
  * @brief An AST node that represents a variable declaration
  * 
  *
-
-you know what daniel. Great job. Stupendous job.
-it's kidna cool you know a little bit about phsyciology though.
 */
 class VarDeclareExpr : public Expr { 
     public:
@@ -308,9 +305,9 @@ class VarDeclareExpr : public Expr {
          * @brief The right hand expression representing the value.
          * 
          */
-        unique_ptr<Expr> value;
+        optional<unique_ptr<Expr>> value;
         // defined in BinaryOpIrGen.cpp
-        VarDeclareExpr(VarMutability mutTypeArg, string nameArg, unique_ptr<Expr> valueArg, optional<string> typeArg) : value(move(valueArg)), mutType(mutTypeArg), name(nameArg), typeArg(typeArg) {};
+        VarDeclareExpr(VarMutability mutTypeArg, string nameArg, optional<unique_ptr<Expr>> valueArg, optional<string> typeArg) : value(move(valueArg)), mutType(mutTypeArg), name(nameArg), typeArg(typeArg) {};
         void alloc(CompilationContext &ctx);
         optional<Value*> codegen(CompilationContext &ctx) override;
         string debug_info() override;
@@ -423,7 +420,7 @@ class ReturnExpr : public Expr {
  */
 
 struct VarTemplate {
-    unique_ptr<Expr> expr ;
+    unique_ptr<VarDeclareExpr> expr;
     bool isPublic;
 };
 
@@ -438,7 +435,7 @@ class ClassExpr : public Expr {
         vector<VarTemplate> variables;
         vector<FuncTemplate> functions;
         
-        ClassExpr (vector<VarTemplate> vars, vector<FuncTemplate> funcs) : variables(vars), functions(move(funcs)) {}
+        ClassExpr (vector<VarTemplate> vars, vector<FuncTemplate> funcs) : variables(move(vars)), functions(move(funcs)) {}
 
         optional<Value*> codegen (CompilationContext &ctx) override;
         string debug_info() override;

@@ -1,9 +1,8 @@
 class Hello {
 private:
-    int x = 0
-
+    int x
 public:
-    int y = 0 
+    int y 
 
     func hello () {}
 }
