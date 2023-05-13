@@ -144,6 +144,10 @@
       "required": true,
       "types": [
         {
+          "type": "classVarDecl",
+          "named": true
+        },
+        {
           "type": "function_declare",
           "named": true
         },
@@ -154,9 +158,24 @@
         {
           "type": "publicPrivate",
           "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "classVarDecl",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
         },
         {
-          "type": "var_declaration",
+          "type": "primitive_type",
           "named": true
         }
       ]

@@ -491,6 +491,19 @@
         }
       ]
     },
+    "classVarDecl": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "primitive_type"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        }
+      ]
+    },
     "classDecl": {
       "type": "SEQ",
       "members": [
@@ -513,7 +526,7 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "var_declaration"
+                "name": "classVarDecl"
               },
               {
                 "type": "SYMBOL",

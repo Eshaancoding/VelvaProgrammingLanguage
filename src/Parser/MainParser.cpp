@@ -35,7 +35,7 @@ GeneralType Parser::ParseGeneral () {
     else if (type == "expression") return ParseExpression();
     else if (type == "for") return ParseForLoop();
     else if (type == "while") return ParseWhile();
-    else if (type == "classDecl") return ParseVarDecl();
+    else if (type == "classDecl") return ParseClass();
     // else if (type == "return") return ParseReturn();
     else {
         throw invalid_argument((std::string("Invalid type when parsing general: ")+type).c_str());

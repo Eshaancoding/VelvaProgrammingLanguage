@@ -420,7 +420,8 @@ class ReturnExpr : public Expr {
  */
 
 struct VarTemplate {
-    unique_ptr<VarDeclareExpr> expr;
+    string type;
+    string name;
     bool isPublic;
 };
 

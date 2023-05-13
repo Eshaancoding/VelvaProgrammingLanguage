@@ -13,20 +13,32 @@ unique_ptr<Expr> Parser::ParseClass () {
     funcName = cursor.getSourceStr();
     cursor.goToSibling();
 
+    printf("Praseing class\n");
+
     for (int i = 1; i < numChilds; i++) {
         string ty = cursor.getType();  
 
         if (ty == "publicPrivate") {
             if (cursor.getSourceStr() == "public") isPublic = true;
             else isPublic = false;
-        }
-        else if (ty == "var_declaration") {
-            auto exp = ParseVarDecl();
 
-            variables.push_back({
-                move(exp), 
-                isPublic
-            });
+            cursor.goToSibling();
+        }
+        else if (ty == "classVarDecl") {
+            cursor.goToChild();
+
+            assert(cursor.getType() == "primitive_type");
+            string ty = cursor.getSourceStr();
+            cursor.goToSibling();
+
+            assert(cursor.getType() == "identifier");
+            string name = cursor.getSourceStr();
+
+            cursor.goToParent();
+
+            variables.push_back({ty, name, isPublic});
+
+            cursor.goToSibling();
         }
         else if (ty == "function_declare") {
             auto exp = ParseFunctionDeclare();
@@ -35,10 +47,11 @@ unique_ptr<Expr> Parser::ParseClass () {
                 move(exp),
                 isPublic
             });
-        }
-        if (i < numChilds-1)
             cursor.goToSibling();
+        }
+
+        cursor.printNode();
     }
 
-    cursor.goToParent();
+    return make_unique<ClassExpr>(variables, move(functions));
 }

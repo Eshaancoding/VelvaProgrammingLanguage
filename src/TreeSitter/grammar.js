@@ -141,13 +141,18 @@ module.exports = grammar({
         
         publicPrivate: $ => choice("public:", "private:"),
         
+        classVarDecl: $ => seq(
+            $.primitive_type,
+            $.identifier
+        ),
+        
         classDecl: $ => seq(
             'class',
             $.identifier,
             '{',
             repeat(
                 choice(
-                    $.var_declaration,
+                    $.classVarDecl,
                     $.function_declare,
                     $.publicPrivate
                 )
