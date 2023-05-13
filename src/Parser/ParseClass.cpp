@@ -4,16 +4,16 @@ unique_ptr<Expr> Parser::ParseClass () {
     bool isPublic = true;
     vector<VarTemplate> variables;
     vector<FuncTemplate> functions;
-    string funcName;
+    string className;
+    vector<ConstructTemplate> constructors;
 
     int numChilds = cursor.getNumChilds();
     cursor.goToChild();
 
     // get name
-    funcName = cursor.getSourceStr();
+    className = cursor.getSourceStr();
     cursor.goToSibling();
-
-    printf("Praseing class\n");
+    
 
     for (int i = 1; i < numChilds; i++) {
         string ty = cursor.getType();  
@@ -49,9 +49,33 @@ unique_ptr<Expr> Parser::ParseClass () {
             });
             cursor.goToSibling();
         }
+        else if (ty == "constructor") {
+            vector<tuple<string, string>> params;
 
-        cursor.printNode();
+            // parse parameter list
+            assert(cursor.getType() == "parameter_list");
+            int numParameters = cursor.getNumChilds();
+            cursor.goToChild();
+            for (int i = 0; i < numParameters; i++) {
+                cursor.goToChild();
+                std::string primitiveType = cursor.getSourceStr();
+                cursor.goToSibling();
+                std::string identifier = cursor.getSourceStr();
+
+                cursor.goToParent();
+                cursor.goToSibling();
+                params.push_back({primitiveType, identifier});
+            }
+            cursor.goToParent();
+            cursor.goToSibling();
+
+            // parse block
+            assert(cursor.getType() == "block");
+            auto bl = ParseBlock();
+            
+            constructors.push_back({params, move(bl)});
+        }
     }
 
-    return make_unique<ClassExpr>(variables, move(functions));
+    return make_unique<ClassExpr>(className, variables, move(functions), move(constructors));
 }

@@ -430,13 +430,24 @@ struct FuncTemplate {
     bool isPublic;
 };
 
+struct ConstructTemplate {
+    vector<tuple<string, string>> params;
+    unique_ptr<Expr> blockExpr;
+};
+
 class ClassExpr : public Expr {
     public: 
         string className;
         vector<VarTemplate> variables;
         vector<FuncTemplate> functions;
+        vector<ConstructTemplate> constructors;
         
-        ClassExpr (vector<VarTemplate> vars, vector<FuncTemplate> funcs) : variables(move(vars)), functions(move(funcs)) {}
+        ClassExpr (
+            string className, 
+            vector<VarTemplate> vars, 
+            vector<FuncTemplate> funcs, 
+            vector<ConstructTemplate> constructors
+        ) : variables(move(vars)), functions(move(funcs)), className(className), constructors(move(constructors)) {}
 
         optional<Value*> codegen (CompilationContext &ctx) override;
         string debug_info() override;

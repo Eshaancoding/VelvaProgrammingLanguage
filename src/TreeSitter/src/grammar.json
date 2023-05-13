@@ -504,6 +504,23 @@
         }
       ]
     },
+    "constructor": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "init"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "parameter_list"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "block"
+        }
+      ]
+    },
     "classDecl": {
       "type": "SEQ",
       "members": [
@@ -535,6 +552,10 @@
               {
                 "type": "SYMBOL",
                 "name": "publicPrivate"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "constructor"
               }
             ]
           }

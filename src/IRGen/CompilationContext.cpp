@@ -20,7 +20,6 @@ CompilationContext::CompilationContext() {
     context = std::make_unique<LLVMContext>();
     mod = std::make_unique<Module>("mod", *context);
     builder = std::make_unique<IRBuilder<>>(*context);
-    lessVerbose = false;
     pushFrame(); // add main frame
 }
 

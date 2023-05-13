@@ -146,6 +146,12 @@ module.exports = grammar({
             $.identifier
         ),
         
+        constructor: $ => seq(
+            "init",
+            $.parameter_list,  
+            $.block
+        ),
+        
         classDecl: $ => seq(
             'class',
             $.identifier,
@@ -154,7 +160,8 @@ module.exports = grammar({
                 choice(
                     $.classVarDecl,
                     $.function_declare,
-                    $.publicPrivate
+                    $.publicPrivate,
+                    $.constructor
                 )
             ),
             '}'

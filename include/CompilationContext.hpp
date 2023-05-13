@@ -60,7 +60,6 @@ struct CompilationContext {
         Scope globals;
 
         //std::unique_ptr<FunctionPassManager> fpm;
-        bool lessVerbose=false;
         NameRegistry names;
         CompilationContext();
         void compile();

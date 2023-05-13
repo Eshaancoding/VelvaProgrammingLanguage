@@ -26,7 +26,6 @@ int main(int argc, const char **argv)
     const char *filename = argv[1];
 
     CompilationContext ctx;
-    ctx.lessVerbose = lessVerbose;
     if (!lessVerbose) printf("Starting...\n");
 
     // initialize ffi functions
@@ -45,9 +44,7 @@ int main(int argc, const char **argv)
     
     raw_fd_ostream ofile("dog.ll", EC);
     ctx.mod->print(ofile, nullptr);
-
-    if (!lessVerbose)
-        (*fn)->print(errs()); 
+    ctx.mod->print(errs(), nullptr);
 
     if (!lessVerbose) printf("================== Compiling to object File =================\n");
     verifyFunction(**fn, &llvm::errs());

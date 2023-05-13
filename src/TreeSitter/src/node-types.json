@@ -148,6 +148,10 @@
           "named": true
         },
         {
+          "type": "constructor",
+          "named": true
+        },
+        {
           "type": "function_declare",
           "named": true
         },
@@ -216,6 +220,25 @@
         },
         {
           "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "constructor",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "parameter_list",
           "named": true
         }
       ]
@@ -828,6 +851,10 @@
   },
   {
     "type": "if",
+    "named": false
+  },
+  {
+    "type": "init",
     "named": false
   },
   {

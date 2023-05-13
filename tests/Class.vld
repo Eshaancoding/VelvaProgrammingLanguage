@@ -4,5 +4,11 @@ private:
 public:
     int y 
 
-    func hello () {}
+    init () {
+        x = 6
+    }
+
+    func hello () {
+        x = x + 2
+    }
 }
