@@ -73,6 +73,7 @@ unique_ptr<Expr> Parser::ParseClass () {
             assert(cursor.getType() == "block");
             auto bl = ParseBlock();
             
+            // add to constructors
             constructors.push_back({params, move(bl)});
         }
     }

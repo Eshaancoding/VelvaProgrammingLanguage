@@ -44,7 +44,8 @@ int main(int argc, const char **argv)
     
     raw_fd_ostream ofile("dog.ll", EC);
     ctx.mod->print(ofile, nullptr);
-    ctx.mod->print(errs(), nullptr);
+    
+    if (!lessVerbose) ctx.mod->print(errs(), nullptr);
 
     if (!lessVerbose) printf("================== Compiling to object File =================\n");
     verifyFunction(**fn, &llvm::errs());
