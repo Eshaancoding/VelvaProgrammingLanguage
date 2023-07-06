@@ -1,16 +1,24 @@
 #include "CompilationContext.hpp"
 
 void CompilationContext::pushFrame(ClassScope cls) {
-    auto sc = Scope();
-    sc.isFunction = false;
-    sc.cls = cls;
-    scopes.push_back(sc);
+    if (this->createToGlobal) {
+        globals.cls = cls;
+    } else {
+        auto sc = Scope();
+        sc.isFunction = false;
+        sc.cls = cls;
+        scopes.push_back(sc);
+    }
 }
 
 void CompilationContext::pushFrame(bool isFunction) {
-    auto sc = Scope();
-    sc.isFunction = isFunction;
-    scopes.push_back(sc);
+    if (this->createToGlobal) {
+        globals.isFunction = isFunction;
+    } else {
+        auto sc = Scope();
+        sc.isFunction = isFunction;
+        scopes.push_back(sc);
+    }
 }
 // add frame
 void CompilationContext::pushFrame(Scope &frame) {
@@ -26,8 +34,13 @@ VariableScope CompilationContext::createVarName(string varName, VariableScope va
     // eventually expand to full list of keywords later
     if (varName == "this") throw invalid_argument("Cannot name keyword.");
     
-    if (scopes.back().varNames.count(varName) > 0) throw invalid_argument("Variable already exists in scope.");
-    scopes.back().varNames[varName] = var;
+    if (this->createToGlobal) {
+        if (globals.varNames.count(varName) > 0) throw invalid_argument("Variable already exists in scope.");
+        globals.varNames[varName] = var;
+    } else {
+        if (scopes.back().varNames.count(varName) > 0) throw invalid_argument("Variable already exists in scope.");
+        scopes.back().varNames[varName] = var;
+    }
     return var;
 }
 
@@ -61,7 +74,11 @@ string CompilationContext::createFunctionName (optional<string> returnType, stri
     string newRet = "";
     if (returnType) newRet = *returnType;
     else newRet = "void";
-    scopes.back().functions.push_back(FunctionScope {funcName, n, types, newRet});
+    auto fscope = FunctionScope {funcName, n, types, newRet};
+    if (this->createToGlobal) 
+        globals.functions.push_back(fscope);
+    else
+        scopes.back().functions.push_back(fscope);
 
     return n;
 }

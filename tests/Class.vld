@@ -6,9 +6,15 @@ public:
 
     init () {
         x = 6
+        y = 2
+    }
+    
+    int returnX ()  {
+        return x
     }
 
-    
-
+    int returnY () {
+        return y
+    }
     
 }

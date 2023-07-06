@@ -36,19 +36,18 @@ optional<Value *> StringExpr::codegen(CompilationContext &ctx)
 optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 {
     auto result = ctx.findVarName(var);
-    printf("var use expr: ");
     if (const VariableScope* v = get_if<VariableScope>(&result)) {
-        printf("variable scope!\n");
         retType = v->type;
         return ctx.builder->CreateLoad(ctx.convertToLLVMType(v->type), v->value, var.c_str());
     }
 
     if (const ClassScope* classSc = get_if<ClassScope>(&result)) {
-        printf("class scope!\n");
         // search through the class scope if we can get the var name
         for (int i = 0; i < classSc->variables.size(); i++) {
-            if (classSc->variables[i].name == var) // check for public/private later
-                return ctx.builder->CreateLoad(classSc->variableValues[i]->getType(), classSc->variableValues[i], var.c_str());
+            if (classSc->variables[i].name == var && ctx.runningClass) {// check for public/private later
+                retType = classSc->variables[i].type;
+                return ctx.builder->CreateLoad(ctx.convertToLLVMType(retType), classSc->variableValues[i], var.c_str());
+            }
         }
         throw invalid_argument("Unable to find variable in class scope!");
     }
@@ -111,10 +110,9 @@ optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {
         return ctx.builder->CreateStore(*(value->codegen(ctx)), v->value);
 
     if (const ClassScope* classSc = get_if<ClassScope>(&result)) {
-        printf("class scope!\n");
         // search through the class scope if we can get the var name
         for (int i = 0; i < classSc->variables.size(); i++) {
-            if (classSc->variables[i].name == varName) // check for public/private later
+            if (classSc->variables[i].name == varName && ctx.runningClass) // check for public/private later
                 return ctx.builder->CreateStore(*(value->codegen(ctx)), classSc->variableValues[i]);
         }
         throw invalid_argument("Unable to find variable in class scope!");

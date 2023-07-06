@@ -16,6 +16,7 @@ The Velva Programming Language is a low-level programming language designed for 
 	* embed classes in scope 
 	* check whether if accessing variable is private
 	* What if we redeclare a private variable in a class structure. What do we do :/
+	* putchar in one of the functions and call it
 
 * Scoping:
 	* Check whether overloaded functions (both in classes and outside classes) work

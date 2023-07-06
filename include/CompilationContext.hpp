@@ -83,6 +83,7 @@ struct CompilationContext {
         Scope globals;
 
         static bool runningClass;
+        static bool createToGlobal;
 
         //std::unique_ptr<FunctionPassManager> fpm;
         NameRegistry names;

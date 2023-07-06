@@ -14,12 +14,14 @@ void initializeFunction (CompilationContext &ctx, string name, vector<tuple<stri
 }
 
 void initializeAllFFIFunc (CompilationContext &ctx) {
+    ctx.createToGlobal = true; 
     initializeFunction(ctx, "cos", {{"float", "x"}}, "float");
     initializeFunction(ctx, "sin", {{"float", "x"}}, "float");
     initializeFunction(ctx, "cos", {{"int", "x"}}, "float");
     initializeFunction(ctx, "sin", {{"int", "x"}}, "float");
     initializeFunction(ctx, "putchar", {{"int", "x"}}, "int");
     initializeFunction(ctx, "printf", {{"string", "x"}}, "int");
+    ctx.createToGlobal = false; 
 }
 
 #endif

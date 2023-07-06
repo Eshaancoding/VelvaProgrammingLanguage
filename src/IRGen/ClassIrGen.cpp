@@ -24,7 +24,6 @@ optional<Value*> ClassExpr::codegen(CompilationContext &ctx) {
 
         // go through block expr now and see what variables are declared
         // if not declared, either do default value or value set in equal sign in the original constructor
-        
 
         // process declare func expr
         DeclareFunctionExpr(
@@ -41,8 +40,9 @@ optional<Value*> ClassExpr::codegen(CompilationContext &ctx) {
     bool definedConstruct = false;
     for (int i = 0; i < functions.size(); i++) {
         auto f = move(functions[i].expr); 
-
-        // add class name in front of name
+        f->name = className + "_" + f->name;            // functino name
+        f->params.push_back({"pt:"+className, "this"}); // return pointer type
+        f->codegen(ctx);
     }
 
     // pop from class frame

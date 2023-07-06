@@ -16,6 +16,7 @@
 #include "llvm/IR/LegacyPassManager.h"
 
 bool CompilationContext::runningClass = false;
+bool CompilationContext::createToGlobal = false;
 
 CompilationContext::CompilationContext() {
     context = std::make_unique<LLVMContext>();
