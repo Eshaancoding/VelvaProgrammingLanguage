@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.13.4)
 project(Velva)
 
 # get all file names
-
 file(GLOB_RECURSE lib_srcs ${CMAKE_SOURCE_DIR}/src/*.cpp ${CMAKE_SOURCE_DIR}/src/TreeSitter/*.c)
 
 # set names
@@ -33,8 +32,9 @@ llvm_map_components_to_libnames(llvm_libraries ${LLVM_LINK_COMPONENTS})
 
 ########################## RUN COMPILER CPP WITH LIBRARY ##########################
 
+set(CMAKE_CXX_FLAGS "-g -fstandalone-debug")
 add_executable(${COMPILER_NAME} ${lib_srcs})
-target_compile_options(${COMPILER_NAME} PUBLIC "-g")
+target_compile_options(${COMPILER_NAME} PUBLIC)
 target_include_directories(${COMPILER_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${LLVM_INCLUDE_DIRS} $ENV{TREE_SITTER_LIB_INCLUDE})
 target_link_libraries(${COMPILER_NAME} PUBLIC ${llvm_libraries} ${targets} $ENV{TREE_SITTER_LIB_FILE})
 set_property(TARGET ${COMPILER_NAME} PROPERTY CXX_STANDARD 17) # we are using C++17

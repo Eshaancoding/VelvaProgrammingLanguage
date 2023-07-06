@@ -36,7 +36,7 @@ unique_ptr<Expr> Parser::ParseClass () {
 
             cursor.goToParent();
 
-            variables.push_back({ty, name, isPublic});
+            variables.push_back({ty, name, isPublic, nullptr});
 
             cursor.goToSibling();
         }
@@ -74,7 +74,10 @@ unique_ptr<Expr> Parser::ParseClass () {
             // parse block
             assert(cursor.getType() == "block");
             auto bl = ParseBlock();
-            
+
+            cursor.goToParent();
+            cursor.goToSibling();
+
             // add to constructors
             constructors.push_back({params, move(bl)});
         }

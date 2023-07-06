@@ -419,11 +419,7 @@ class ReturnExpr : public Expr {
  * 
  */
 
-struct VarTemplate {
-    string type;
-    string name;
-    bool isPublic;
-};
+// var template defined in CompilationContext.hpp
 
 struct FuncTemplate {
     unique_ptr<DeclareFunctionExpr> expr;

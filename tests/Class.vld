@@ -5,10 +5,10 @@ public:
     int y 
 
     init () {
-        int x = 6
+        x = 6
     }
 
-    func hello () {
-        x = x + 2
-    }
+    
+
+    
 }

@@ -1,5 +1,12 @@
 #include "CompilationContext.hpp"
 
+void CompilationContext::pushFrame(ClassScope cls) {
+    auto sc = Scope();
+    sc.isFunction = false;
+    sc.cls = cls;
+    scopes.push_back(sc);
+}
+
 void CompilationContext::pushFrame(bool isFunction) {
     auto sc = Scope();
     sc.isFunction = isFunction;
@@ -16,19 +23,21 @@ void CompilationContext::popFrame() {
 
 // variable handling
 VariableScope CompilationContext::createVarName(string varName, VariableScope var) {
+    // eventually expand to full list of keywords later
+    if (varName == "this") throw invalid_argument("Cannot name keyword.");
+    
     if (scopes.back().varNames.count(varName) > 0) throw invalid_argument("Variable already exists in scope.");
     scopes.back().varNames[varName] = var;
     return var;
 }
 
-VariableScope CompilationContext::findVarName(string varName) {
-    for(vector<Scope>::reverse_iterator i = scopes.rbegin(); i != scopes.rend(); ++i) {
-        if(i->varNames.count(varName) != 0) {
-            return i->varNames[varName];
-        }
-        if (i->isFunction) break;
+variant<VariableScope, ClassScope> CompilationContext::findVarName(string varName) {
+    auto fullScopes = scopes; fullScopes.push_back(globals);
+    for(vector<Scope>::reverse_iterator i = fullScopes.rbegin(); i != fullScopes.rend(); ++i) {
+        if(i->varNames.count(varName) != 0) return i->varNames[varName];
+        if (i->cls && runningClass) return *i->cls;
+        if (i->isFunction && !runningClass) break;
     }
-    if(globals.varNames.count(varName) != 0) return globals.varNames[varName];
     throw invalid_argument("No variable by the name of '" + varName + "'");
 }
 
@@ -68,22 +77,29 @@ FunctionScope CompilationContext::findFuncName (string funcName, vector<string> 
 }
 
 // classes
-ClassScope CompilationContext::createClass (string name, StructType* type) {
+ClassScope CompilationContext::createClass (string name, StructType* type, Type* pointerType, vector<VarTemplate> variables) {
+    // check if already in name registry. If not, then create one 
+    if (this->names.isUsed(name)) 
+        throw invalid_argument("Class already defined.");
+    this->names.use(name);
+
+    // only one class per scope instance
     for (vector<Scope>::reverse_iterator i = scopes.rbegin(); i != scopes.rend(); ++i) { 
-        for (auto v : i->classes) {
-            if (v.name == name) throw invalid_argument("Class already defined.");
-        }
+        if (i->cls)
+            throw invalid_argument("Cannot declare a class within a class.");
     }
-    ClassScope c = {name, type};
-    scopes.back().classes.push_back(c);
+
+    // push scope 
+    ClassScope c = {name, type, pointerType, variables, {}};
+    this->pushFrame(c);
     return c;
 }
 
+// really this function is only used when defining functions within in the class
 ClassScope CompilationContext::findClass (string name) {
     for (vector<Scope>::reverse_iterator i = scopes.rbegin(); i != scopes.rend(); ++i) { 
-        for (auto v : i->classes) {
-            if (v.name == name) return v; 
-        }
+        if (i->cls && i->cls->name == name)
+            return *i->cls; 
     }
     throw invalid_argument("Invalid class name.");
 }

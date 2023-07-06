@@ -1,7 +1,7 @@
 #include "AST.hpp" 
 
 
-string Expr::return_type() { return ""; }
+string Expr::return_type() { return "def expr"; }
 string ClassExpr::return_type() { return "class"; }
 string IntExpr::return_type() { return "int"; }
 string FloatExpr::return_type() { return "float"; }

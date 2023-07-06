@@ -35,9 +35,24 @@ optional<Value *> StringExpr::codegen(CompilationContext &ctx)
 // ********************************** Variable uses/decl/assign **********************************
 optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 {
-    auto v = ctx.findVarName(var);
-    retType = v.type;
-    return ctx.builder->CreateLoad(ctx.convertToLLVMType(v.type), v.value, var.c_str());
+    auto result = ctx.findVarName(var);
+    printf("var use expr: ");
+    if (const VariableScope* v = get_if<VariableScope>(&result)) {
+        printf("variable scope!\n");
+        retType = v->type;
+        return ctx.builder->CreateLoad(ctx.convertToLLVMType(v->type), v->value, var.c_str());
+    }
+
+    if (const ClassScope* classSc = get_if<ClassScope>(&result)) {
+        printf("class scope!\n");
+        // search through the class scope if we can get the var name
+        for (int i = 0; i < classSc->variables.size(); i++) {
+            if (classSc->variables[i].name == var) // check for public/private later
+                return ctx.builder->CreateLoad(classSc->variableValues[i]->getType(), classSc->variableValues[i], var.c_str());
+        }
+        throw invalid_argument("Unable to find variable in class scope!");
+    }
+    throw invalid_argument("Reached invalid subroutine!");
 }
 
 // error stuff literally just dummy functions because it has to override shit
@@ -88,6 +103,22 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
     return s;
 };  
 
+
 optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {
-    return ctx.builder->CreateStore(*(value->codegen(ctx)), ctx.findVarName(varName).value);
+    auto result = ctx.findVarName(varName);
+    
+    if (const VariableScope* v = get_if<VariableScope>(&result))
+        return ctx.builder->CreateStore(*(value->codegen(ctx)), v->value);
+
+    if (const ClassScope* classSc = get_if<ClassScope>(&result)) {
+        printf("class scope!\n");
+        // search through the class scope if we can get the var name
+        for (int i = 0; i < classSc->variables.size(); i++) {
+            if (classSc->variables[i].name == varName) // check for public/private later
+                return ctx.builder->CreateStore(*(value->codegen(ctx)), classSc->variableValues[i]);
+        }
+        throw invalid_argument("Unable to find variable in class scope!");
+    }
+
+    throw invalid_argument("Reached invalid subroutine!");
 }

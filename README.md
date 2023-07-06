@@ -5,6 +5,7 @@ The Velva Programming Language is a low-level programming language designed for 
 ## Todo:
 
 * Class implementation
+	* Assign expr doesnttttttt work :/
 	* Enable arguments be classes
 		* The convert to LLVM Type should already be implemented
 		* in CompilationContext::getDefaultValue make sure you have default classes already
@@ -13,16 +14,39 @@ The Velva Programming Language is a low-level programming language designed for 
 	* Make sure that as its parsing, if it detects a class check if its already declared or not
 	* actually be able to call function methods	
 	* embed classes in scope 
+	* check whether if accessing variable is private
+	* What if we redeclare a private variable in a class structure. What do we do :/
+
+* Scoping:
+	* Check whether overloaded functions (both in classes and outside classes) work
+
+* ERROR:
+```
+/*
+    init (int v) {
+        v++
+    }
+*/
+```
+whenever I add this (with comment), it gives me a parser issue. and whenever I don't it gives me an "integer" not supported type stuff which is weird me no likey.
 
 * Check if scoping really works
 	* what if you declare two variables in a different scope?
+	* what if an argument to the function and then the same name is redeclared :(
 
 * linter (treesitter)
+* intellisense (microsoft language server protocol (LSP), not sure how to implement that)
 * better error messages
 =========================================
 * Create a full neural network then :0
 =========================================
 * Class Inheritance (Polymorphism)
+
+## Tests
+
+Once you successfully generate build files using the `cmake` command and executable `veld` (more instructions on "How to build manually?"), you could look at all the tests that Velva is currently passing.
+
+The tests are at the `tests` folder of this repo. Almost all of .vld are then checked with the `ctest` command that is set up in the `CMakeLists.txt`
 
 ## Goals
 
@@ -32,16 +56,6 @@ The Velva Programming Language is a low-level programming language designed for 
 * Communications Library (UCP/TCP protocol, etc.)
 * Strongly-typed
 * Friendly and easy-to-understand error messages
-
-## Implemented so far:
-
-* Int, string, & float variable declarations
-* Variable using, declaring, and assigning
-* For loops + while loops
-* Binary Operations (with precedence)
-* String types + declarations
-* Conditions (If statements + return statements)
-* Function declares (no returns as of right now, parameters work)
 
 ## How to run?
 

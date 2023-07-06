@@ -44,11 +44,33 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         
         int i = 0;
         for(auto &arg : F->args()) {
-            AllocaInst *Alloca = CreateEntryBlockAlloca(ctx, F, arg.getName().str());
-            ctx.builder->CreateStore(&arg, Alloca);
-            ctx.createVarName(arg.getName().str(), VariableScope { 
-                get<0>(params[i]), Alloca
-            });
+            if (arg.getName().str() != "this") {  
+                // just regular allocation for normal argument variables
+                AllocaInst *Alloca = CreateEntryBlockAlloca(ctx, F, arg.getName().str());
+                ctx.builder->CreateStore(&arg, Alloca);
+                ctx.createVarName(arg.getName().str(), VariableScope { 
+                    get<0>(params[i]), Alloca
+                });
+            } else if (ctx.runningClass) {
+                // go back until you get class scope
+                for (vector<Scope>::reverse_iterator i = ctx.scopes.rbegin(); i != ctx.scopes.rend(); ++i) {
+                    // gen values for variables
+                    if (i->cls) {
+                        size_t indCount = 0;
+                        for (auto vtemplate : i->cls->variables) {
+                            i->cls->variableValues.push_back(ctx.builder->CreateGEP(
+                                i->cls->type, 
+                                &arg, 
+                                {*IntExpr(0).codegen(ctx), *IntExpr(indCount).codegen(ctx)}, 
+                                vtemplate.name
+                            ));
+                            indCount++;
+                        }
+                    }
+
+                }
+            } else throw invalid_argument("Cannot name 'this' as an argument.");
+                
             i += 1;
         }
         (*body)->codegen(ctx);

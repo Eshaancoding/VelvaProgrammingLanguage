@@ -15,6 +15,7 @@
 #include "llvm/Analysis/InstructionSimplify.h"
 #include "llvm/IR/LegacyPassManager.h"
 
+bool CompilationContext::runningClass = false;
 
 CompilationContext::CompilationContext() {
     context = std::make_unique<LLVMContext>();
@@ -77,11 +78,11 @@ llvm::Type* CompilationContext::convertToLLVMType (optional<string> type) {
 
     // advanced check
     if (result->getTypeID() == llvm::Type::TypeID::VoidTyID) {
-        if (type->substr(0, 3) == "cp:") { // is class type parameter
+        if (type->substr(0, 3) == "pt:") { // is class type parameter
             // get actual class name
             auto classN = type->substr(3, type->length());
             auto r = this->findClass(classN); // assert that class actually has been found;
-            return r.type;
+            return r.pointerType;
         }
     }
 

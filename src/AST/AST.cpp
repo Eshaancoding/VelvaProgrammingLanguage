@@ -25,6 +25,10 @@ string NameRegistry::use(const string &prefix) {
     return prefix + "_" + to_string(names[prefix]);
 }
 
+bool NameRegistry::isUsed (const string n) {
+    return names.count(n);
+}
+
 
 // expr
 optional<Value*> Expr::codegen(CompilationContext &ctx) {return std::nullopt;}
