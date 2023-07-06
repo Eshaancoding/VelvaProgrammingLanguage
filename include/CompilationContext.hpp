@@ -29,6 +29,11 @@ class NameRegistry {
         string use(const string &prefix);
 };
 
+struct ClassScope {
+    string name;
+    StructType* type;
+};
+
 struct VariableScope {
     string type;
     Value *value;
@@ -44,6 +49,7 @@ struct FunctionScope {
 struct Scope {
     unordered_map<string, VariableScope> varNames;                // first str: name, second int: just a palceholder 
     vector<FunctionScope> functions;
+    vector<ClassScope> classes;
     bool isFunction; // if it is a function, then it doesn't include variables previous of the scope.
 };
 /**
@@ -73,6 +79,9 @@ struct CompilationContext {
 
         FunctionScope findFuncName (string funcName, vector<string> types);
         string createFunctionName (optional<string> returnType, string funcName, vector<string> types);
+
+        ClassScope createClass (string name, StructType* type);
+        ClassScope findClass (string name);
 
         llvm::Type* convertToLLVMType (optional<string> type);
         optional<llvm::Value*> getDefaultValue (string type);

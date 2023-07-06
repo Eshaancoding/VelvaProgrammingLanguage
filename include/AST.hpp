@@ -432,7 +432,7 @@ struct FuncTemplate {
 
 struct ConstructTemplate {
     vector<tuple<string, string>> params;
-    unique_ptr<Expr> blockExpr;
+    unique_ptr<BlockExpr> blockExpr;
 };
 
 class ClassExpr : public Expr {

@@ -52,6 +52,8 @@ unique_ptr<Expr> Parser::ParseClass () {
         else if (ty == "constructor") {
             vector<tuple<string, string>> params;
 
+            cursor.goToChild();
+
             // parse parameter list
             assert(cursor.getType() == "parameter_list");
             int numParameters = cursor.getNumChilds();

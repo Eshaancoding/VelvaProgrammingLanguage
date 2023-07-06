@@ -5,7 +5,7 @@ public:
     int y 
 
     init () {
-        x = 6
+        int x = 6
     }
 
     func hello () {

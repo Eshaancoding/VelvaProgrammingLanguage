@@ -66,3 +66,24 @@ FunctionScope CompilationContext::findFuncName (string funcName, vector<string> 
     }
     throw invalid_argument("Invalid function call: no function found");
 }
+
+// classes
+ClassScope CompilationContext::createClass (string name, StructType* type) {
+    for (vector<Scope>::reverse_iterator i = scopes.rbegin(); i != scopes.rend(); ++i) { 
+        for (auto v : i->classes) {
+            if (v.name == name) throw invalid_argument("Class already defined.");
+        }
+    }
+    ClassScope c = {name, type};
+    scopes.back().classes.push_back(c);
+    return c;
+}
+
+ClassScope CompilationContext::findClass (string name) {
+    for (vector<Scope>::reverse_iterator i = scopes.rbegin(); i != scopes.rend(); ++i) { 
+        for (auto v : i->classes) {
+            if (v.name == name) return v; 
+        }
+    }
+    throw invalid_argument("Invalid class name.");
+}

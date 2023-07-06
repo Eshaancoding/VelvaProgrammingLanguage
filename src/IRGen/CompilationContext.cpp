@@ -66,12 +66,26 @@ void CompilationContext::compile() {
 // return type
 llvm::Type* CompilationContext::convertToLLVMType (optional<string> type) {
     if (!type) return Type::getVoidTy(*context);
-    return *type == "int" ? Type::getInt32Ty(*context)
+    
+    // basic check
+    auto result = *type == "int" ? Type::getInt32Ty(*context)
         : *type == "float" ? Type::getFloatTy(*context)
         : *type == "double" ? Type::getDoubleTy(*context)
         : *type == "string" ? Type::getInt8PtrTy(*context)
         : *type == "bool" ? Type::getInt1Ty(*context)
         : Type::getVoidTy(*context);
+
+    // advanced check
+    if (result->getTypeID() == llvm::Type::TypeID::VoidTyID) {
+        if (type->substr(0, 3) == "cp:") { // is class type parameter
+            // get actual class name
+            auto classN = type->substr(3, type->length());
+            auto r = this->findClass(classN); // assert that class actually has been found;
+            return r.type;
+        }
+    }
+
+    return result;
 }
 
 // get default value

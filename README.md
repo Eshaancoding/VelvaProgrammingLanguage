@@ -2,6 +2,28 @@
 
 The Velva Programming Language is a low-level programming language designed for extensibility, friendly syntax, and equipped with plenty of useful libraries.
 
+## Todo:
+
+* Class implementation
+	* Enable arguments be classes
+		* The convert to LLVM Type should already be implemented
+		* in CompilationContext::getDefaultValue make sure you have default classes already
+			* shoudl give error if not default function
+	* Multiple constructors calling
+	* Make sure that as its parsing, if it detects a class check if its already declared or not
+	* actually be able to call function methods	
+	* embed classes in scope 
+
+* Check if scoping really works
+	* what if you declare two variables in a different scope?
+
+* linter (treesitter)
+* better error messages
+=========================================
+* Create a full neural network then :0
+=========================================
+* Class Inheritance (Polymorphism)
+
 ## Goals
 
 * Speed comparable to C++.
