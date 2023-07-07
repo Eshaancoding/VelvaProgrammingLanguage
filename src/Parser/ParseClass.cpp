@@ -82,6 +82,7 @@ unique_ptr<Expr> Parser::ParseClass () {
             constructors.push_back({params, move(bl)});
         }
     }
+    cursor.goToParent();
 
     return make_unique<ClassExpr>(className, variables, move(functions), move(constructors));
 }

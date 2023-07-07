@@ -42,20 +42,24 @@ int main(int argc, const char **argv)
     if (!fn) throw invalid_argument("Invalid main function");
     error_code EC;
     
-    raw_fd_ostream ofile("dog.ll", EC);
+    raw_fd_ostream ofile("main.ll", EC);
     ctx.mod->print(ofile, nullptr);
     
     if (!lessVerbose) ctx.mod->print(errs(), nullptr);
 
     if (!lessVerbose) printf("================== Compiling to object File =================\n");
-    verifyFunction(**fn, &llvm::errs());
-    ctx.compile();
-    if (!lessVerbose)
-        printf("Successfully compiled!\n");
+    bool res = verifyFunction(**fn, &errs());
+    if (!lessVerbose) printf("Verify function (1 if successful else 0): %d\n", !res);
 
-    system("clang -fPIE -fpie output.o");
     if (!lessVerbose)
-        printf("Successfully linked. Running executable...\n");
+        printf("Converting to assembly...\n");
+    system("llc --opaque-pointers main.ll");
 
+    if (!lessVerbose)
+        printf("Compiling...\n");
+    system("clang -fPIE -fpie main.s");
+
+    if (!lessVerbose)
+        printf("Running Executable...\n");
     system("./a.out");
 }   

@@ -17,10 +17,6 @@ The Velva Programming Language is a low-level programming language designed for 
 	* check whether if accessing variable is private
 	* What if we redeclare a private variable in a class structure. What do we do :/
 	* putchar in one of the functions and call it
-
-* Scoping:
-	* Check whether overloaded functions (both in classes and outside classes) work
-
 * ERROR:
 ```
 /*
@@ -33,7 +29,10 @@ whenever I add this (with comment), it gives me a parser issue. and whenever I d
 
 * Check if scoping really works
 	* what if you declare two variables in a different scope?
+	* Check whether overloaded functions (both in classes and outside classes) work
 	* what if an argument to the function and then the same name is redeclared :(
+
+* Implement strings (PIE, some weird thing)
 
 * linter (treesitter)
 * intellisense (microsoft language server protocol (LSP), not sure how to implement that)

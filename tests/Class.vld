@@ -1,15 +1,13 @@
-class Hello {
-private:
-    int x
-public:
+class Foo {
+    int x 
     int y 
 
     init () {
-        x = 6
-        y = 2
+        x = 0
+        y = 0
     }
-    
-    int returnX ()  {
+
+    int returnX () {
         return x
     }
 
@@ -18,3 +16,5 @@ public:
     }
     
 }
+
+putchar(48)

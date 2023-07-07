@@ -29,6 +29,9 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 
     Function *F = Function::Create(FT, Function::ExternalLinkage, newName, ctx.mod.get());
 
+    if (ctx.runningClass)
+        F->addFnAttr(Attribute::NoUnwind);
+
     unsigned Idx = 0;
     for (auto &Arg : F->args())
     {
@@ -61,8 +64,8 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
                             i->cls->variableValues.push_back(ctx.builder->CreateGEP(
                                 i->cls->type, 
                                 &arg, 
-                                {*IntExpr(0).codegen(ctx), *IntExpr(indCount).codegen(ctx)}, 
-                                vtemplate.name
+                                {*IntExpr(0).codegen(ctx), *IntExpr(indCount).codegen(ctx)},
+                                i->cls->name + "_" + vtemplate.name
                             ));
                             indCount++;
                         }
