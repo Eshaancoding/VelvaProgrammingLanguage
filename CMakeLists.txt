@@ -54,7 +54,7 @@ set(TestList
   "MultipleConditions 315"
   "Boolean 1110"
   "Scoping 76<"
-  "Class 306"
+  "Class 30642253"
 )
 
 include(CTest)

@@ -61,6 +61,7 @@ struct FunctionScope {
     string name;
     vector<string> params;
     string returnType;
+    bool isPrivate;
 };
 
 struct Scope {
@@ -82,7 +83,7 @@ struct CompilationContext {
         vector<Scope> scopes;
         Scope globals;
 
-        static bool runningClass;
+        static string runningClass;
         static bool createToGlobal;
 
         //std::unique_ptr<FunctionPassManager> fpm;
@@ -98,7 +99,7 @@ struct CompilationContext {
         variant<VariableScope, ClassScope> findVarName (string varName);
 
         FunctionScope findFuncName (string funcName, vector<string> types);
-        string createFunctionName (optional<string> returnType, string funcName, vector<string> types);
+        string createFunctionName (optional<string> returnType, string funcName, vector<string> types, bool isPrivate);
 
         ClassScope createClass (string name, StructType* type, Type* pointerType, vector<VarTemplate> variables);
         ClassScope findClass (string name);

@@ -38,17 +38,13 @@ optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
     auto result = ctx.findVarName(var);
     if (const VariableScope* v = get_if<VariableScope>(&result)) {
         retType = v->type;
-        // check whether value is a pointer. If it is we create load if not we just send the value
-        if (v->value->getType()->isPointerTy())        
-            return ctx.builder->CreateLoad(ctx.convertToLLVMType(v->type), v->value, var.c_str());
-        else 
-            return v->value;
+        return ctx.builder->CreateLoad(ctx.convertToLLVMType(v->type), v->value, var.c_str());
     }
 
     if (const ClassScope* classSc = get_if<ClassScope>(&result)) {
         // search through the class scope if we can get the var name
         for (int i = 0; i < classSc->variables.size(); i++) {
-            if (classSc->variables[i].name == var && ctx.runningClass) {// check for public/private later
+            if (classSc->variables[i].name == var && ctx.runningClass != "") {// check for public/private later
                 retType = classSc->variables[i].type;
                 return ctx.builder->CreateLoad(ctx.convertToLLVMType(retType), classSc->variableValues[i], var.c_str());
             }
@@ -116,7 +112,7 @@ optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {
     if (const ClassScope* classSc = get_if<ClassScope>(&result)) {
         // search through the class scope if we can get the var name
         for (int i = 0; i < classSc->variables.size(); i++) {
-            if (classSc->variables[i].name == varName && ctx.runningClass) // check for public/private later
+            if (classSc->variables[i].name == varName && ctx.runningClass != "") // check for public/private later
                 return ctx.builder->CreateStore(*(value->codegen(ctx)), classSc->variableValues[i]);
         }
         throw invalid_argument("Unable to find variable in class scope!");

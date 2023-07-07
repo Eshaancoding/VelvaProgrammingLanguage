@@ -38,18 +38,18 @@ variant<VariableScope, ClassScope> CompilationContext::findVarName(string varNam
     auto fullScopes = scopes; fullScopes.push_back(globals);
     for(vector<Scope>::reverse_iterator i = fullScopes.rbegin(); i != fullScopes.rend(); ++i) {
         if(i->varNames.count(varName) != 0) return i->varNames[varName];
-        if (i->isFunction && !runningClass) break;
+        if (i->isFunction && runningClass == "") break;
     }
 
     // if we are comiling class it might be a class scope thing
-    if (runningClass)
+    if (runningClass != "")
         return this->classesDefined.back();
 
     throw invalid_argument("No variable by the name of '" + varName + "'");
 }
 
 // function type
-string CompilationContext::createFunctionName (optional<string> returnType, string funcName, vector<string> types) {
+string CompilationContext::createFunctionName (optional<string> returnType, string funcName, vector<string> types, bool isPrivate) {
     string n = funcName;
     bool isDiffParams = false;
     auto fullScopes = scopes; fullScopes.push_back(globals);
@@ -68,7 +68,7 @@ string CompilationContext::createFunctionName (optional<string> returnType, stri
     string newRet = "";
     if (returnType) newRet = *returnType;
     else newRet = "void";
-    auto fscope = FunctionScope {funcName, n, types, newRet};
+    auto fscope = FunctionScope {funcName, n, types, newRet, isPrivate};
     if (this->createToGlobal) 
         globals.functions.push_back(fscope);
     else

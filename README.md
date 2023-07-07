@@ -5,32 +5,20 @@ The Velva Programming Language is a low-level programming language designed for 
 ## Todo:
 
 * Class implementation
-	* duplicated classes declared (with same name, uh oh)
-	* Assign expr doesnttttttt work :/
+	* private, public
+	* default values for initializing
 	* Enable arguments be classes
 		* The convert to LLVM Type should already be implemented
 		* in CompilationContext::getDefaultValue make sure you have default classes already
 			* shoudl give error if not default function
-	* Multiple constructors calling
 	* Make sure that as its parsing, if it detects a class check if its already declared or not
 	* actually be able to call function methods	
-	* embed classes in scope 
 	* check whether if accessing variable is private
 	* What if we redeclare a private variable in a class structure. What do we do :/
-	* putchar in one of the functions and call it
 	* in class, have a method to call another method within class
 	* consider changing classesDefiend into a map rather than a vector (O(n) search time, which although it not bad will end up burdening stuff...)
-* ERROR:
-```
-/*
-    init (int v) {
-        v++
-    }
-*/
-```
-whenever I add this (with comment), it gives me a parser issue. and whenever I don't it gives me an "integer" not supported type stuff which is weird me no likey.
 
-* Check if scoping really works
+ Check if scoping really works
 	* what if you declare two variables in a different scope?
 	* Check whether overloaded functions (both in classes and outside classes) work
 	* what if an argument to the function and then the same name is redeclared :(
@@ -43,6 +31,8 @@ whenever I add this (with comment), it gives me a parser issue. and whenever I d
 * linter (treesitter)
 * intellisense (microsoft language server protocol (LSP), not sure how to implement that)
 * better error messages
+* enums, structs
+
 =========================================
 * Create a full neural network then :0
 =========================================

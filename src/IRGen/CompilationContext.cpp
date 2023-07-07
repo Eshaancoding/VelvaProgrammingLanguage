@@ -15,7 +15,7 @@
 #include "llvm/Analysis/InstructionSimplify.h"
 #include "llvm/IR/LegacyPassManager.h"
 
-bool CompilationContext::runningClass = false;
+string CompilationContext::runningClass = "";
 bool CompilationContext::createToGlobal = false;
 
 CompilationContext::CompilationContext() {

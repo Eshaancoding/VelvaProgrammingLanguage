@@ -19,8 +19,8 @@ unique_ptr<Expr> Parser::ParseClass () {
         string ty = cursor.getType();  
 
         if (ty == "publicPrivate") {
-            if (cursor.getSourceStr() == "public") isPublic = true;
-            else isPublic = false;
+            if (cursor.getSourceStr() == "public:") isPublic = true;
+            else if (cursor.getSourceStr() == "private:") isPublic = false;
 
             cursor.goToSibling();
         }
@@ -42,6 +42,7 @@ unique_ptr<Expr> Parser::ParseClass () {
         }
         else if (ty == "function_declare") {
             auto exp = ParseFunctionDeclare();
+            printf("registred function with name: %s as public: %d\n", exp->name.c_str(), isPublic);
 
             functions.push_back({
                 move(exp),

@@ -155,6 +155,11 @@ class BlockExpr : public Expr {
 class DeclareFunctionExpr {
     public:
         /**
+         * @brief Whether the function is private within a namespace or class
+         */
+        bool isPrivate;
+
+        /**
          * @brief Whether or not the function is from FFI (external functions declared in C++ but can be used in our lang) or not .
          */
         bool isExternal;
@@ -187,8 +192,9 @@ class DeclareFunctionExpr {
             string name, 
             vector<tuple<string, string> > params, 
             optional<string> returnType, 
-            optional<unique_ptr<BlockExpr>> body // <-- should be block expr
-        ) : isPure(isPure), name(name), params(params), returnType(returnType), isExternal(isExternal), body(move(body)) {};
+            optional<unique_ptr<BlockExpr>> body,
+            bool isPrivate=false    
+        ) : isPure(isPure), name(name), params(params), returnType(returnType), isExternal(isExternal), body(move(body)), isPrivate(isPrivate) {};
         optional<Function*> codegen(CompilationContext &ctx);
         string return_type (); 
 };

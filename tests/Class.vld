@@ -1,10 +1,17 @@
 class Foo {
+private:
     int x 
     int y 
 
+public: 
     init () {
         x = 0
         y = 0
+    }
+
+    init (int val) {
+        x = val
+        y = 3
     }
 
     func setX (int val) {
@@ -25,8 +32,34 @@ class Foo {
     }
 }
 
+class FooTwo {
+private:
+    int x
+    int z
+    
+public:
+    init (int v) {
+        v = v + 1
+        x = v
+        z = 2
+    }
+
+    int print () {
+        putchar(48+x)
+        putchar(48+z)
+        return z
+    }
+}
+
 Foo foo
 foo.setX(3)
 foo.print()
 foo.setY(6)
 putchar(foo.getY() + 48)
+
+FooTwo two (3)
+int result = two.print()
+putchar(result + 48)
+
+Foo fooThre (5)
+fooThre.print()

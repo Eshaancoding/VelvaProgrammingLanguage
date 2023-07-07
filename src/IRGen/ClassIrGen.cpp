@@ -15,7 +15,7 @@ optional<Value*> ClassExpr::codegen(CompilationContext &ctx) {
      
     // add to compilation context
     ctx.createClass(className, st, pt, variables); 
-    ctx.runningClass = true;
+    ctx.runningClass = className;
 
     // define constructors
     for (int i = 0; i < constructors.size(); i++) {
@@ -41,12 +41,13 @@ optional<Value*> ClassExpr::codegen(CompilationContext &ctx) {
     for (int i = 0; i < functions.size(); i++) {
         auto f = move(functions[i].expr); 
         f->name = className + "_" + f->name;            // functino name
+        f->isPrivate = !functions[i].isPublic;          // whether its private or not
         f->params.push_back({"pt:"+className, "this"}); // return pointer type
         f->codegen(ctx);
     }
 
     // pop from class frame and reset prev values
-    ctx.runningClass = false;
+    ctx.runningClass = "";
 
     return nullopt;
 }
