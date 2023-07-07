@@ -1,5 +1,24 @@
 [
   {
+    "type": "ClassVarDecl",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "and",
     "named": true,
     "fields": {}
@@ -77,6 +96,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "ClassVarDecl",
+          "named": true
+        },
         {
           "type": "assignment",
           "named": true
@@ -338,6 +361,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "ClassVarDecl",
+          "named": true
+        },
         {
           "type": "assignment",
           "named": true

@@ -16,7 +16,8 @@ module.exports = grammar({
             $.while,
             $._singleComment,
             $._multiLineComment,
-            $.classDecl
+            $.classDecl,
+            $.ClassVarDecl
         ),
 
         _singleComment: $ => seq('//', /.*/),
@@ -25,6 +26,16 @@ module.exports = grammar({
             '/*',
             repeat(/./),
             '*/'
+        ),
+
+        ClassVarDecl: $ => seq(
+            $.identifier,
+            $.identifier,
+            optional(
+                seq('(',
+                    commaSep($.expression),
+                ')')
+            )
         ),
 
         ternaryStatement: $ => seq(

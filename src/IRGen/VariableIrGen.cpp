@@ -38,7 +38,11 @@ optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
     auto result = ctx.findVarName(var);
     if (const VariableScope* v = get_if<VariableScope>(&result)) {
         retType = v->type;
-        return ctx.builder->CreateLoad(ctx.convertToLLVMType(v->type), v->value, var.c_str());
+        // check whether value is a pointer. If it is we create load if not we just send the value
+        if (v->value->getType()->isPointerTy())        
+            return ctx.builder->CreateLoad(ctx.convertToLLVMType(v->type), v->value, var.c_str());
+        else 
+            return v->value;
     }
 
     if (const ClassScope* classSc = get_if<ClassScope>(&result)) {

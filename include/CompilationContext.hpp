@@ -67,7 +67,6 @@ struct Scope {
     unordered_map<string, VariableScope> varNames;                // first str: name, second int: just a palceholder 
     vector<FunctionScope> functions;
     bool isFunction; // if it is a function, then it doesn't include variables previous of the scope.
-    optional<ClassScope> cls; // if this is not nullopt, then this is a class scope.
 };
 /**
  * @brief This object stores variables for a compilation context. Only use this once per compile task.
@@ -79,6 +78,7 @@ struct CompilationContext {
         std::unique_ptr<IRBuilder<>> builder;
         std::unique_ptr<Module> mod;
 
+        vector<ClassScope> classesDefined;
         vector<Scope> scopes;
         Scope globals;
 
@@ -91,7 +91,6 @@ struct CompilationContext {
         void compile();
         // ModulePassManager setOptimize(ModuleAnalysisManager& MAM);
         //void defaultOptimize();
-        void pushFrame(ClassScope cls);
         void pushFrame(bool isFunction=false);
         void pushFrame(Scope &frame);
         void popFrame();

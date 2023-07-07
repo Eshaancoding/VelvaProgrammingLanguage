@@ -46,13 +46,6 @@ class Expr {
         // virtual std::optional<Value*> generate_str(CompilationContext &ctx);
 
         /**
-         * @brief A function that returns the information about the AST node itself.
-         *
-         * 
-        */
-        virtual string debug_info(); 
-
-        /**
          * @brief String type that specifies the type of the Expression (will be override)
         */
        virtual string return_type (); 
@@ -72,20 +65,8 @@ class IntExpr : public Expr {
         unsigned int numBits;
         IntExpr(int i, int numBits=32) : num(i), numBits(numBits) {}; // defaults to 32 for int
         optional<Value*> codegen(CompilationContext &ctx) override; 
-        string debug_info () override;
         string return_type () override; // just returns string, declared in AST Constructors.cpp
 };
-
-// not implemented yet, just wondering if arrays would be something we want to implement in the future
-// class ArrayExpr : public Expr {
-//     public:
-//         vector<unique_ptr<Expr>> arr; // for now this is only being used for a string implementation, any-type arrays will be added later ig
-//         Types type;
-//         ArrayExpr(vector<unique_ptr<Expr>> arr) : arr(move(arr)), type(type) {};
-//         optional<Value*> codegen(CompilationContext &ctx) override;
-//         string debug_info() override;
-//         string return_type() override;
-// };
 
 /**
  * @brief An AST node that represents a float literal.
@@ -100,7 +81,6 @@ class FloatExpr : public Expr {
         float decimal;
         public: FloatExpr(float d) : decimal(d) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
         string return_type () override; 
 };
 
@@ -124,7 +104,6 @@ class CallFuncExpr : public Expr {
 
         CallFuncExpr(string name, vector<unique_ptr<Expr>> params) : functionName(name), params(std::move(params)) {};
         std::optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
         string return_type () override; 
 };
 
@@ -148,7 +127,6 @@ class BinaryOpExpr : public Expr {
 
         BinaryOpExpr (string op, unique_ptr<Expr> LHS, unique_ptr<Expr> RHS) : op(op), LHS(move(LHS)), RHS(move(RHS)) {}
         std::optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
         string return_type() override;
 };
 
@@ -165,7 +143,6 @@ class BlockExpr : public Expr {
         void add (vector<unique_ptr<Expr>> expr); 
         void add (unique_ptr<DeclareFunctionExpr> func);   
         string return_type () override;
-        string debug_info () override;
         optional<Value*> codegen (CompilationContext &ctx) override;
 };
 
@@ -211,7 +188,6 @@ class DeclareFunctionExpr {
             optional<unique_ptr<BlockExpr>> body // <-- should be block expr
         ) : isPure(isPure), name(name), params(params), returnType(returnType), isExternal(isExternal), body(move(body)) {};
         optional<Function*> codegen(CompilationContext &ctx);
-        string debug_info();
         string return_type (); 
 };
 
@@ -224,7 +200,6 @@ class ErrorExpr: public Expr {
     public:     
         ErrorExpr() {}; 
         optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
         string return_type () override;
 };
 
@@ -241,7 +216,6 @@ class StringExpr: public Expr {
         string text;
         StringExpr(string t) : text(t) {} // Defined in  AST.cpp
         optional<Value*> codegen(CompilationContext &ctx) override;    
-        string debug_info() override;
         string return_type() override;
 };
 
@@ -258,7 +232,6 @@ class VarUseExpr : public Expr {
         string retType;
         VarUseExpr(string var) : var(var) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
         string return_type() override;
 };
 //didn't we have more mutability types before, we'll add more later.
@@ -310,7 +283,6 @@ class VarDeclareExpr : public Expr {
         VarDeclareExpr(VarMutability mutTypeArg, string nameArg, optional<unique_ptr<Expr>> valueArg, optional<string> typeArg) : value(move(valueArg)), mutType(mutTypeArg), name(nameArg), typeArg(typeArg) {};
         void alloc(CompilationContext &ctx);
         optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
         string return_type() override;
 };
 
@@ -332,7 +304,6 @@ class AssignExpr : public Expr {
         unique_ptr<Expr> value;
         AssignExpr(string name, unique_ptr<Expr> value) : varName(name), value(move(value)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
         string return_type() override;
 };
 
@@ -345,7 +316,6 @@ class BranchExpr: public Expr {
         vector<tuple<optional<unique_ptr<Expr>>, unique_ptr<Expr>>> ifMap;
         BranchExpr(vector<tuple<optional<unique_ptr<Expr>>, unique_ptr<Expr>>> ifmaps) : ifMap(move(ifmaps)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
         string return_type() override;
 };
 
@@ -360,7 +330,6 @@ class ForExpr : public Expr {
         ForExpr(unique_ptr<Expr> varDecl, unique_ptr<Expr> condition, unique_ptr<Expr> operation, unique_ptr<BlockExpr> body) : varDecl(move(varDecl)), condition(move(condition)), operation(move(operation)), body(move(body)) {}
 
         optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
         string return_type() override;
 };
 
@@ -373,7 +342,6 @@ class TernaryExpr: public Expr {
 
         TernaryExpr(unique_ptr<Expr> ifP, unique_ptr<Expr> thenP, unique_ptr<Expr> elseP) : _if(move(ifP)), then(move(thenP)), _else(move(elseP)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
         string return_type() override;
 };
 
@@ -392,7 +360,6 @@ class WhileExpr: public Expr {
 
         WhileExpr(unique_ptr<Expr> cond, unique_ptr<Expr> body) : cond(move(cond)), body(move(body)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
-        string debug_info() override;
         string return_type() override;
 };
 
@@ -410,7 +377,6 @@ class ReturnExpr : public Expr {
 
         ReturnExpr (optional<unique_ptr<Expr>> val) : val(move(val)) {};
         optional<Value*> codegen (CompilationContext &ctx ) override; 
-        string debug_info() override;
         string return_type() override;
 };
 
@@ -446,7 +412,23 @@ class ClassExpr : public Expr {
         ) : variables(move(vars)), functions(move(funcs)), className(className), constructors(move(constructors)) {}
 
         optional<Value*> codegen (CompilationContext &ctx) override;
-        string debug_info() override;
+        string return_type() override;
+};
+
+// ex: Class hello ([params]);
+class ClassVarDecl : public Expr {
+    public:
+        string className;
+        string varName;
+        vector<unique_ptr<Expr>> parameters;
+        
+        ClassVarDecl (
+            string className, 
+            string varName,
+            vector<unique_ptr<Expr>> params 
+        ) : className(className), varName(varName), parameters(move(params)) {}
+
+        optional<Value*> codegen (CompilationContext &ctx) override;
         string return_type() override;
 };
 

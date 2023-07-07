@@ -15,8 +15,8 @@ string BlockExpr::return_type() { return "block"; }
 string ForExpr::return_type() { return "for"; }
 string ReturnExpr::return_type() { return "return"; }
 
-
 string TernaryExpr::return_type() { return retType; } 
 string BinaryOpExpr::return_type() { return retType; }
 string CallFuncExpr::return_type() { return retType; }
 string VarUseExpr::return_type() { return retType; }
+string ClassVarDecl::return_type() { return "cl:"+className; }

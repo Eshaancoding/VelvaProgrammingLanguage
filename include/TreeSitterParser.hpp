@@ -60,11 +60,11 @@ public:
     unique_ptr<Expr> ParseCondition ();
     unique_ptr<Expr> ParseBinaryCondition ();
     unique_ptr<Expr> ParseClass ();
+    unique_ptr<ClassVarDecl> ParseClassVarDeclr ();
     unique_ptr<BlockExpr> ParseBlock ();
     unique_ptr<VarDeclareExpr> ParseVarDecl ();
     unique_ptr<DeclareFunctionExpr> ParseFunctionDeclare ();
     unique_ptr<DeclareFunctionExpr> ParseAST ();
-
     
    void printTree (bool printNoNamedNodes=false, std::optional<TSNode> nodeInp = std::nullopt, int lvl=0);
    ~Parser ();

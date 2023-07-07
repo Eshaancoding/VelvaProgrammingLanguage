@@ -86,3 +86,27 @@ unique_ptr<Expr> Parser::ParseClass () {
 
     return make_unique<ClassExpr>(className, variables, move(functions), move(constructors));
 }
+
+unique_ptr<ClassVarDecl> Parser::ParseClassVarDeclr () {
+    int numChild = cursor.getNumChilds();
+
+    cursor.goToChild();
+    
+    string className = cursor.getSourceStr();
+    
+    cursor.goToSibling();
+    
+    string varName = cursor.getSourceStr();
+
+    vector<unique_ptr<Expr>> params;
+    
+    for (int i = numChild; i > 2; i--) {
+        // parse 
+        cursor.goToSibling();
+        params.push_back(ParseExpression());
+    }
+    
+    cursor.goToParent();
+
+    return make_unique<ClassVarDecl>(className, varName, move(params));
+}

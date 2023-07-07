@@ -22,7 +22,7 @@ std::unique_ptr<DeclareFunctionExpr> Parser::ParseAST () {
 
 GeneralType Parser::ParseGeneral () {
     std::string type = cursor.getType();
-    
+        
     if (type == "function_declare") return ParseFunctionDeclare();
     else if (type == "return_statement") return ParseReturn();
     else if (type == "while") return ParseWhile();
@@ -36,6 +36,7 @@ GeneralType Parser::ParseGeneral () {
     else if (type == "for") return ParseForLoop();
     else if (type == "while") return ParseWhile();
     else if (type == "classDecl") return ParseClass();
+    else if (type == "ClassVarDecl") return ParseClassVarDeclr();
     // else if (type == "return") return ParseReturn();
     else {
         throw invalid_argument((std::string("Invalid type when parsing general: ")+type).c_str());

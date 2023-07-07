@@ -11,8 +11,6 @@ static AllocaInst *CreateEntryBlockAlloca(CompilationContext &ctx,
 optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 {
     
-    // TODO: Later we have to check if the function has already been declared or not, and check if it has an empty body (if not, we give error)
-
     std::vector<Type *> paramTypes;
     vector<string> types;
     for (auto &param : params) {
@@ -49,29 +47,23 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         for(auto &arg : F->args()) {
             if (arg.getName().str() != "this") {  
                 // just regular allocation for normal argument variables
-                AllocaInst *Alloca = CreateEntryBlockAlloca(ctx, F, arg.getName().str());
-                ctx.builder->CreateStore(&arg, Alloca);
                 ctx.createVarName(arg.getName().str(), VariableScope { 
-                    get<0>(params[i]), Alloca
+                    get<0>(params[i]), &arg
                 });
             } else if (ctx.runningClass) {
-                // go back until you get class scope
-                for (vector<Scope>::reverse_iterator i = ctx.scopes.rbegin(); i != ctx.scopes.rend(); ++i) {
-                    // gen values for variables
-                    if (i->cls) {
-                        size_t indCount = 0;
-                        for (auto vtemplate : i->cls->variables) {
-                            i->cls->variableValues.push_back(ctx.builder->CreateGEP(
-                                i->cls->type, 
-                                &arg, 
-                                {*IntExpr(0).codegen(ctx), *IntExpr(indCount).codegen(ctx)},
-                                i->cls->name + "_" + vtemplate.name
-                            ));
-                            indCount++;
-                        }
-                    }
-
+                // create GEP instruction
+                auto scope = &ctx.classesDefined.back();
+                int indCount = 0;
+                for (auto vtemplate: scope->variables) {
+                    scope->variableValues.push_back(ctx.builder->CreateGEP(
+                        scope->type,
+                        &arg,
+                        {*IntExpr(0).codegen(ctx), *IntExpr(indCount).codegen(ctx)},
+                        scope->name + "_" + vtemplate.name
+                    ));
+                    indCount++;
                 }
+                // ctx.classesDefined[ctx.classesDefined.size()-1] = scope;
             } else throw invalid_argument("Cannot name 'this' as an argument.");
                 
             i += 1;

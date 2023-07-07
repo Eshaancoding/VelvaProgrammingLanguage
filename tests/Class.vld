@@ -7,14 +7,9 @@ class Foo {
         y = 0
     }
 
-    int returnX () {
-        return x
+    func a (int v) {
+        int x = v + 3
     }
-
-    int returnY () {
-        return y
-    }
-    
 }
 
-putchar(48)
+Foo foo

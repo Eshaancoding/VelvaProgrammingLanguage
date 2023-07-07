@@ -45,11 +45,46 @@ optional<Value*> ClassExpr::codegen(CompilationContext &ctx) {
         f->codegen(ctx);
     }
 
-    // pop from class frame
-    ctx.popFrame();
+    // pop from class frame and reset prev values
     ctx.runningClass = false;
 
     return nullopt;
+}
+
+optional<Value*> ClassVarDecl::codegen (CompilationContext &ctx) {
+    for (auto cscope : ctx.classesDefined) {
+        if (cscope.name == className) {
+            // found class scope; allocate memory for class
+            auto alloc = ctx.builder->CreateAlloca(cscope.type, 0, varName);
+            ctx.createVarName(varName, VariableScope { cscope.name, alloc });
+
+            // iterate through param types
+            vector<Value *> argv;
+            vector<string> types;
+
+            for (int i = 0; i != parameters.size(); ++i)
+            {
+                std::optional<Value*> codeGenParam = parameters[i]->codegen(ctx);
+                if (codeGenParam) {
+                    argv.push_back(*codeGenParam);
+                    types.push_back(parameters[i]->return_type());
+                }
+                else
+                    throw invalid_argument("Parameter invalid");
+            }
+
+            // add scope param
+            argv.push_back(alloc);
+            types.push_back("pt:"+cscope.name);
+
+            // find function init and call it!
+            FunctionScope func = ctx.findFuncName("constructor_" + cscope.name, types);
+            Function *calleeF = ctx.mod->getFunction(func.name);
+            ctx.builder->CreateCall(calleeF, argv);
+            return nullopt;
+        }
+    }
+    throw invalid_argument("Class def not found");
 }
 
 /**
