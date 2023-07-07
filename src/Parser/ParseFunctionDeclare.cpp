@@ -61,6 +61,16 @@ std::unique_ptr<Expr> Parser::ParseFuncCall() {
     std::string name = cursor.getSourceStr();
 
     cursor.goToSibling();
+
+    // parse class name if exists
+    std::string className = "";
+    if (cursor.getType() == "identifier") {
+        className = name;
+        name = cursor.getSourceStr();
+        lenArguments -= 1;
+        cursor.goToSibling();
+    }
+
     for (int i = 0; i < lenArguments; i++) {
         auto expr = ParseExpression();
         cursor.goToSibling();
@@ -68,5 +78,5 @@ std::unique_ptr<Expr> Parser::ParseFuncCall() {
     }
 
     cursor.goToParent();
-    return make_unique<CallFuncExpr>(name, move(params));
+    return make_unique<CallFuncExpr>(className, name, move(params));
 }

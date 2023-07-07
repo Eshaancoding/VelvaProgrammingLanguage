@@ -96,9 +96,33 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx) {
             throw invalid_argument("Parameter invalid");
     }   
 
-    FunctionScope func = ctx.findFuncName(functionName, types);
-    retType = func.returnType;
-    Function *calleeF = ctx.mod->getFunction(func.name);
-    return ctx.builder->CreateCall(calleeF, argv);
+    if (classVar == "") { // not a class name
+        FunctionScope func = ctx.findFuncName(functionName, types);
+        retType = func.returnType;
+        Function *calleeF = ctx.mod->getFunction(func.name);
+        return ctx.builder->CreateCall(calleeF, argv);
+    } 
+    else {
+        // class var should be a type
+        auto result = ctx.findVarName(classVar);
+        if (const VariableScope* v = get_if<VariableScope>(&result)) {
+            string className = v->type;
+        
+            // search through ctx for classes defined
+            for (auto i : ctx.classesDefined) {
+                if (i.name == className) {
+                    argv.push_back(v->value);
+                    types.push_back("pt:"+className);
+
+                    FunctionScope func = ctx.findFuncName(className + "_" + functionName, types);
+                    retType = func.returnType;
+                    Function *calleeF = ctx.mod->getFunction(func.name);
+                    return ctx.builder->CreateCall(calleeF, argv);
+                }
+            }
+            throw invalid_argument("Invalid class name: " + className);
+        }
+        else throw invalid_argument("Can't run class member inside classes themselves.");
+    }
 }
 

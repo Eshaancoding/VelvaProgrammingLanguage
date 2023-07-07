@@ -7,9 +7,26 @@ class Foo {
         y = 0
     }
 
-    func a (int v) {
-        int x = v + 3
+    func setX (int val) {
+        x = val
+    }
+
+    func print () {
+        putchar(48+x)
+        putchar(48+y)
+    }
+
+    func setY (int val) {
+        y = val
+    }
+
+    int getY () {
+        return y
     }
 }
 
 Foo foo
+foo.setX(3)
+foo.print()
+foo.setY(6)
+putchar(foo.getY() + 48)

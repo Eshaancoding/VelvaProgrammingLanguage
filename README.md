@@ -18,6 +18,8 @@ The Velva Programming Language is a low-level programming language designed for 
 	* check whether if accessing variable is private
 	* What if we redeclare a private variable in a class structure. What do we do :/
 	* putchar in one of the functions and call it
+	* in class, have a method to call another method within class
+	* consider changing classesDefiend into a map rather than a vector (O(n) search time, which although it not bad will end up burdening stuff...)
 * ERROR:
 ```
 /*

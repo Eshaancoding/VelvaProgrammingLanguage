@@ -90,6 +90,8 @@ class FloatExpr : public Expr {
  */
 class CallFuncExpr : public Expr {
     public:
+        string classVar;        
+
         /**
          * @brief The name of the function to be called.
          * 
@@ -102,7 +104,7 @@ class CallFuncExpr : public Expr {
         vector<unique_ptr<Expr>> params;
         string retType;
 
-        CallFuncExpr(string name, vector<unique_ptr<Expr>> params) : functionName(name), params(std::move(params)) {};
+        CallFuncExpr(string classVar, string name, vector<unique_ptr<Expr>> params) : functionName(name), classVar(classVar), params(std::move(params)) {};
         std::optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type () override; 
 };

@@ -10,7 +10,7 @@ module.exports = grammar({
             $.var_declaration,
             seq($.assignment, $._endLn),
             $.return_statement,
-            $.func_call,
+            seq($.func_call, $._endLn),
             $.function_declare,
             $.for,
             $.while,
@@ -35,7 +35,8 @@ module.exports = grammar({
                 seq('(',
                     commaSep($.expression),
                 ')')
-            )
+            ),
+            $._endLn
         ),
 
         ternaryStatement: $ => seq(
@@ -219,11 +220,11 @@ module.exports = grammar({
         ),
 
         func_call: $ => seq(
+            optional(seq($.identifier, '.')),
             $.identifier,
             '(',
             commaSep($.expression),
-            ')',
-            $._endLn
+            ')'
         ),
 
 
