@@ -42,8 +42,8 @@ variant<VariableScope, ClassScope> CompilationContext::findVarName(string varNam
     }
 
     // if we are comiling class it might be a class scope thing
-    if (runningClass != "")
-        return this->classesDefined.back();
+    if (runningClass != "" && this->classesDefined.rbegin() != this->classesDefined.rend())
+        return this->classesDefined.rbegin()->second;
 
     throw invalid_argument("No variable by the name of '" + varName + "'");
 }
@@ -93,22 +93,17 @@ ClassScope CompilationContext::createClass (string name, StructType* type, Type*
     if (scopes.size() != 2) throw invalid_argument("Class must be declared in global scope.");
 
     // check whether we didn't declare any of the classes before
-    for (auto cscope : this->classesDefined) {
-        if (cscope.name == name) throw invalid_argument("Class already defined.");
-    }
+    if (this->classesDefined.find(name) != this->classesDefined.end()) throw invalid_argument("Class already defined.");
 
     // if not any of these conditions, then we can push scope 
     ClassScope c = {name, type, pointerType, variables, {}};
-    this->classesDefined.push_back(c);
+    this->classesDefined[name] = c;
     return c;
 }
 
 // really this function is only used when defining functions within in the class
 ClassScope CompilationContext::findClass (string name) {
-    auto fullScopes = scopes; fullScopes.push_back(globals);
-    for (auto cscope : this->classesDefined) { 
-        if (cscope.name == name)
-            return cscope; 
-    }
+    if (this->classesDefined.find(name) != this->classesDefined.end()) 
+        return this->classesDefined[name];
     throw invalid_argument("Invalid class name.");
 }

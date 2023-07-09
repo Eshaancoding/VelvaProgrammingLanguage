@@ -6,6 +6,7 @@ unique_ptr<Expr> Parser::ParseClass () {
     vector<FuncTemplate> functions;
     string className;
     vector<ConstructTemplate> constructors;
+    map<string, int> variableDefined;
 
     int numChilds = cursor.getNumChilds();
     cursor.goToChild();
@@ -14,7 +15,6 @@ unique_ptr<Expr> Parser::ParseClass () {
     className = cursor.getSourceStr();
     cursor.goToSibling();
     
-
     for (int i = 1; i < numChilds; i++) {
         string ty = cursor.getType();  
 
@@ -25,6 +25,9 @@ unique_ptr<Expr> Parser::ParseClass () {
             cursor.goToSibling();
         }
         else if (ty == "classVarDecl") {
+
+            int numChilds = cursor.getNumChilds();
+            
             cursor.goToChild();
 
             assert(cursor.getType() == "primitive_type");
@@ -34,15 +37,25 @@ unique_ptr<Expr> Parser::ParseClass () {
             assert(cursor.getType() == "identifier");
             string name = cursor.getSourceStr();
 
+            if (variableDefined.find(name) != variableDefined.end())               
+                throw invalid_argument("Variable " + name + " already defined!");
+
+            Expr* defaultExpr = nullptr;
+            if (numChilds > 2) {
+                cursor.goToSibling();
+                assert(cursor.getType() == "expression");
+                defaultExpr = ParseExpression().release(); 
+                // why release? I tried making VarTemplate an unique pointer but I got so many bugs that I just stuck with the unsafe method :(
+            }
+
+            variables.push_back({ty, name, isPublic, nullptr, defaultExpr});
+            variableDefined[name] = 1;
+
             cursor.goToParent();
-
-            variables.push_back({ty, name, isPublic, nullptr});
-
             cursor.goToSibling();
         }
         else if (ty == "function_declare") {
             auto exp = ParseFunctionDeclare();
-            printf("registred function with name: %s as public: %d\n", exp->name.c_str(), isPublic);
 
             functions.push_back({
                 move(exp),
@@ -85,7 +98,7 @@ unique_ptr<Expr> Parser::ParseClass () {
     }
     cursor.goToParent();
 
-    return make_unique<ClassExpr>(className, variables, move(functions), move(constructors));
+    return make_unique<ClassExpr>(className, move(variables), move(functions), move(constructors));
 }
 
 unique_ptr<ClassVarDecl> Parser::ParseClassVarDeclr () {

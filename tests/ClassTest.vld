@@ -1,33 +1,8 @@
 class Foo {
-    int x 
-    int y 
+    int x
+    int y
+    
 
-    init () {
-        x = 0
-        y = 0
-    }
+    
 
-private:
-    func print () {
-        putchar(48+x)
-        putchar(48+y)
-    }
-
-public:
-    func setY (int val) {
-        y = val
-    }
-
-    int getY () {
-        print()
-        return y
-    }
-
-private:
-    int getX () {
-        return x
-    }
 }
-
-Foo foo
-foo.getY()

@@ -155,7 +155,13 @@ module.exports = grammar({
         
         classVarDecl: $ => seq(
             $.primitive_type,
-            $.identifier
+            $.identifier,
+            optional(
+                seq(
+                    '=',
+                    $.expression
+                )
+            )
         ),
         
         constructor: $ => seq(

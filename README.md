@@ -5,18 +5,16 @@ The Velva Programming Language is a low-level programming language designed for 
 ## Todo:
 
 * Class implementation
-	* private, public
 	* default values for initializing
-	* Enable arguments be classes
-		* The convert to LLVM Type should already be implemented
-		* in CompilationContext::getDefaultValue make sure you have default classes already
-			* shoudl give error if not default function
-	* Make sure that as its parsing, if it detects a class check if its already declared or not
-	* actually be able to call function methods	
-	* check whether if accessing variable is private
-	* What if we redeclare a private variable in a class structure. What do we do :/
-	* in class, have a method to call another method within class
-	* consider changing classesDefiend into a map rather than a vector (O(n) search time, which although it not bad will end up burdening stuff...)
+	
+	* actual variables ...
+		* check whether if accessing variable is private
+		* What if we redeclare a private variable in a class structure. What do we do :/
+
+* Enable arguments be classes
+	* The convert to LLVM Type should already be implemented
+	* in CompilationContext::getDefaultValue make sure you have default classes already
+		* shoudl give error if not default function
 
  Check if scoping really works
 	* what if you declare two variables in a different scope?

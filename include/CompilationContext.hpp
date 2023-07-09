@@ -22,25 +22,14 @@
 using namespace std;
 using namespace llvm;
 
-/* 
-now, usually this would be in AST.hpp as it is defined along with the other classes like "FuncTemplate" or "ConstructTemplate" or what not
-howeveer, Var Template is also used in CompilationContext.
-Now what I was first thinking is just use a forward declare in CompilationContext and then have AST to declare the struct later (forward declaration)
-but ... that doesn't work for some reason so I am moving it here :/
-*/
+class Expr; // forward decl; defined in AST.hpp
+
 struct VarTemplate {
     string type;
     string name;
     bool isPublic;
     Type* llvmType;
-};
-
-class NameRegistry {
-private:
-    unordered_map<string, int> names;
-public:
-    string use(const string &prefix);
-    bool isUsed (const string n);
+    Expr* defaultValue;
 };
 
 struct ClassScope {
@@ -49,6 +38,14 @@ struct ClassScope {
     Type* pointerType;
     vector<VarTemplate> variables;
     vector<Value*> variableValues;
+};
+
+class NameRegistry {
+private:
+    unordered_map<string, int> names;
+public:
+    string use(const string &prefix);
+    bool isUsed (const string n);
 };
 
 struct VariableScope {
@@ -79,11 +76,12 @@ struct CompilationContext {
         std::unique_ptr<IRBuilder<>> builder;
         std::unique_ptr<Module> mod;
 
-        vector<ClassScope> classesDefined;
+        map<string, ClassScope> classesDefined;
         vector<Scope> scopes;
         Scope globals;
 
         static string runningClass;
+        static Value* thisValue;    // value for the this argument that is used for nested calls in a way
         static bool createToGlobal;
 
         //std::unique_ptr<FunctionPassManager> fpm;

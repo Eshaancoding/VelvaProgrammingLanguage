@@ -49,6 +49,12 @@ class Expr {
          * @brief String type that specifies the type of the Expression (will be override)
         */
        virtual string return_type (); 
+
+        /**
+         * @brief return the variable defined if the expr is a VarDeclare Expr (used for class init info)
+         * 
+         */
+        virtual string returnVariableDefined ();
 };
 
 /**
@@ -146,6 +152,7 @@ class BlockExpr : public Expr {
         void add (unique_ptr<DeclareFunctionExpr> func);   
         string return_type () override;
         optional<Value*> codegen (CompilationContext &ctx) override;
+        vector<string> varsDefined (); // this is particularly helpful when finding out init classes, defined in BlockIRGen.cpp
 };
 
 /**
@@ -292,6 +299,7 @@ class VarDeclareExpr : public Expr {
         void alloc(CompilationContext &ctx);
         optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type() override;
+
 };
 
 /**
@@ -310,9 +318,19 @@ class AssignExpr : public Expr {
          * 
          */
         unique_ptr<Expr> value;
-        AssignExpr(string name, unique_ptr<Expr> value) : varName(name), value(move(value)) {};
+
+        /**
+         * @brief llvm value that can sometimes be used
+         * 
+         */
+        llvm::Value* llvmValue; 
+        
+        AssignExpr(string name, unique_ptr<Expr> value) : varName(name), value(move(value)), llvmValue(nullptr) {};
+        AssignExpr(string name, llvm::Value* value) : varName(name), llvmValue(value), value(nullptr) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type() override;
+
+        string returnVariableDefined () override {return varName;};
 };
 
 class BranchExpr: public Expr {
@@ -404,6 +422,9 @@ struct ConstructTemplate {
     vector<tuple<string, string>> params;
     unique_ptr<BlockExpr> blockExpr;
 };
+
+
+
 
 class ClassExpr : public Expr {
     public: 

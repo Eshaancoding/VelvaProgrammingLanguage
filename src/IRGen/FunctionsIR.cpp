@@ -54,23 +54,25 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
                 });
             } else if (ctx.runningClass != "") {
                 // create GEP instruction
-                auto scope = &ctx.classesDefined.back();
+                ctx.thisValue = &arg; // set the this value up for functions methods within functions methods to be called
+                auto scope = &ctx.classesDefined.rbegin()->second;
                 int indCount = 0;
-                for (auto vtemplate: scope->variables) {
+                for (int v = 0; v < scope->variables.size(); v++) {
                     scope->variableValues.push_back(ctx.builder->CreateGEP(
                         scope->type,
                         &arg,
                         {*IntExpr(0).codegen(ctx), *IntExpr(indCount).codegen(ctx)},
-                        scope->name + "_" + vtemplate.name
+                        scope->name + "_" + scope->variables[v].name
                     ));
                     indCount++;
                 }
-                // ctx.classesDefined[ctx.classesDefined.size()-1] = scope;
             } else throw invalid_argument("Cannot name 'this' as an argument.");
                 
             i += 1;
         }
         (*body)->codegen(ctx);
+
+        ctx.thisValue = nullptr; // reset this value; the function is pretty much done with codegen
 
         if (!returnType) {
             ctx.builder->CreateRetVoid();
@@ -105,22 +107,28 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx) {
             Function *calleeF = ctx.mod->getFunction(func.name);
             return ctx.builder->CreateCall(calleeF, argv);
         } catch (invalid_argument e) {
+            printf("Class function within another function with name: %s\n", functionName.c_str());
+
+            printf("running class: %s and is this value null %d\n", ctx.runningClass.c_str(), ctx.thisValue == nullptr);
+
             // if that doesn't work, then maybe we are inside a function and we are trying to call there
             if (ctx.runningClass == "") throw e; // if there's no class inside of what we are trying to call, then throw e
+            if (ctx.thisValue == nullptr) throw e;
 
-            for (auto i : ctx.classesDefined) {
-                if (i.name == ctx.runningClass) {
-                    argv.push_back(v->value);
-                    types.push_back("pt:"+ctx.runningClass);
+            
+            if (ctx.classesDefined.find(ctx.runningClass) != ctx.classesDefined.end()) {
+                argv.push_back(ctx.thisValue);
+                types.push_back("pt:"+ctx.runningClass);
 
-                    FunctionScope func = ctx.findFuncName(ctx.runningClass + "_" + functionName, types);
-                    
-                    // if not actually create call
-                    retType = func.returnType;
-                    Function *calleeF = ctx.mod->getFunction(func.name);
-                    return ctx.builder->CreateCall(calleeF, argv);
-                }
+                FunctionScope func = ctx.findFuncName(ctx.runningClass + "_" + functionName, types);
+                
+                // if not actually create call
+                retType = func.returnType;
+                Function *calleeF = ctx.mod->getFunction(func.name);
+                return ctx.builder->CreateCall(calleeF, argv);
             }
+
+            throw e;
         }
     } 
     else {
@@ -130,23 +138,22 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx) {
             string className = v->type;
         
             // search through ctx for classes defined
-            for (auto i : ctx.classesDefined) {
-                if (i.name == className) {
-                    argv.push_back(v->value);
-                    types.push_back("pt:"+className);
+            if (ctx.classesDefined.find(className) != ctx.classesDefined.end()) {
+                argv.push_back(v->value);
+                types.push_back("pt:"+className);
 
-                    FunctionScope func = ctx.findFuncName(className + "_" + functionName, types);
-                    
-                    // check if its private
-                    if (func.isPrivate && ctx.runningClass != className) 
-                        throw invalid_argument("Cannot call private method!");
-                    
-                    // if not actually create call
-                    retType = func.returnType;
-                    Function *calleeF = ctx.mod->getFunction(func.name);
-                    return ctx.builder->CreateCall(calleeF, argv);
-                }
+                FunctionScope func = ctx.findFuncName(className + "_" + functionName, types);
+                
+                // check if its private
+                if (func.isPrivate && ctx.runningClass != className) 
+                    throw invalid_argument("Cannot call private method!");
+                
+                // if not actually create call
+                retType = func.returnType;
+                Function *calleeF = ctx.mod->getFunction(func.name);
+                return ctx.builder->CreateCall(calleeF, argv);
             }
+
             throw invalid_argument("Invalid class name: " + className);
         }
         else throw invalid_argument("Can't run class member inside classes themselves.");

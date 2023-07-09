@@ -32,3 +32,5 @@ bool NameRegistry::isUsed (const string n) {
 
 // expr
 optional<Value*> Expr::codegen(CompilationContext &ctx) {return std::nullopt;}
+
+string Expr::returnVariableDefined () { return ""; }

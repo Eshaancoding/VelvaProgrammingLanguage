@@ -105,15 +105,17 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
 
 optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {
     auto result = ctx.findVarName(varName);
+   
+    Value* vlu = value == nullptr ? llvmValue : *(value->codegen(ctx));
     
     if (const VariableScope* v = get_if<VariableScope>(&result))
-        return ctx.builder->CreateStore(*(value->codegen(ctx)), v->value);
+        return ctx.builder->CreateStore(vlu, v->value);
 
     if (const ClassScope* classSc = get_if<ClassScope>(&result)) {
         // search through the class scope if we can get the var name
         for (int i = 0; i < classSc->variables.size(); i++) {
             if (classSc->variables[i].name == varName && ctx.runningClass != "") // check for public/private later
-                return ctx.builder->CreateStore(*(value->codegen(ctx)), classSc->variableValues[i]);
+                return ctx.builder->CreateStore(vlu, classSc->variableValues[i]);
         }
         throw invalid_argument("Unable to find variable in class scope!");
     }
