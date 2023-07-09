@@ -6,7 +6,9 @@ Parser::Parser(const char *filename)
 {
     auto is = std::ifstream(filename);
     
-    assert(is);
+    if (!is)
+        throw invalid_argument(string(filename) + " is not a valid .vld file");
+
     // get length of file:
     std::string str(std::istreambuf_iterator<char>{is}, {}) ;
 

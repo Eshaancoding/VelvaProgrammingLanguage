@@ -124,3 +124,25 @@ unique_ptr<ClassVarDecl> Parser::ParseClassVarDeclr () {
 
     return make_unique<ClassVarDecl>(className, varName, move(params));
 }
+
+unique_ptr<ClassVarAssign> Parser::ParseClassAssign () {
+    cursor.goToChild();
+    
+    string className = cursor.getSourceStr();
+    
+    cursor.goToSibling();
+
+    string varName = cursor.getSourceStr();
+    
+    cursor.goToSibling();
+    
+    auto expr = ParseExpression();
+
+    cursor.goToParent();
+    
+    return make_unique<ClassVarAssign>(
+        className,
+        varName,
+        move(expr)
+    );
+}

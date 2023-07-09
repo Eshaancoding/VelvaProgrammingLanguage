@@ -17,7 +17,8 @@ module.exports = grammar({
             $._singleComment,
             $._multiLineComment,
             $.classDecl,
-            $.ClassVarDecl
+            $.ClassVarDecl,
+            $.classAssign
         ),
 
         _singleComment: $ => seq('//', /.*/),
@@ -168,6 +169,14 @@ module.exports = grammar({
             "init",
             $.parameter_list,  
             $.block
+        ),
+
+        classAssign: $ => seq(
+            $.identifier, 
+            '.',
+            $.identifier,
+            '=',
+            $.expression
         ),
         
         classDecl: $ => seq(

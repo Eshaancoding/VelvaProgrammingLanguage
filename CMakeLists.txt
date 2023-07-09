@@ -64,7 +64,7 @@ foreach (X IN LISTS TestList)
   string(REPLACE ";" " " ExpectedResult "${X}")
   add_test(
     NAME ${NameTest}
-    COMMAND ./veld ../tests/${NameTest}.vld ctest
+    COMMAND ./veld ../tests/${NameTest}.vld
   )
   set_property(TEST ${NameTest} PROPERTY PASS_REGULAR_EXPRESSION "^${ExpectedResult}")
 endforeach()

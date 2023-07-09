@@ -461,4 +461,19 @@ class ClassVarDecl : public Expr {
         string return_type() override;
 };
 
+// having something like class.x = 0
+class ClassVarAssign : public Expr {
+    public:
+        string className;
+        string varName;
+        unique_ptr<Expr> expr;
+        
+        ClassVarAssign (string className, string varName, unique_ptr<Expr> expr) :
+            className(className), varName(varName), expr(move(expr))
+        {}
+    
+        optional<Value*> codegen (CompilationContext &ctx) override;
+        string return_type() override;
+};
+
 #endif

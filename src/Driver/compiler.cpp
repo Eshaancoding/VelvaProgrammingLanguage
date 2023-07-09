@@ -15,13 +15,13 @@ using namespace std;
 int main(int argc, const char **argv)
 {
     // assert that there is a valid argument
-    bool lessVerbose = false;
-    if (argc == 3) {
-        lessVerbose = true; 
+    bool lessVerbose = true;
+    if (argc == 3 && std::strcmp("debug",argv[2])==0) {
+        lessVerbose = false; 
     }
     else if (argc != 2)
     {
-        throw invalid_argument("invalid argument");
+        throw invalid_argument("invalid argument ");
     }
     const char *filename = argv[1];
 

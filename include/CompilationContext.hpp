@@ -51,6 +51,7 @@ public:
 struct VariableScope {
     string type;
     Value *value;
+    string llvmStructType; // for classes
 };
 
 struct FunctionScope {

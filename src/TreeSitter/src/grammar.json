@@ -76,6 +76,10 @@
         {
           "type": "SYMBOL",
           "name": "ClassVarDecl"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "classAssign"
         }
       ]
     },
@@ -623,6 +627,31 @@
         {
           "type": "SYMBOL",
           "name": "block"
+        }
+      ]
+    },
+    "classAssign": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        },
+        {
+          "type": "STRING",
+          "value": "."
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expression"
         }
       ]
     },

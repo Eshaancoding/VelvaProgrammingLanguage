@@ -5,7 +5,6 @@ The Velva Programming Language is a low-level programming language designed for 
 ## Todo:
 
 * Class implementation
-	* default values for initializing
 	
 	* actual variables ...
 		* check whether if accessing variable is private
@@ -22,17 +21,19 @@ The Velva Programming Language is a low-level programming language designed for 
 	* what if an argument to the function and then the same name is redeclared :(
 
 * Implement strings (PIE, some weird thing)
+* better error management (search for throw invalid argument and then go from there)
+
+* linter (treesitter)
+* intellisense (microsoft language server protocol (LSP), not sure how to implement that)
 
 * multiple files 
 	* Ig you can call `ld` and `clang` temporaily but one day you have to make it into a c interface one day you know
 
-* linter (treesitter)
-* intellisense (microsoft language server protocol (LSP), not sure how to implement that)
 * better error messages
 * enums, structs
 
 =========================================
-* Create a full neural network then :0
+* Create a full or auto diff / neural network then :0
 =========================================
 * Class Inheritance (Polymorphism)
 

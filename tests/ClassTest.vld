@@ -1,8 +1,28 @@
 class Foo {
     int x
     int y
-    
 
+    init (int v) {
+        x = v
+    }
+
+    int returnX () {
+        return x 
+    }
     
+    func print () {
+        putchar(48+x)
+        putchar(48+y)
+    }
 
 }
+
+Foo foo (3)
+foo.print()
+
+foo.y = 5
+foo.print()
+
+Foo fooTwo (4)
+fooTwo.x = 2
+fooTwo.print()

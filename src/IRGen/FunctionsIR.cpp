@@ -50,7 +50,7 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
                 AllocaInst *Alloca = CreateEntryBlockAlloca(ctx, F, arg.getName().str());
                 ctx.builder->CreateStore(&arg, Alloca);
                 ctx.createVarName(arg.getName().str(), VariableScope { 
-                    get<0>(params[i]), Alloca
+                    get<0>(params[i]), Alloca, ""
                 });
             } else if (ctx.runningClass != "") {
                 // create GEP instruction

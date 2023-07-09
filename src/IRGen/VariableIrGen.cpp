@@ -95,7 +95,7 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
     }
 
     AllocaInst *inst = ctx.builder->CreateAlloca(retType, 0, name.c_str());
-    ctx.createVarName(name, VariableScope { ty, inst });
+    ctx.createVarName(name, VariableScope { ty, inst, "" });
     
     auto s = ctx.builder->CreateStore(val, inst);
     // s->setVolatile(true);

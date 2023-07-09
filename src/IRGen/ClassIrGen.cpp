@@ -129,11 +129,11 @@ optional<Value*> ClassExpr::codegen(CompilationContext &ctx) {
 
 optional<Value*> ClassVarDecl::codegen (CompilationContext &ctx) {
     if (ctx.classesDefined.find(className) != ctx.classesDefined.end()) {
-        const auto cscope = ctx.classesDefined[className];
+        auto cscope = ctx.classesDefined[className];
 
         // found class scope; allocate memory for class
         auto alloc = ctx.builder->CreateAlloca(cscope.type, 0, varName);
-        ctx.createVarName(varName, VariableScope { cscope.name, alloc });
+        ctx.createVarName(varName, VariableScope { cscope.name, alloc, className });
 
         // iterate through param types
         vector<Value *> argv;
@@ -163,31 +163,34 @@ optional<Value*> ClassVarDecl::codegen (CompilationContext &ctx) {
     throw invalid_argument("Class def not found");
 }
 
-/**
+optional<Value*> ClassVarAssign::codegen (CompilationContext &ctx) {
+    printf("class name: %s var name: %s \n", className.c_str(), varName.c_str()); 
+    
+    // find variable
+    auto result = ctx.findVarName(className);
+    if (const VariableScope* v = get_if<VariableScope>(&result)) {
+        
+        auto cscope = ctx.classesDefined[v->llvmStructType];
 
-; The structure definition for class Foo.
-%Foo = type { i32 }
+        int x = 0;
+        for (auto var : cscope.variables) {
+            if (!var.isPublic) throw invalid_argument("Cannot access variable " + varName + ": variable is private!"); 
+            if (var.name == varName) {
+                auto gepValue = ctx.builder->CreateGEP(
+                    cscope.type,
+                    v->value,
+                    {*IntExpr(0).codegen(ctx), *IntExpr(x).codegen(ctx)},
+                    cscope.name + "_" + varName 
+                );
 
-; The default constructor for class Foo.
-define void @Foo_Create_Default(%Foo* %this) nounwind {
-    %1 = getelementptr %Foo, %Foo* %this, i32 0, i32 0
-    store i32 0, i32* %1
-    ret void
+                ctx.builder->CreateStore(*expr->codegen(ctx), gepValue);
+
+                return nullopt;
+            }
+            x++;
+        }
+        throw invalid_argument(className + " variable not found.");
+    } else throw invalid_argument(className + " variable not found.");
+    
+    return nullopt;
 }
-
-; The Foo::GetLength() method.
-define i32 @Foo_GetLength(%Foo* %this) nounwind {
-    %1 = getelementptr %Foo, %Foo* %this, i32 0, i32 0
-    %2 = load i32, i32* %1
-    ret i32 %2
-}
-
-
-; The Foo::SetLength() method.
-define void @Foo_SetLength(%Foo* %this, i32 %value) nounwind {
-    %1 = getelementptr %Foo, %Foo* %this, i32 0, i32 0
-    store i32 %value, i32* %1
-    ret void
-}
-
- */

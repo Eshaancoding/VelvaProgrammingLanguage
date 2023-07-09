@@ -14,6 +14,7 @@ string WhileExpr::return_type() { return "WhileExpr"; }
 string BlockExpr::return_type() { return "block"; }
 string ForExpr::return_type() { return "for"; }
 string ReturnExpr::return_type() { return "return"; }
+string ClassVarAssign::return_type() { return "class var assign"; }
 
 string TernaryExpr::return_type() { return retType; } 
 string BinaryOpExpr::return_type() { return retType; }

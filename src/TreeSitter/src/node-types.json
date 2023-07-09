@@ -105,6 +105,10 @@
           "named": true
         },
         {
+          "type": "classAssign",
+          "named": true
+        },
+        {
           "type": "classDecl",
           "named": true
         },
@@ -153,6 +157,25 @@
         },
         {
           "type": "true",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "classAssign",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        },
+        {
+          "type": "identifier",
           "named": true
         }
       ]
@@ -371,6 +394,10 @@
         },
         {
           "type": "assignment",
+          "named": true
+        },
+        {
+          "type": "classAssign",
           "named": true
         },
         {
