@@ -55,6 +55,7 @@ set(TestList
   "Boolean 1110"
   "Scoping 76<"
   "Class 30642253"
+  "ClassExtra 303520"
 )
 
 include(CTest)

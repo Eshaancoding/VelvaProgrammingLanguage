@@ -26,3 +26,6 @@ foo.print()
 Foo fooTwo (4)
 fooTwo.x = 2
 fooTwo.print()
+
+// this test tests two things 1. auto initializer (y is not defined, auto to 0)
+// 2. variable assignment (fooTwo.x = 2)

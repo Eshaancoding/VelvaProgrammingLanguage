@@ -4,12 +4,6 @@ The Velva Programming Language is a low-level programming language designed for 
 
 ## Todo:
 
-* Class implementation
-	
-	* actual variables ...
-		* check whether if accessing variable is private
-		* What if we redeclare a private variable in a class structure. What do we do :/
-
 * Enable arguments be classes
 	* The convert to LLVM Type should already be implemented
 	* in CompilationContext::getDefaultValue make sure you have default classes already

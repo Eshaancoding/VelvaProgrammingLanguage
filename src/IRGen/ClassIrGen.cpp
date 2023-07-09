@@ -164,8 +164,6 @@ optional<Value*> ClassVarDecl::codegen (CompilationContext &ctx) {
 }
 
 optional<Value*> ClassVarAssign::codegen (CompilationContext &ctx) {
-    printf("class name: %s var name: %s \n", className.c_str(), varName.c_str()); 
-    
     // find variable
     auto result = ctx.findVarName(className);
     if (const VariableScope* v = get_if<VariableScope>(&result)) {
