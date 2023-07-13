@@ -79,9 +79,7 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
         if (isIntBool) typeExpr = "bool";
         ty = typeExpr;
         retType = ctx.convertToLLVMType(typeExpr);
-
-        
-
+    
     } else if (!typeArg && !value) {
         throw invalid_argument("Cannot declare auto with no assigment.");
     }

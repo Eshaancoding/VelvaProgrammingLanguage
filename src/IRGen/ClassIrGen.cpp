@@ -31,7 +31,7 @@ optional<Value*> ClassExpr::codegen(CompilationContext &ctx) {
         else
             variablesNotDefVal.push_back({variables[i].name, 0});
     }
-    
+
     // create struct and pointer type
     StructType* st = StructType::create(*ctx.context, varTypes, className);
     Type* pt = PointerType::get(st, 0);
