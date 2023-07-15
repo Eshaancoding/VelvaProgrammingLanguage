@@ -21,6 +21,7 @@ bool CompilationContext::createToGlobal = false;
 
 CompilationContext::CompilationContext() {
     context = std::make_unique<LLVMContext>();
+    context->setOpaquePointers(false); // really helpful for debugging purposes
     mod = std::make_unique<Module>("mod", *context);
     builder = std::make_unique<IRBuilder<>>(*context);
     pushFrame(); // add main frame

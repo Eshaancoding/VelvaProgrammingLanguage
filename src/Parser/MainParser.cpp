@@ -38,7 +38,6 @@ GeneralType Parser::ParseGeneral () {
     else if (type == "classDecl") return ParseClass();
     else if (type == "ClassVarDecl") return ParseClassVarDeclr();
     else if (type == "classAssign") return ParseClassAssign();
-    // else if (type == "return") return ParseReturn();
     else {
         throw invalid_argument((std::string("Invalid type when parsing general: ")+type).c_str());
     }

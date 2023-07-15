@@ -20,9 +20,16 @@ private:
     StructType* str;
     PointerType* strPtr;
 
-    void defaultStringGen ();
-
+    void defaultStringGen (CompilationContext &ctx);
+    void stringDelete (CompilationContext &ctx);
+    void stringResize (CompilationContext &ctx);
+    void AddChar (CompilationContext &ctx);
 public:
+    const Function* stringDeleteF;
+    const Function* stringConstrF;
+    const Function* stringResizeF;
+    const Function* stringAddChar;
+
     String () : didGenHelper(false), str(nullptr) {};
 
     // include in IR helper functions such as string and such;
