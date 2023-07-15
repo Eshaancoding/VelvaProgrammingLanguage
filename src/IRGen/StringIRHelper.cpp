@@ -44,8 +44,6 @@ void String :: defaultStringGen (CompilationContext &ctx) {
     ctx.builder->CreateStore(*IntExpr(16).codegen(ctx), factor);                 // set factor to null
 
     ctx.builder->CreateRetVoid();
-
-    stringConstrF = FCreateDef;
 }
 
 void String :: stringDelete (CompilationContext &ctx) {
@@ -80,8 +78,6 @@ void String :: stringDelete (CompilationContext &ctx) {
 
     ctx.builder->SetInsertPoint(free_close);
     ctx.builder->CreateRetVoid();
-
-    stringDeleteF = FCDeleteDef;
 }
 
 void String :: stringResize (CompilationContext &ctx) {
@@ -135,8 +131,6 @@ void String :: stringResize (CompilationContext &ctx) {
     ctx.builder->CreateStore(FResizeDef->args().begin()+1, maxLen);
 
     ctx.builder->CreateRetVoid();
-
-    stringResizeF = FResizeDef; 
 }
 
 void String :: AddChar  (CompilationContext &ctx) {
@@ -193,9 +187,27 @@ void String :: AddChar  (CompilationContext &ctx) {
     // program grow end (actually add the character)
     ctx.builder->SetInsertPoint(grow_close);
 
+    // set char
+    ctx.builder->CreateCall(ctx.mod->getFunction("String_Set_Char"), {FAddCharDef->args().begin(), lenVal, FAddCharDef->args().begin()+1});
+
+    auto lengthAdd = ctx.builder->CreateAdd(lenVal, *IntExpr(1).codegen(ctx));
+    ctx.builder->CreateStore(lengthAdd, len);
+
+    ctx.builder->CreateRetVoid();
+}
+
+void String :: setChar (CompilationContext &ctx) {
+    FunctionType *FSetChar = FunctionType::get(Type::getVoidTy(*ctx.context), {strPtr, Type::getInt32Ty(*ctx.context), Type::getInt32Ty(*ctx.context)}, false);
+    Function *FSetCharDef = Function::Create(FSetChar, Function::ExternalLinkage, "String_Set_Char", ctx.mod.get());
+    
+    // get starting block; prepare to insert stuff into function
+    BasicBlock *bb = BasicBlock::Create(*ctx.context, "String_Set_Char", FSetCharDef);
+    ctx.builder->SetInsertPoint(bb);
+
+    // set char
     auto buf = ctx.builder->CreateGEP(
         str,
-        FAddCharDef->args().begin(),
+        FSetCharDef->args().begin(),
         {*IntExpr(0).codegen(ctx), *IntExpr(0).codegen(ctx)}
     );
     auto bufferval = ctx.builder->CreateLoad(Type::getInt8PtrTy(*ctx.context), buf, "buffer");   
@@ -203,13 +215,10 @@ void String :: AddChar  (CompilationContext &ctx) {
     auto lastCharVal = ctx.builder->CreateGEP(
         Type::getInt8Ty(*ctx.context),
         bufferval,
-        {lenVal}
+        {FSetCharDef->args().begin()+1}
     );
 
-    ctx.builder->CreateStore(FAddCharDef->args().begin()+1, lastCharVal);
-
-    auto lengthAdd = ctx.builder->CreateAdd(lenVal, *IntExpr(1).codegen(ctx));
-    ctx.builder->CreateStore(lengthAdd, len);
+    ctx.builder->CreateStore(FSetCharDef->args().begin()+2, lastCharVal);
 
     ctx.builder->CreateRetVoid();
 }
@@ -240,9 +249,14 @@ void String :: genStringHelper (CompilationContext &ctx) {
     ctx.builder->SetInsertPoint(startingBlock);
     stringResize(ctx);
 
+    // set char
+    ctx.builder->SetInsertPoint(startingBlock);
+    setChar(ctx);
+
     // add character 
     ctx.builder->SetInsertPoint(startingBlock);
     AddChar(ctx);
+
 
     ctx.builder->SetInsertPoint(startingBlock);
     didGenHelper = true;
