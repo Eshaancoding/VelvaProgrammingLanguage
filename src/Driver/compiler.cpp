@@ -7,7 +7,6 @@
 #include <cassert>
 #include <memory>
 #include <cstring>
-#include "String.hpp"
 #include "TreeSitterParser.hpp"
 #include "AST.hpp"
 #include "Functions.hpp"
@@ -31,10 +30,6 @@ int main(int argc, const char **argv)
 
     // initialize ffi functions
     initializeAllFFIFunc(ctx);
-
-    // initialize string (prob will be remove to a later area probably)
-    String stringHel; 
-    stringHel.genStringHelper(ctx);
 
     // start parsing actual file
     Parser pars(filename);
