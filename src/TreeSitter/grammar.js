@@ -13,6 +13,7 @@ module.exports = grammar({
             seq($.func_call, $._endLn),
             $.function_declare,
             $.for,
+            $.classVarDecl,
             $.while,
             $._singleComment,
             $._multiLineComment,
@@ -29,16 +30,15 @@ module.exports = grammar({
             '*/'
         ),
 
-        ClassVarDecl: $ => seq(
+        ClassVarDecl: $ => prec(3, seq(
             $.identifier,
             $.identifier,
-            optional(
-                seq('(',
-                    commaSep($.expression),
-                ')')
-            ),
+            '(',
+            commaSep($.expression),
+            ')',
             $._endLn
-        ),
+        )),
+
 
         ternaryStatement: $ => seq(
             $.condition,
@@ -93,10 +93,12 @@ module.exports = grammar({
         var_declaration: $ => seq(
             field("type", choice($.primitive_type, "auto")),
             field("name", $.identifier),
-            optional(seq(
-                '=',
-                field("value", $.expression),
-            )),
+            optional(
+                seq(
+                    '=',
+                    field("value", $.expression),
+                )
+            ),
             $._endLn, 
         ),
 
@@ -162,7 +164,8 @@ module.exports = grammar({
                     '=',
                     $.expression
                 )
-            )
+            ),
+            $._endLn
         ),
         
         constructor: $ => seq(
@@ -211,7 +214,8 @@ module.exports = grammar({
             'int',
             'float',
             'bool',
-            'string' // oh? not a primitive type? who asked
+            'char', // string is actually not... a primitive type. stupid young beshaan
+            $.identifier // might be a class 
         ),
 
         //functions
@@ -231,7 +235,13 @@ module.exports = grammar({
             choice("func", $.primitive_type),
             $.identifier,
             $.parameter_list,  
-            choice($.block, $._endLn)
+            $.block
+        ),
+        
+        function_forward_decl: $ => seq(
+            "forward",
+            $.primitive_type,
+            $.identifier 
         ),
 
         func_call: $ => seq(

@@ -1,0 +1,8 @@
+class Hello {
+    void hello () {
+        putchar(49)
+    }
+}
+
+Hello hel (3, 3)
+

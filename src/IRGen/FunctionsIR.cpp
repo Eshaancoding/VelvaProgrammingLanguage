@@ -120,7 +120,7 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx) {
                 argv.push_back(ctx.thisValue);
                 types.push_back("pt:"+ctx.runningClass);
 
-                FunctionScope func = ctx.findFuncName(ctx.runningClass + "_" + functionName, types);
+                FunctionS,cope func = ctx.findFuncName(ctx.runningClass + "_" + functionName, types);
                 
                 // if not actually create call
                 retType = func.returnType;

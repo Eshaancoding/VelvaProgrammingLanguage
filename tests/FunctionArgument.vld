@@ -1,0 +1,12 @@
+
+class Hello {
+    int hello ()  {
+        putchar(49)
+    }
+}
+
+func test (Hello hel) {
+    hel.hello()
+}
+
+test()
