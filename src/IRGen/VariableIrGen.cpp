@@ -44,8 +44,8 @@ optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
     if (const ClassScope* classSc = get_if<ClassScope>(&result)) {
         // search through the class scope if we can get the var name
         for (int i = 0; i < classSc->variables.size(); i++) {
-            if (classSc->variables[i].name == var && ctx.runningClass != "") {// check for public/private later
-                retType = classSc->variables[i].type;
+            if (classSc->variables[i].expr->name == var && ctx.runningClass != "") {// check for public/private later
+                retType = *classSc->variables[i].expr->typeArg;
                 return ctx.builder->CreateLoad(ctx.convertToLLVMType(retType), classSc->variableValues[i], var.c_str());
             }
         }
@@ -54,7 +54,6 @@ optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
     throw invalid_argument("Reached invalid subroutine!");
 }
 
-// error stuff literally just dummy functions because it has to override shit
 optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
     string ty;
     llvm::Type* retType; 
@@ -88,7 +87,9 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
         ty = *typeArg;
         retType = ctx.convertToLLVMType(ty);
         auto res = ctx.getDefaultValue(ty);
-        if (!res) throw invalid_argument("Default value undefined.");
+        if (!res) { // if its not one of the primitive types, then it may be a class
+            return make_unique<ClassVarDecl>(ty, name, move(params))->codegen(ctx);
+        }
         val = *res;
     }
 
@@ -112,7 +113,7 @@ optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {
     if (const ClassScope* classSc = get_if<ClassScope>(&result)) {
         // search through the class scope if we can get the var name
         for (int i = 0; i < classSc->variables.size(); i++) {
-            if (classSc->variables[i].name == varName && ctx.runningClass != "") // check for public/private later
+            if (classSc->variables[i].expr->name == varName && ctx.runningClass != "") // check for public/private later
                 return ctx.builder->CreateStore(vlu, classSc->variableValues[i]);
         }
         throw invalid_argument("Unable to find variable in class scope!");

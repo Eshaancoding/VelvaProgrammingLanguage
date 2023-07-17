@@ -20,16 +20,20 @@ optional<Value*> ClassExpr::codegen(CompilationContext &ctx) {
     vector<pair<string, int>> variablesNotDefVal; // no default val provided nor does programmer provides any
     vector<Type*> varTypes;
     for (int i = 0; i < variables.size(); i++) {
-        auto t = ctx.convertToLLVMType(variables[i].type);
+        auto t = ctx.convertToLLVMType(*variables[i].expr->typeArg);
         varTypes.push_back(t);
-        variables[i].llvmType = t;
         
-        if (variables[i].defaultValue != nullptr)
-            variableDefVal.push_back({variables[i].name, *variables[i].defaultValue->codegen(ctx)});
-        else if (ctx.getDefaultValue(variables[i].type) != nullopt) 
-            variableDefValProg.push_back({variables[i].name, *ctx.getDefaultValue(variables[i].type)});
+        if (variables[i].expr->value != nullopt) {
+            variableDefVal.push_back({variables[i].expr->name, *(*variables[i].expr->value)->codegen(ctx)});
+            continue;
+        }
+
+        auto defaultValRes = ctx.getDefaultValue(*variables[i].expr->typeArg) ;
+
+        if (defaultValRes != nullopt) 
+            variableDefValProg.push_back({variables[i].expr->name, *defaultValRes });
         else
-            variablesNotDefVal.push_back({variables[i].name, 0});
+            variablesNotDefVal.push_back({variables[i].expr->name, 0});
     }
 
     // create struct and pointer type
@@ -40,8 +44,12 @@ optional<Value*> ClassExpr::codegen(CompilationContext &ctx) {
     ctx.createClass(className, st, pt, variables); 
     ctx.runningClass = className;
 
+    printf("class expr!\n");
+
     // if no constructor exists however there is variable defined 
     if (constructors.size() == 0) {
+
+        printf("no constructor!\n");
         unique_ptr<BlockExpr> b = make_unique<BlockExpr>();
 
         if (variablesNotDefVal.size() > 0)
@@ -59,7 +67,8 @@ optional<Value*> ClassExpr::codegen(CompilationContext &ctx) {
                 i.second
             ));
 
-        DeclareFunctionExpr(
+
+        auto vres = DeclareFunctionExpr(
             false,
             false,
             "constructor_"+className,
@@ -173,7 +182,7 @@ optional<Value*> ClassVarAssign::codegen (CompilationContext &ctx) {
         int x = 0;
         for (auto var : cscope.variables) {
             if (!var.isPublic) throw invalid_argument("Cannot access variable " + varName + ": variable is private!"); 
-            if (var.name == varName) {
+            if (var.expr->name == varName) {
                 auto gepValue = ctx.builder->CreateGEP(
                     cscope.type,
                     v->value,

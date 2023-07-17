@@ -13,12 +13,10 @@ module.exports = grammar({
             seq($.func_call, $._endLn),
             $.function_declare,
             $.for,
-            $.classVarDecl,
             $.while,
             $._singleComment,
             $._multiLineComment,
             $.classDecl,
-            $.ClassVarDecl,
             $.classAssign
         ),
 
@@ -29,16 +27,6 @@ module.exports = grammar({
             repeat(/./),
             '*/'
         ),
-
-        ClassVarDecl: $ => prec(3, seq(
-            $.identifier,
-            $.identifier,
-            '(',
-            commaSep($.expression),
-            ')',
-            $._endLn
-        )),
-
 
         ternaryStatement: $ => seq(
             $.condition,
@@ -93,11 +81,18 @@ module.exports = grammar({
         var_declaration: $ => seq(
             field("type", choice($.primitive_type, "auto")),
             field("name", $.identifier),
-            optional(
-                seq(
-                    '=',
-                    field("value", $.expression),
-                )
+            field("value",
+                optional(choice(
+                    seq(
+                        '=',
+                        field("value", $.expression),
+                    ),
+                    seq(
+                        '(',
+                        commaSep($.expression),
+                        ')'
+                    )
+                ))
             ),
             $._endLn, 
         ),
@@ -156,18 +151,6 @@ module.exports = grammar({
         
         publicPrivate: $ => choice("public:", "private:"),
         
-        classVarDecl: $ => seq(
-            $.primitive_type,
-            $.identifier,
-            optional(
-                seq(
-                    '=',
-                    $.expression
-                )
-            ),
-            $._endLn
-        ),
-        
         constructor: $ => seq(
             "init",
             $.parameter_list,  
@@ -188,8 +171,8 @@ module.exports = grammar({
             '{',
             repeat(
                 choice(
-                    $.classVarDecl,
                     $.function_declare,
+                    $.var_declaration,
                     $.publicPrivate,
                     $.constructor
                 )
@@ -205,9 +188,6 @@ module.exports = grammar({
             prec.left(1, seq($.expression, '-', $.expression)),
             prec.left(1, seq($.expression, '+', $.expression)),
         ),
-        // _operator: $ => choice(
-        //     "+", "-", "*", "/"
-        // ),
 
         // types
         primitive_type: $ => choice(

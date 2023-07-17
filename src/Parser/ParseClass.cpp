@@ -24,34 +24,14 @@ unique_ptr<Expr> Parser::ParseClass () {
 
             cursor.goToSibling();
         }
-        else if (ty == "classVarDecl") {
+        else if (ty == "var_declaration") {
+            auto exp = ParseVarDecl();
 
-            int numChilds = cursor.getNumChilds();
-            
-            cursor.goToChild();
+            if (!exp->typeArg) throw invalid_argument("Cannot declare auto in class decl");
 
-            assert(cursor.getType() == "primitive_type");
-            string ty = cursor.getSourceStr();
-            cursor.goToSibling();
+            variableDefined[exp->name] = 1;
+            variables.push_back({isPublic, exp.release()});
 
-            assert(cursor.getType() == "identifier");
-            string name = cursor.getSourceStr();
-
-            if (variableDefined.find(name) != variableDefined.end())               
-                throw invalid_argument("Variable " + name + " already defined!");
-
-            Expr* defaultExpr = nullptr;
-            if (numChilds > 2) {
-                cursor.goToSibling();
-                assert(cursor.getType() == "expression");
-                defaultExpr = ParseExpression().release(); 
-                // why release? I tried making VarTemplate an unique pointer but I got so many bugs that I just stuck with the unsafe method :(
-            }
-
-            variables.push_back({ty, name, isPublic, nullptr, defaultExpr});
-            variableDefined[name] = 1;
-
-            cursor.goToParent();
             cursor.goToSibling();
         }
         else if (ty == "function_declare") {

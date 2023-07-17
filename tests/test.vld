@@ -1,8 +1,16 @@
 class Hello {
-    void hello () {
+
+    int i = 3
+
+    init (int v, int x) {
         putchar(49)
     }
+
+    init () {
+    }
+
 }
 
 Hello hel (3, 3)
+Hello helTwo
 

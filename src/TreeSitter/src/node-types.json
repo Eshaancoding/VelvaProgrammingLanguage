@@ -90,10 +90,6 @@
           "named": true
         },
         {
-          "type": "classVarDecl",
-          "named": true
-        },
-        {
           "type": "for",
           "named": true
         },
@@ -171,10 +167,6 @@
       "required": true,
       "types": [
         {
-          "type": "classVarDecl",
-          "named": true
-        },
-        {
           "type": "constructor",
           "named": true
         },
@@ -189,28 +181,9 @@
         {
           "type": "publicPrivate",
           "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "classVarDecl",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "expression",
-          "named": true
         },
         {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "primitive_type",
+          "type": "var_declaration",
           "named": true
         }
       ]
@@ -379,10 +352,6 @@
         },
         {
           "type": "classDecl",
-          "named": true
-        },
-        {
-          "type": "classVarDecl",
           "named": true
         },
         {
@@ -716,9 +685,25 @@
         ]
       },
       "value": {
-        "multiple": false,
+        "multiple": true,
         "required": false,
         "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
+          {
+            "type": ",",
+            "named": false
+          },
+          {
+            "type": "=",
+            "named": false
+          },
           {
             "type": "expression",
             "named": true

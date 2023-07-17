@@ -275,6 +275,12 @@ typedef enum {
 class VarDeclareExpr : public Expr { 
     public:
         /**
+         * @brief if its a var decl, we might store parameters
+         * 
+         */
+        vector<unique_ptr<Expr>> params;
+
+        /**
          * @brief Represents the mutability protections of the variable
          * 
          */
@@ -295,7 +301,8 @@ class VarDeclareExpr : public Expr {
          */
         optional<unique_ptr<Expr>> value;
         // defined in BinaryOpIrGen.cpp
-        VarDeclareExpr(VarMutability mutTypeArg, string nameArg, optional<unique_ptr<Expr>> valueArg, optional<string> typeArg) : value(move(valueArg)), mutType(mutTypeArg), name(nameArg), typeArg(typeArg) {};
+        VarDeclareExpr(VarMutability mutTypeArg, string nameArg, optional<unique_ptr<Expr>> valueArg, optional<string> typeArg, vector<unique_ptr<Expr>> params) 
+            : value(move(valueArg)), mutType(mutTypeArg), name(nameArg), typeArg(typeArg), params(move(params)) {};
         void alloc(CompilationContext &ctx);
         optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type() override;

@@ -62,7 +62,7 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
                         scope->type,
                         &arg,
                         {*IntExpr(0).codegen(ctx), *IntExpr(indCount).codegen(ctx)},
-                        scope->name + "_" + scope->variables[v].name
+                        scope->name + "_" + scope->variables[v].expr->name
                     ));
                     indCount++;
                 }
@@ -120,7 +120,7 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx) {
                 argv.push_back(ctx.thisValue);
                 types.push_back("pt:"+ctx.runningClass);
 
-                FunctionS,cope func = ctx.findFuncName(ctx.runningClass + "_" + functionName, types);
+                FunctionScope func = ctx.findFuncName(ctx.runningClass + "_" + functionName, types);
                 
                 // if not actually create call
                 retType = func.returnType;

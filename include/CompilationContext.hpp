@@ -23,13 +23,11 @@ using namespace std;
 using namespace llvm;
 
 class Expr; // forward decl; defined in AST.hpp
+class VarDeclareExpr; // forward decl; defined in AST.hpp
 
 struct VarTemplate {
-    string type;
-    string name;
     bool isPublic;
-    Type* llvmType;
-    Expr* defaultValue;
+    VarDeclareExpr* expr; 
 };
 
 struct ClassScope {

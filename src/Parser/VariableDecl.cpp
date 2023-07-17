@@ -12,6 +12,8 @@ unique_ptr<VarDeclareExpr> Parser::ParseVarDecl () {
         throw invalid_argument("cannot declare auto variable with empty value");
     }
 
+    vector<unique_ptr<Expr>> exprs;
+
     // get primitive type
     cursor.goToChild();
         
@@ -22,12 +24,29 @@ unique_ptr<VarDeclareExpr> Parser::ParseVarDecl () {
         // get identifier
         assert(cursor.getType() == "identifier");
         identifier = cursor.getSourceStr();
-        
+
         if (numChilds > 2) {
-            // get expression
-            cursor.goToSibling();
-            assert(cursor.getType() == "expression");
-            expr = ParseExpression();
+            // get next char 
+            cursor.goToSibling(true);
+
+            if (cursor.getSourceStr() == "=") { // normal var decl
+                cursor.goToSibling(true);
+                assert(cursor.getType() == "expression");
+                expr = ParseExpression();
+
+            } else {                            // ohh is  a class decl
+                cursor.goToSibling(true);
+                while (true) {
+                    auto ex = ParseExpression();
+                    cursor.goToSibling(true);
+                    
+                    exprs.push_back(move(ex));
+                    
+                    if (cursor.getSourceStr() == ",") cursor.goToSibling(true);
+                    else break;
+                }
+            }
+
         }
     }
     else {
@@ -38,9 +57,9 @@ unique_ptr<VarDeclareExpr> Parser::ParseVarDecl () {
         assert(cursor.getType() == "expression");
         expr = ParseExpression();
     }
-    
+
     // go back to the var decl expr 
     cursor.goToParent();
     
-    return make_unique<VarDeclareExpr>(VarMutability::VAR_MUTABILITY_VAR, identifier, move(expr), primitiveType);
+    return make_unique<VarDeclareExpr>(VarMutability::VAR_MUTABILITY_VAR, identifier, move(expr), primitiveType, move(exprs));
 }
