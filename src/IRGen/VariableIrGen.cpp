@@ -32,6 +32,13 @@ optional<Value *> StringExpr::codegen(CompilationContext &ctx)
     return ConstantExpr::getBitCast(globalDecl, i8->getPointerTo());
 }
 
+optional<Value *> PointerExpr::codegen (CompilationContext &ctx) {
+    auto val = *ex->codegen(ctx);
+    auto p = ctx.builder->CreateAlloca(val->getType());
+    ctx.builder->CreateStore(val, p);
+    return p;
+}
+
 // ********************************** Variable uses/decl/assign **********************************
 optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 {

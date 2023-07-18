@@ -107,7 +107,13 @@ module.exports = grammar({
             $.bool,
             $.func_call,
             $.string,
-            $.parathensisExpr
+            $.parathensisExpr,
+            $.pointer
+        ),
+
+        pointer: $ => seq(
+            '&',
+            $.identifier
         ),
 
         parathensisExpr: $ => prec(2, seq(
@@ -191,6 +197,16 @@ module.exports = grammar({
 
         // types
         primitive_type: $ => choice(
+            seq(
+                "ptr<",
+                $.primitive_type,
+                ">"
+            ),
+            seq(
+                "ref<",
+                $.primitive_type,
+                ">"
+            ),
             'int',
             'float',
             'bool',

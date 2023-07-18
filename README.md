@@ -23,9 +23,9 @@ The Velva Programming Language is a low-level programming language designed for 
 * better error messages
 * enums, structs
 
-=========================================
+========================================================
 * Create a full or auto diff / neural network then :0
-=========================================
+========================================================
 * Class Inheritance (Polymorphism)
 
 ## Tests
@@ -79,6 +79,13 @@ The tests are at the `tests` folder of this repo. Almost all of .vld are then ch
 /* This is a multi-
 line
 comment */
+
+ptr<int> hello = x
+hello[0]  // eval to x
+*hello    // eval to x
+hello[1]  // if 
+
+ref<int> x
 
 print("Hello World") //Prints Hello World
 

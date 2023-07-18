@@ -23,6 +23,7 @@ unique_ptr<Expr> Parser::ParseExpression () {
     else if (type == "ternaryStatement") result = ParseTernary();
     else if (type == "func_call") result = ParseFuncCall();
     else if (type == "bool") result = ParseBool();
+    else if (type == "pointer") result = ParsePointer();
     else {
         throw invalid_argument((std::string("Parsing expression invalid type: ") + type).c_str());
     }

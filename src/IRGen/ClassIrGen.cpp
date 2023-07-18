@@ -69,7 +69,7 @@ optional<Value*> ClassExpr::codegen(CompilationContext &ctx) {
             false,
             false,
             "constructor_"+className,
-            {{"pt:"+className, "this"}}, 
+            {{"ptr<"+className+">", "this"}}, 
             std::nullopt,
             std::move(b)
         ).codegen(ctx);
@@ -78,7 +78,7 @@ optional<Value*> ClassExpr::codegen(CompilationContext &ctx) {
     // define constructors
     for (int i = 0; i < constructors.size(); i++) {
         auto c = std::move(constructors[i]);
-        c.params.push_back({"pt:"+className, "this"}); // return pointer type
+        c.params.push_back({"ptr<"+className+">", "this"}); // return pointer type
 
         // go through block expr now and see what variables are declared
         // if not declared, either do default value or value set in equal sign in the original constructor
@@ -123,7 +123,7 @@ optional<Value*> ClassExpr::codegen(CompilationContext &ctx) {
         auto f = std::move(functions[i].expr); 
         f->name = className + "_" + f->name;            // functino name
         f->isPrivate = !functions[i].isPublic;          // whether its private or not
-        f->params.push_back({"pt:"+className, "this"}); // add pointer type to parameters
+        f->params.push_back({"ptr<"+className+">", "this"}); // add pointer type to parameters
         f->codegen(ctx);
     }
 
@@ -158,7 +158,7 @@ optional<Value*> ClassVarDecl::codegen (CompilationContext &ctx) {
 
         // add scope param
         argv.push_back(alloc);
-        types.push_back("pt:"+cscope.name);
+        types.push_back("ptr<"+cscope.name+">");
 
         // find function init and call it!
         FunctionScope func = ctx.findFuncName("constructor_" + cscope.name, types);

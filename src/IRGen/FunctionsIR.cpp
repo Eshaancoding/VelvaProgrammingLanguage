@@ -119,7 +119,7 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx) {
             
             if (ctx.classesDefined.find(ctx.runningClass) != ctx.classesDefined.end()) {
                 argv.push_back(ctx.thisValue);
-                types.push_back("pt:"+ctx.runningClass);
+                types.push_back("ptr<"+ctx.runningClass+">");
 
                 FunctionScope func = ctx.findFuncName(ctx.runningClass + "_" + functionName, types);
                 
@@ -141,7 +141,7 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx) {
             // search through ctx for classes defined
             if (ctx.classesDefined.find(className) != ctx.classesDefined.end()) {
                 argv.push_back(v->value);
-                types.push_back("pt:"+className);
+                types.push_back("ptr<"+className+">");
 
                 FunctionScope func = ctx.findFuncName(className + "_" + functionName, types);
                 

@@ -21,3 +21,4 @@ string BinaryOpExpr::return_type() { return retType; }
 string CallFuncExpr::return_type() { return retType; }
 string VarUseExpr::return_type() { return retType; }
 string ClassVarDecl::return_type() { return "cl:"+className; }
+string PointerExpr::return_type() { return "ptr<" + ex->return_type() + ">"; }

@@ -483,4 +483,14 @@ class ClassVarAssign : public Expr {
         string return_type() override;
 };
 
+class PointerExpr : public Expr {
+    public:
+        unique_ptr<Expr> ex;
+    
+        PointerExpr (unique_ptr<Expr> expr) : ex(move(expr)) {};
+    
+        optional<Value*> codegen (CompilationContext &ctx) override;
+        string return_type() override;
+};
+
 #endif

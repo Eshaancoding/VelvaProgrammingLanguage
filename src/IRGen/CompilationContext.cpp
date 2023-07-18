@@ -72,11 +72,18 @@ llvm::Type* CompilationContext::convertToLLVMType (optional<string> type) {
     if (!type) return Type::getVoidTy(*context);
     
     // basic check
-    auto result = *type == "int" ? Type::getInt32Ty(*context)
+    auto result = 
+          *type == "int" ? Type::getInt32Ty(*context)
         : *type == "float" ? Type::getFloatTy(*context)
         : *type == "double" ? Type::getDoubleTy(*context)
+        : *type == "char" ? Type::getInt8Ty(*context)
         : *type == "string" ? Type::getInt8PtrTy(*context)
         : *type == "bool" ? Type::getInt1Ty(*context)
+        : *type == "ptr<int>" ? Type::getInt32PtrTy(*context) 
+        : *type == "ptr<float>" ? Type::getFloatPtrTy(*context)
+        : *type == "ptr<double>" ? Type::getDoublePtrTy(*context)
+        : *type == "ptr<char>" ? Type::getInt8PtrTy(*context)
+        : *type == "ptr<bool>" ? Type::getInt1PtrTy(*context)
         : Type::getVoidTy(*context);
 
     // advanced check
@@ -87,12 +94,13 @@ llvm::Type* CompilationContext::convertToLLVMType (optional<string> type) {
         } catch (invalid_argument e) {};
 
 
-        if (type->substr(0, 3) == "pt:") { // is class type parameter
+        if (type->substr(0, 4) == "ptr<") { // is a pointer
             // get actual class name
-            auto classN = type->substr(3, type->length());
-            auto r = this->findClass(classN); // assert that class actually has been found;
-            return r.pointerType;
+            auto insidePointer = type->substr(4, type->length()-5);
+            return PointerType::get(convertToLLVMType(insidePointer), 0);
         }
+
+        throw invalid_argument("Invalid type: " + *type); 
     }
 
     return result;
