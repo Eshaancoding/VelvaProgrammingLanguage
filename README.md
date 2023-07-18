@@ -3,22 +3,12 @@
 The Velva Programming Language is a low-level programming language designed for extensibility, friendly syntax, and equipped with plenty of useful libraries.
 
 ## Todo:
-
-* Enable arguments be classes
-	* The convert to LLVM Type should already be implemented
-	* in CompilationContext::getDefaultValue make sure you have default classes already
-		* shoudl give error if not default function
-
-* tree sitter classes are .... weird bruh
-	* remove reuse classes "like ClassVarDecl"
-	* also precendents are weird; maybe singular them out.
+* pointer type (support for classes too!), char (int8)
 
 * Check if scoping really works
 	* what if you declare two variables in a different scope?
 	* Check whether overloaded functions (both in classes and outside classes) work
 	* what if an argument to the function and then the same name is redeclared :(
-
-* pointer type (support for classes too!), char (int8)
 
 * add string stdlib
 
