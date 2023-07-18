@@ -16,6 +16,7 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
     for (auto &param : params) {
         auto p = get<0>(param);
         types.push_back(p);
+        printf("type: %d\n", ctx.convertToLLVMType(p)->getTypeID());
         paramTypes.push_back(ctx.convertToLLVMType(p));
     }
 
@@ -47,12 +48,12 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
         for(auto &arg : F->args()) {
             if (arg.getName().str() != "this") {  
                 // just regular allocation for normal argument variables
-                AllocaInst *Alloca = CreateEntryBlockAlloca(ctx, F, arg.getName().str());
+                auto Alloca = ctx.builder->CreateAlloca(arg.getType(), nullptr, arg.getName().str());
                 ctx.builder->CreateStore(&arg, Alloca);
                 ctx.createVarName(arg.getName().str(), VariableScope { 
                     get<0>(params[i]), Alloca, ""
                 });
-            } else if (ctx.runningClass != "") {
+            } else if (ctx.runningClass != "") { // method (within class) declaration
                 // create GEP instruction
                 ctx.thisValue = &arg; // set the this value up for functions methods within functions methods to be called
                 auto scope = &ctx.classesDefined.rbegin()->second;
@@ -66,7 +67,12 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
                     ));
                     indCount++;
                 }
-            } else throw invalid_argument("Cannot name 'this' as an argument.");
+            } else {
+                // just add to variable name
+                ctx.createVarName(arg.getName().str(), VariableScope { 
+                    get<0>(params[i]), &arg, ""
+                });
+            }
                 
             i += 1;
         }

@@ -81,6 +81,12 @@ llvm::Type* CompilationContext::convertToLLVMType (optional<string> type) {
 
     // advanced check
     if (result->getTypeID() == llvm::Type::TypeID::VoidTyID) {
+        try {
+            auto r = this->findClass(*type);
+            return r.type;
+        } catch (invalid_argument e) {};
+
+
         if (type->substr(0, 3) == "pt:") { // is class type parameter
             // get actual class name
             auto classN = type->substr(3, type->length());

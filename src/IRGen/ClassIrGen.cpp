@@ -44,8 +44,6 @@ optional<Value*> ClassExpr::codegen(CompilationContext &ctx) {
     ctx.createClass(className, st, pt, variables); 
     ctx.runningClass = className;
 
-    printf("class expr!\n");
-
     // if no constructor exists however there is variable defined 
     if (constructors.size() == 0) {
 
