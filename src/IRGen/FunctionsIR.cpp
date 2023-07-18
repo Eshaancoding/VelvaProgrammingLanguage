@@ -16,7 +16,6 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
     for (auto &param : params) {
         auto p = get<0>(param);
         types.push_back(p);
-        printf("type: %d\n", ctx.convertToLLVMType(p)->getTypeID());
         paramTypes.push_back(ctx.convertToLLVMType(p));
     }
 
@@ -113,10 +112,6 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx) {
             Function *calleeF = ctx.mod->getFunction(func.name);
             return ctx.builder->CreateCall(calleeF, argv);
         } catch (invalid_argument e) {
-            printf("Class function within another function with name: %s\n", functionName.c_str());
-
-            printf("running class: %s and is this value null %d\n", ctx.runningClass.c_str(), ctx.thisValue == nullptr);
-
             // if that doesn't work, then maybe we are inside a function and we are trying to call there
             if (ctx.runningClass == "") throw e; // if there's no class inside of what we are trying to call, then throw e
             if (ctx.thisValue == nullptr) throw e;

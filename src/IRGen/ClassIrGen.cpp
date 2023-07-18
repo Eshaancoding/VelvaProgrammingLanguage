@@ -47,7 +47,6 @@ optional<Value*> ClassExpr::codegen(CompilationContext &ctx) {
     // if no constructor exists however there is variable defined 
     if (constructors.size() == 0) {
 
-        printf("no constructor!\n");
         unique_ptr<BlockExpr> b = make_unique<BlockExpr>();
 
         if (variablesNotDefVal.size() > 0)
