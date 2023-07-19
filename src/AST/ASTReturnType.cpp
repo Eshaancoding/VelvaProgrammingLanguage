@@ -21,4 +21,11 @@ string BinaryOpExpr::return_type() { return retType; }
 string CallFuncExpr::return_type() { return retType; }
 string VarUseExpr::return_type() { return retType; }
 string ClassVarDecl::return_type() { return "cl:"+className; }
-string PointerExpr::return_type() { return "ptr<" + ex->return_type() + ">"; }
+string PointerExpr::return_type() { return "ptr<" + retType + ">"; }
+
+string AccessorExpr::return_type() { 
+    string returnTypeExpr = expr->return_type();
+    int cutFirst = v.size()*4;
+    string res = returnTypeExpr.substr(cutFirst, returnTypeExpr.size() - cutFirst - v.size()); 
+    return res;
+}

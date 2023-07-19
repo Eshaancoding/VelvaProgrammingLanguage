@@ -54,12 +54,13 @@ public:
     unique_ptr<Expr> ParseNumber ();  
     unique_ptr<Expr> ParseString ();
     unique_ptr<Expr> ParseIfStatement();
-    unique_ptr<Expr> ParseIdentifier();
     unique_ptr<Expr> ParseParanthesis ();
     unique_ptr<Expr> ParseTernary ();
     unique_ptr<Expr> ParseCondition ();
     unique_ptr<Expr> ParseBinaryCondition ();
     unique_ptr<Expr> ParseClass ();
+    unique_ptr<VarUseExpr> ParseIdentifier();
+    unique_ptr<AccessorExpr> ParseAccessor ();
     unique_ptr<PointerExpr> ParsePointer ();
     unique_ptr<ClassVarAssign> ParseClassAssign ();
     unique_ptr<ClassVarDecl> ParseClassVarDeclr ();

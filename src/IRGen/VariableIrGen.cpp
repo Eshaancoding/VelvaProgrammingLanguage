@@ -33,10 +33,49 @@ optional<Value *> StringExpr::codegen(CompilationContext &ctx)
 }
 
 optional<Value *> PointerExpr::codegen (CompilationContext &ctx) {
-    auto val = *ex->codegen(ctx);
-    auto p = ctx.builder->CreateAlloca(val->getType());
-    ctx.builder->CreateStore(val, p);
-    return p;
+    const auto result = ctx.findVarName(name); // find the original declaration of the variable itself
+    
+    if (const VariableScope* v = get_if<VariableScope>(&result)) { 
+        retType = v->type;
+        return v->value;
+    }
+    else if (const ClassScope* classSc = get_if<ClassScope>(&result)) {
+        // search through the class scope if we can get the var name
+        for (int i = 0; i < classSc->variables.size(); i++) {
+            if (classSc->variables[i].expr->name == name && ctx.runningClass != "") {
+                retType = classSc->variables[i].expr->return_type();
+                return classSc->variableValues[i];
+            }
+        }
+    }
+    
+    throw invalid_argument("No variable found.");
+}
+
+optional<Value*> AccessorExpr::codegen (CompilationContext &ctx) {
+    auto val = *expr->codegen(ctx);
+    auto rt = expr->return_type();
+    
+    string t = rt.substr(4, rt.size()-5);
+    
+    Value* gepS = ctx.builder->CreateGEP(
+        ctx.convertToLLVMType(t),
+        val,
+        {*v[0]->codegen(ctx)}
+    );
+    Value* loadVal = ctx.builder->CreateLoad(ctx.convertToLLVMType(t), gepS);
+
+    for (int i = 1; i < v.size(); i++) {
+        t = t.substr(4, t.size()-5);
+        gepS = ctx.builder->CreateGEP(
+            ctx.convertToLLVMType(t),
+            loadVal,
+            {*v[i]->codegen(ctx)}
+        );
+        loadVal = ctx.builder->CreateLoad(ctx.convertToLLVMType(t), gepS);
+    }
+
+    return loadVal;
 }
 
 // ********************************** Variable uses/decl/assign **********************************
@@ -112,19 +151,48 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
 optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {
     auto result = ctx.findVarName(varName);
    
-    Value* vlu = value == nullptr ? llvmValue : *(value->codegen(ctx));
+    Value* vlu = llvmValue != nullptr ? llvmValue : *(value->codegen(ctx));
+    Value* toAdd = nullptr;
+    string toAddRet = "";
     
-    if (const VariableScope* v = get_if<VariableScope>(&result))
-        return ctx.builder->CreateStore(vlu, v->value);
+    if (const VariableScope* v = get_if<VariableScope>(&result)) {
+        toAdd = v->value;
+        toAddRet = v->type;
+    }
+        
 
     if (const ClassScope* classSc = get_if<ClassScope>(&result)) {
         // search through the class scope if we can get the var name
         for (int i = 0; i < classSc->variables.size(); i++) {
-            if (classSc->variables[i].expr->name == varName && ctx.runningClass != "") // check for public/private later
-                return ctx.builder->CreateStore(vlu, classSc->variableValues[i]);
+            if (classSc->variables[i].expr->name == varName && ctx.runningClass != "") {
+                toAdd = classSc->variableValues[i];
+                toAddRet = *classSc->variables[i].expr->typeArg;
+                break;
+            }
         }
-        throw invalid_argument("Unable to find variable in class scope!");
     }
+
+    if (toAdd == nullptr) throw invalid_argument("Unable to parse assignment.");
+
+    // parse var to access specific addresses
+    Value* gepS;
+    Value* loadVel;
+    for (int i = 0; i < v.size(); i++) {
+        toAdd = ctx.builder->CreateLoad(
+            ctx.convertToLLVMType(toAddRet),
+            toAdd
+        );
+
+        toAddRet = toAddRet.substr(4, toAddRet.size()-5);
+
+        toAdd = ctx.builder->CreateGEP(
+            ctx.convertToLLVMType(toAddRet),
+            toAdd,
+            {*v[i]->codegen(ctx)}
+        );
+    }
+
+    return ctx.builder->CreateStore(vlu, toAdd);
 
     throw invalid_argument("Reached invalid subroutine!");
 }

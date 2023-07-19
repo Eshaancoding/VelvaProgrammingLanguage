@@ -332,8 +332,14 @@ class AssignExpr : public Expr {
          */
         llvm::Value* llvmValue; 
         
-        AssignExpr(string name, unique_ptr<Expr> value) : varName(name), value(move(value)), llvmValue(nullptr) {};
-        AssignExpr(string name, llvm::Value* value) : varName(name), llvmValue(value), value(nullptr) {};
+        /**
+         * @brief this stores an array of accessor values. ex: v[1,2], the 1 & 2 would be in v
+         * 
+         */
+        vector<unique_ptr<Expr>> v;
+        
+        AssignExpr(string name, unique_ptr<Expr> value, vector<unique_ptr<Expr>>v={}) : varName(name), value(move(value)), llvmValue(nullptr), v(move(v)) {};
+        AssignExpr(string name, llvm::Value* value, vector<unique_ptr<Expr>>v={}) : varName(name), llvmValue(value), value(nullptr), v(move(v)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type() override;
 
@@ -485,10 +491,22 @@ class ClassVarAssign : public Expr {
 
 class PointerExpr : public Expr {
     public:
-        unique_ptr<Expr> ex;
+        string name;
+        string retType;
     
-        PointerExpr (unique_ptr<Expr> expr) : ex(move(expr)) {};
+        PointerExpr (string name) : name(name) {};
     
+        optional<Value*> codegen (CompilationContext &ctx) override;
+        string return_type() override;
+};
+
+class AccessorExpr : public Expr { // a[0]
+    public:
+        unique_ptr<Expr> expr;
+        vector<unique_ptr<Expr>> v;
+    
+        AccessorExpr (unique_ptr<Expr> expr, vector<unique_ptr<Expr>> v) : expr(move(expr)), v(move(v)) {}
+
         optional<Value*> codegen (CompilationContext &ctx) override;
         string return_type() override;
 };

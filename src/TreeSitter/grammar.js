@@ -101,6 +101,7 @@ module.exports = grammar({
         expression: $ => choice(
             $.ternaryStatement,
             $.identifier,
+            $.accessor,
             $.binary_expression,
             $._unary_expression,
             $.number,
@@ -113,7 +114,14 @@ module.exports = grammar({
 
         pointer: $ => seq(
             '&',
-            $.identifier
+            $.expression
+        ),
+
+        accessor: $ => seq(
+            $.identifier,
+            '[',
+            commaSep($.expression),
+            ']'
         ),
 
         parathensisExpr: $ => prec(2, seq(
@@ -142,19 +150,22 @@ module.exports = grammar({
         assignment: $ => choice(
             seq(
                 $.identifier,
-                "=",
-                $.expression,
+                optional(seq(
+                    '[',
+                    commaSep($.expression),
+                    ']' 
+                )),
+                choice(
+                    seq(
+                        '=',
+                        $.expression
+                    ), 
+                    '++',
+                    '--'
+                )
             ),
-            $.inc_dec,
         ),
 
-        // increment and decrement for assignment
-        inc_dec: $ => seq(
-            $.identifier,
-            choice("++", "--"),
-            $._endLn
-        ),
-        
         publicPrivate: $ => choice("public:", "private:"),
         
         constructor: $ => seq(

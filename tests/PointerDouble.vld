@@ -1,0 +1,7 @@
+
+int x = 3
+ptr<int> y = &x
+ptr<ptr<int>> z = &y
+
+z[0,0] = 2
+putchar(x+48)

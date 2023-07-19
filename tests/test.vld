@@ -1,3 +1,0 @@
-int v = 3
-ptr<int> x = &v
-ptr<ptr<int>> l = &x

@@ -4,7 +4,7 @@
 
 
 
-unique_ptr<Expr> Parser::ParseIdentifier () {
+unique_ptr<VarUseExpr> Parser::ParseIdentifier () {
     std::string name = cursor.getSourceStr();
     
     return make_unique<VarUseExpr>(name);
@@ -24,6 +24,7 @@ unique_ptr<Expr> Parser::ParseExpression () {
     else if (type == "func_call") result = ParseFuncCall();
     else if (type == "bool") result = ParseBool();
     else if (type == "pointer") result = ParsePointer();
+    else if (type == "accessor") result = ParseAccessor();
     else {
         throw invalid_argument((std::string("Parsing expression invalid type: ") + type).c_str());
     }
@@ -83,38 +84,55 @@ unique_ptr<Expr> Parser::ParseBinaryOp() {
 }
 
 unique_ptr<Expr> Parser::ParseAssigment() {
+    int numChilds = cursor.getNumChilds();
+
     cursor.goToChild();
-    
-    unique_ptr<Expr> expr; 
+
+    vector<unique_ptr<Expr>> p = {};
+    unique_ptr<Expr> expr = nullptr; 
     std::string var_name = "";
     std::string type = cursor.getType();
 
-    if (type == "inc_dec") {
-        cursor.goToChild();
-        
-        var_name = cursor.getSourceStr();
-        
-        cursor.goToSibling(true);
+    // new 
+    var_name = cursor.getSourceStr();
 
+    // test if there [
+    cursor.goToSibling(true);
+
+    if (cursor.getSourceStr() == "[") {
+        while (true) {
+            cursor.goToSibling(true);
+            auto srcSource = cursor.getSourceStr();
+
+            if (srcSource == "]") break;
+            if (srcSource == ",") continue;
+
+            p.push_back(ParseExpression());
+        }
+
+        cursor.goToSibling(true);
+    }
+
+    if (cursor.getSourceStr() == "=") {
+        cursor.goToSibling();
+        expr = ParseExpression();
+    } 
+    else {
         auto baseChild = make_unique<VarUseExpr>(var_name);
         auto increment = make_unique<IntExpr>(1);
 
-        // ================= INFERENCE TYPE NOT SUPPORTED============ because var use expr doesn't work :9
         if (cursor.getSourceStr() == "++")
             expr = make_unique<BinaryOpExpr>("+", move(baseChild), move(increment));
         else if (cursor.getSourceStr() == "--")
             expr = make_unique<BinaryOpExpr>("-", move(baseChild), move(increment));
-
-        cursor.goToParent();
-    } else {
-        var_name = cursor.getSourceStr();
-
-        cursor.goToSibling();
-        
-        expr = ParseExpression();
     }
+    
+    cursor.goToSibling();
+
+    if (var_name == "") throw invalid_argument("Var name cannot be empty!");
+
     cursor.goToParent();
-    return make_unique<AssignExpr>(var_name, move(expr));
+    return make_unique<AssignExpr>(var_name, move(expr), move(p));
 }
 
 unique_ptr<Expr> Parser::ParseReturn () {
@@ -139,4 +157,30 @@ unique_ptr<Expr> Parser::ParseBool () {
     else throw invalid_argument("this should never happen");
     cursor.goToParent();
     return move(ret);
+}
+
+unique_ptr<PointerExpr> Parser::ParsePointer () {
+    cursor.goToChild();
+    auto expr = ParseIdentifier();
+    cursor.goToParent();
+
+    return make_unique<PointerExpr>(expr->var);
+}
+
+unique_ptr<AccessorExpr> Parser::ParseAccessor () {
+    int numChilds = cursor.getNumChilds();
+    cursor.goToChild();
+
+    auto ex = ParseIdentifier();
+    vector<unique_ptr<Expr>> arr;
+
+    cursor.goToSibling();
+    for (int i = 0; i < numChilds-1; i++) {
+        arr.push_back(ParseExpression());
+        cursor.goToSibling();
+    }
+
+    cursor.goToParent();
+    
+    return make_unique<AccessorExpr>(move(ex), move(arr));
 }

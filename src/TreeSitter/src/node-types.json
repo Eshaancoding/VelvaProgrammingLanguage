@@ -1,5 +1,24 @@
 [
   {
+    "type": "accessor",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "and",
     "named": true,
     "fields": {}
@@ -18,10 +37,6 @@
         },
         {
           "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "inc_dec",
           "named": true
         }
       ]
@@ -287,6 +302,10 @@
       "required": true,
       "types": [
         {
+          "type": "accessor",
+          "named": true
+        },
+        {
           "type": "binary_expression",
           "named": true
         },
@@ -490,21 +509,6 @@
     }
   },
   {
-    "type": "inc_dec",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "negative",
     "named": true,
     "fields": {},
@@ -605,7 +609,7 @@
       "required": true,
       "types": [
         {
-          "type": "identifier",
+          "type": "expression",
           "named": true
         }
       ]
@@ -872,6 +876,14 @@
   },
   {
     "type": "True",
+    "named": false
+  },
+  {
+    "type": "[",
+    "named": false
+  },
+  {
+    "type": "]",
     "named": false
   },
   {
