@@ -3,12 +3,15 @@
 The Velva Programming Language is a low-level programming language designed for extensibility, friendly syntax, and equipped with plenty of useful libraries.
 
 ## Todo:
-* pointer type (support for classes too!), char (int8)
+* char
 
 * Check if scoping really works
 	* what if you declare two variables in a different scope?
 	* Check whether overloaded functions (both in classes and outside classes) work
 	* what if an argument to the function and then the same name is redeclared :(
+
+* types within types (classses within classes and accessors for those)
+	* this is where you have to create one big giant GEP instruction
 
 * add string stdlib
 
