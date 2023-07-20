@@ -221,8 +221,8 @@ module.exports = grammar({
             'int',
             'float',
             'bool',
-            'char', // string is actually not... a primitive type. stupid young beshaan
-            $.identifier // might be a class 
+            'char', 
+            $.identifier // if a class 
         ),
 
         //functions

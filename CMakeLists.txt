@@ -59,6 +59,7 @@ set(TestList
   "Class&Function 35"
   "Arrays 123"
   "PointerDouble 2"
+  "ClassInClass 33"
 )
 
 include(CTest)

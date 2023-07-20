@@ -150,7 +150,6 @@ optional<Value*> VarDeclareExpr::codegen (CompilationContext &ctx) {
 
 optional<Value*> AssignExpr::codegen (CompilationContext &ctx) {
     auto result = ctx.findVarName(varName);
-   
     Value* vlu = llvmValue != nullptr ? llvmValue : *(value->codegen(ctx));
     Value* toAdd = nullptr;
     string toAddRet = "";

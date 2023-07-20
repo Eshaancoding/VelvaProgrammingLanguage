@@ -1,0 +1,31 @@
+class Array {
+public:
+    int x
+    
+    init (int value) {
+        x = value 
+    }
+
+    func print () {
+        putchar(48+x)
+    }
+}
+
+class ArrayTwo {
+public:
+    Array arr;
+    
+    init (int a) {
+        arr = Array(a)
+    }
+
+    func print () {
+        arr.print()
+    }
+}
+
+Array arrTwo (3)
+arrTwo.print()
+
+ArrayTwo arr (3)
+arr.print()

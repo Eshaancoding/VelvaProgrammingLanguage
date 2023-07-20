@@ -55,6 +55,7 @@ class Expr {
          * 
          */
         virtual string returnVariableDefined ();
+
 };
 
 /**
@@ -96,6 +97,10 @@ class FloatExpr : public Expr {
  */
 class CallFuncExpr : public Expr {
     public:
+        /**
+         * @brief if we have something before the class ("a" in "a.test()"), then store
+         * 
+         */
         string classVar;        
 
         /**
