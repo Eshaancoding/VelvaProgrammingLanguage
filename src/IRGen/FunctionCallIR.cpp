@@ -35,6 +35,8 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx) {
         Function *calleeF = ctx.mod->getFunction(func.name);
         ctx.builder->CreateCall(calleeF, argv);
 
+        retType = cscope.name;
+
         return ctx.builder->CreateLoad(cscope.type, alloc);
     } catch (invalid_argument e) {}
 

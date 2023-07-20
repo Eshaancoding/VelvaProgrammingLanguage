@@ -27,5 +27,5 @@ public:
 Array arrTwo (3)
 arrTwo.print()
 
-ArrayTwo arr (3)
+ArrayTwo arr = ArrayTwo(3)
 arr.print()
