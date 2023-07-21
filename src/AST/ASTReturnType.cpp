@@ -15,6 +15,7 @@ string BlockExpr::return_type() { return "block"; }
 string ForExpr::return_type() { return "for"; }
 string ReturnExpr::return_type() { return "return"; }
 string ClassVarAssign::return_type() { return "class var assign"; }
+string CharExpr::return_type() { return "char"; }
 
 string TernaryExpr::return_type() { return retType; } 
 string BinaryOpExpr::return_type() { return retType; }

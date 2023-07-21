@@ -3,7 +3,9 @@
 The Velva Programming Language is a low-level programming language designed for extensibility, friendly syntax, and equipped with plenty of useful libraries.
 
 ## Todo:
-* char
+* character
+
+* string (global str)
 
 * Check if scoping really works
 	* what if you declare two variables in a different scope?

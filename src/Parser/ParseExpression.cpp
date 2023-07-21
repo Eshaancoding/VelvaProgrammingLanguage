@@ -25,6 +25,7 @@ unique_ptr<Expr> Parser::ParseExpression () {
     else if (type == "bool") result = ParseBool();
     else if (type == "pointer") result = ParsePointer();
     else if (type == "accessor") result = ParseAccessor();
+    else if (type == "char") result = ParseChar();
     else {
         throw invalid_argument((std::string("Parsing expression invalid type: ") + type).c_str());
     }
@@ -183,4 +184,9 @@ unique_ptr<AccessorExpr> Parser::ParseAccessor () {
     cursor.goToParent();
     
     return make_unique<AccessorExpr>(move(ex), move(arr));
+}
+
+unique_ptr<CharExpr> Parser::ParseChar () {
+    string x = cursor.getSourceStr();
+    return make_unique<CharExpr>(x[1]); // skip the ' at the beginning
 }

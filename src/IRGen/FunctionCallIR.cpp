@@ -40,8 +40,6 @@ std::optional<Value *> CallFuncExpr::codegen(CompilationContext &ctx) {
         return ctx.builder->CreateLoad(cscope.type, alloc);
     } catch (invalid_argument e) {}
 
-    printf("not calss\n");
-
     // not a class name, just a normal functino call
     if (classVar == "") { 
         try {

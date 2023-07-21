@@ -59,6 +59,7 @@ public:
     unique_ptr<Expr> ParseCondition ();
     unique_ptr<Expr> ParseBinaryCondition ();
     unique_ptr<Expr> ParseClass ();
+    unique_ptr<CharExpr> ParseChar ();
     unique_ptr<VarUseExpr> ParseIdentifier();
     unique_ptr<AccessorExpr> ParseAccessor ();
     unique_ptr<PointerExpr> ParsePointer ();

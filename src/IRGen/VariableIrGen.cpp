@@ -78,6 +78,11 @@ optional<Value*> AccessorExpr::codegen (CompilationContext &ctx) {
     return loadVal;
 }
 
+optional<Value*> CharExpr::codegen (CompilationContext &ctx) {
+    int x = (int)character;
+    return IntExpr(x, 8).codegen(ctx);
+}
+
 // ********************************** Variable uses/decl/assign **********************************
 optional<Value *> VarUseExpr::codegen(CompilationContext &ctx)
 {

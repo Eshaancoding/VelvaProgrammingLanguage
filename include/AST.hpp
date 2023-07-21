@@ -167,6 +167,12 @@ class BlockExpr : public Expr {
 class DeclareFunctionExpr {
     public:
         /**
+         * @brief determine if the function has variable arg (like printf)
+         * 
+         */
+        bool isVarArg ;
+
+        /**
          * @brief Whether the function is private within a namespace or class
          */
         bool isPrivate;
@@ -205,8 +211,9 @@ class DeclareFunctionExpr {
             vector<tuple<string, string> > params, 
             optional<string> returnType, 
             optional<unique_ptr<BlockExpr>> body,
-            bool isPrivate=false    
-        ) : isPure(isPure), name(name), params(params), returnType(returnType), isExternal(isExternal), body(move(body)), isPrivate(isPrivate) {};
+            bool isPrivate=false,
+            bool isVarArg=false
+        ) : isPure(isPure), name(name), params(params), returnType(returnType), isExternal(isExternal), body(move(body)), isPrivate(isPrivate), isVarArg(isVarArg) {};
         optional<Function*> codegen(CompilationContext &ctx);
         string return_type (); 
 };
@@ -512,6 +519,16 @@ class AccessorExpr : public Expr { // a[0]
     
         AccessorExpr (unique_ptr<Expr> expr, vector<unique_ptr<Expr>> v) : expr(move(expr)), v(move(v)) {}
 
+        optional<Value*> codegen (CompilationContext &ctx) override;
+        string return_type() override;
+};
+
+class CharExpr : public Expr { // 'a'
+    public:
+        char character;
+        
+        CharExpr (char chararacter) : character(chararacter) {};
+        
         optional<Value*> codegen (CompilationContext &ctx) override;
         string return_type() override;
 };

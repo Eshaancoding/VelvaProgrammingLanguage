@@ -81,6 +81,7 @@ FunctionScope CompilationContext::findFuncName (string funcName, vector<string> 
     auto fullScopes = scopes; fullScopes.push_back(globals);
     for (vector<Scope>::reverse_iterator i = fullScopes.rbegin(); i != fullScopes.rend(); ++i) {
         for (auto func : i->functions) {
+            if (func.prefixName == "printf" && funcName == "printf") return func; // I don't support varadic types yet okay
             if (func.prefixName == funcName && types == func.params) return func;
         }
     }

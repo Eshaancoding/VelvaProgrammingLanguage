@@ -23,7 +23,7 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
 
     auto retType = ctx.convertToLLVMType(returnType);
 
-    FunctionType *FT = FunctionType::get(retType, paramTypes, false);
+    FunctionType *FT = FunctionType::get(retType, paramTypes, isVarArg);
 
     Function *F = Function::Create(FT, Function::ExternalLinkage, newName, ctx.mod.get());
 

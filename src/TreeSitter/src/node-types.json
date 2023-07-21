@@ -155,6 +155,11 @@
     }
   },
   {
+    "type": "char",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "classAssign",
     "named": true,
     "fields": {},
@@ -311,6 +316,10 @@
         },
         {
           "type": "bool",
+          "named": true
+        },
+        {
+          "type": "char",
           "named": true
         },
         {
@@ -780,6 +789,10 @@
   },
   {
     "type": "&&",
+    "named": false
+  },
+  {
+    "type": "'",
     "named": false
   },
   {

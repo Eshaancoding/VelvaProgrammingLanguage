@@ -421,6 +421,10 @@
         {
           "type": "SYMBOL",
           "name": "pointer"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "char"
         }
       ]
     },
@@ -1371,6 +1375,23 @@
         {
           "type": "STRING",
           "value": "\""
+        }
+      ]
+    },
+    "char": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "'"
+        },
+        {
+          "type": "PATTERN",
+          "value": "."
+        },
+        {
+          "type": "STRING",
+          "value": "'"
         }
       ]
     },

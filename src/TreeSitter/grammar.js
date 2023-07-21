@@ -109,7 +109,8 @@ module.exports = grammar({
             $.func_call,
             $.string,
             $.parathensisExpr,
-            $.pointer
+            $.pointer,
+            $.char
         ),
 
         pointer: $ => seq(
@@ -259,7 +260,6 @@ module.exports = grammar({
             ')'
         ),
 
-
         // conditionals
 
         _if_continuation: $ => choice(
@@ -307,6 +307,13 @@ module.exports = grammar({
             field("content", repeat(/./)),
             "\""   
         ),
+        
+        char: $ => seq(
+            "\'",
+            /./,
+            "\'"
+        ),
+
         _endLn: $ => choice(
             "\n", 
             ";",
