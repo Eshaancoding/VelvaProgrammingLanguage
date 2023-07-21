@@ -768,10 +768,31 @@
       "members": [
         {
           "type": "PREC_LEFT",
-          "value": 3,
+          "value": 4,
           "content": {
             "type": "SYMBOL",
             "name": "parathensisExpr"
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 3,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "expression"
+              },
+              {
+                "type": "STRING",
+                "value": "as"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "primitive_type"
+              }
+            ]
           }
         },
         {
@@ -904,6 +925,10 @@
         {
           "type": "STRING",
           "value": "float"
+        },
+        {
+          "type": "STRING",
+          "value": "double"
         },
         {
           "type": "STRING",
@@ -1417,8 +1442,25 @@
       "value": "[a-zA-Z]+"
     },
     "number": {
-      "type": "PATTERN",
-      "value": "[+-]?(\\d+([.]\\d*)?([eE][+-]?\\d+)?|[.]\\d+([eE][+-]?\\d+)?)"
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[+-]?(\\d+([.]\\d*)?([eE][+-]?\\d+)?|[.]\\d+([eE][+-]?\\d+)?)"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "f"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
     },
     "true": {
       "type": "CHOICE",

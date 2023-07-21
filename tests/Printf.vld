@@ -1,3 +1,5 @@
 int x = 3
 char theChar = 'c'
-printf("int value: %d and the char: %c", x, theChar)
+float f = 3.0f
+double d = 5.0
+printf("int %d and char: %c and two f: %f %f", x, theChar, d, f as double)

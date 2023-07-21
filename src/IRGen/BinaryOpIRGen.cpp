@@ -17,6 +17,16 @@ std::string determineType (std::string firstType, std::string secondType) {
 }
 
 optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
+    if (asTypeOp != "")  {
+        retType = asTypeOp;
+        if (retType == "int")
+            return ctx.builder->CreateIntCast(*(LHS->codegen(ctx)), ctx.convertToLLVMType(asTypeOp), false);
+        if (retType == "float" || retType == "double")
+            return ctx.builder->CreateFPCast(*(LHS->codegen(ctx)), ctx.convertToLLVMType(asTypeOp));
+
+        // more casts????
+    }
+
     retType = "bool";
     if (op == "and") {
         // expr1 ? expr2 : false

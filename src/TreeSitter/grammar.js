@@ -200,7 +200,8 @@ module.exports = grammar({
 
         // binary expression (needs testing)
         binary_expression: $ => choice(
-            prec.left(3, $.parathensisExpr),
+            prec.left(4, $.parathensisExpr),
+            prec.left(3, seq($.expression, 'as', $.primitive_type)),
             prec.left(2, seq($.expression, '*', $.expression)),
             prec.left(2, seq($.expression, '/', $.expression)),
             prec.left(1, seq($.expression, '-', $.expression)),
@@ -221,6 +222,7 @@ module.exports = grammar({
             ),
             'int',
             'float',
+            'double',
             'bool',
             'char', 
             $.identifier // if a class 
@@ -320,7 +322,10 @@ module.exports = grammar({
         ), 
         anyVal: $ => /.*/,
         identifier: $ => /[a-zA-Z]+/,
-        number: $ => /[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/,
+        number: $ => seq(
+            /[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/,
+            optional('f') // to denote float
+        ),
         true: $ => choice("true", "True"),
         false: $ => choice("false", "False"),
         bool: $ => choice($.true, $.false)

@@ -36,12 +36,20 @@ unique_ptr<Expr> Parser::ParseExpression () {
 unique_ptr<Expr> Parser::ParseNumber() {
     auto src = cursor.getSourceStr();
 
+    bool isFloat = src[src.size()-1] == 'f';
+
     // detect if it is a float or not
     istringstream is(src);
-    if (strchr(src.c_str(), '.') != NULL) {
+
+    if (isFloat) {
         float x;
-        is >> x; 
+        is >> x;
         return make_unique<FloatExpr>(x);
+    }
+    if (strchr(src.c_str(), '.') != NULL) {
+        double x;
+        is >> x; 
+        return make_unique<DoubleExpr>(x);
     }
     else {
         int x;
@@ -77,11 +85,15 @@ unique_ptr<Expr> Parser::ParseBinaryOp() {
 
     // go to second expression
     cursor.goToSibling();
-    auto secondExpression = ParseExpression();
+    unique_ptr<Expr> secondExpression = nullptr;
+    string asTypeOp = "";
+    
+    if (op != "as") secondExpression = ParseExpression();
+    else asTypeOp = cursor.getSourceStr();
     
     cursor.goToParent(); // redirect back to the binary expression
     
-    return make_unique<BinaryOpExpr>(op, move(firstExpression), move(secondExpression));
+    return make_unique<BinaryOpExpr>(op, move(firstExpression), move(secondExpression), asTypeOp);
 }
 
 unique_ptr<Expr> Parser::ParseAssigment() {

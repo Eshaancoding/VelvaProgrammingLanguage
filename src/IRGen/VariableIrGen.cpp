@@ -12,6 +12,11 @@ optional<Value *> FloatExpr::codegen(CompilationContext &ctx)
     return ConstantFP::get(*ctx.context, APFloat(decimal));
 }
 
+optional<Value *> DoubleExpr::codegen(CompilationContext &ctx)
+{
+    return ConstantFP::get(*ctx.context, APFloat(decimal));
+}
+
 optional<Value *> StringExpr::codegen(CompilationContext &ctx)
 {
     auto st = llvm::ConstantDataArray::getString(*ctx.context, text);

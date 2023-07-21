@@ -5,6 +5,7 @@ string Expr::return_type() { return "def expr"; }
 string ClassExpr::return_type() { return "class"; }
 string IntExpr::return_type() { return "int"; }
 string FloatExpr::return_type() { return "float"; }
+string DoubleExpr::return_type() { return "double"; }
 string StringExpr::return_type() { return "string"; }
 string ErrorExpr::return_type() { return "error";}
 string VarDeclareExpr::return_type() { return "VarDeclareExpr"; }

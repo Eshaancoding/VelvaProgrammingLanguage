@@ -86,9 +86,21 @@ class FloatExpr : public Expr {
         * 
         */
         float decimal;
-        public: FloatExpr(float d) : decimal(d) {};
+        FloatExpr(float d) : decimal(d) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type () override; 
+};
+
+class DoubleExpr : public Expr {
+    public:
+        /**
+         * @brief the value of the decimal
+         * 
+         */
+        double decimal;
+        DoubleExpr (double d) : decimal(d) {};
+        optional<Value*> codegen (CompilationContext &ctx) override;
+        string return_type () override;
 };
 
 /**
@@ -126,6 +138,8 @@ class CallFuncExpr : public Expr {
  */
 class BinaryOpExpr : public Expr {
     public: 
+        string asTypeOp;
+
         /**
          * @brief operation used. Could be <= or >= as well (that's why represented as string)
         */
@@ -138,7 +152,7 @@ class BinaryOpExpr : public Expr {
 
         string retType; 
 
-        BinaryOpExpr (string op, unique_ptr<Expr> LHS, unique_ptr<Expr> RHS) : op(op), LHS(move(LHS)), RHS(move(RHS)) {}
+        BinaryOpExpr (string op, unique_ptr<Expr> LHS, unique_ptr<Expr> RHS, string asTypeOp="") : op(op), LHS(move(LHS)), RHS(move(RHS)), asTypeOp(asTypeOp) {}
         std::optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type() override;
 };

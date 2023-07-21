@@ -80,6 +80,10 @@
         {
           "type": "parathensisExpr",
           "named": true
+        },
+        {
+          "type": "primitive_type",
+          "named": true
         }
       ]
     }
@@ -552,6 +556,11 @@
     }
   },
   {
+    "type": "number",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "or",
     "named": true,
     "fields": {}
@@ -904,6 +913,10 @@
     "named": false
   },
   {
+    "type": "as",
+    "named": false
+  },
+  {
     "type": "auto",
     "named": false
   },
@@ -920,7 +933,15 @@
     "named": false
   },
   {
+    "type": "double",
+    "named": false
+  },
+  {
     "type": "else",
+    "named": false
+  },
+  {
+    "type": "f",
     "named": false
   },
   {
@@ -958,10 +979,6 @@
   {
     "type": "int",
     "named": false
-  },
-  {
-    "type": "number",
-    "named": true
   },
   {
     "type": "or",
