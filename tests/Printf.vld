@@ -1,0 +1,3 @@
+int x = 3
+char theChar = 'c'
+printf("int value: %d and the char: %c", x, theChar)

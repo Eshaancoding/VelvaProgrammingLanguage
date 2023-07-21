@@ -60,6 +60,7 @@ set(TestList
   "Arrays 123"
   "PointerDouble 2"
   "ClassInClass 33"
+  "Printf int\ value:\ 3\ and\ the\ char:\ c"
 )
 
 include(CTest)

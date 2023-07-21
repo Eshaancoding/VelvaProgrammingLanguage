@@ -52,12 +52,8 @@ int main(int argc, const char **argv)
     if (!lessVerbose) printf("Verify function (1 if successful else 0): %d\n", !res);
 
     if (!lessVerbose)
-        printf("Converting to assembly...\n");
-    system("llc --opaque-pointers main.ll");
-
-    if (!lessVerbose)
         printf("Compiling...\n");
-    system("clang -fPIE -fpie main.s");
+    system("clang -Wno-override-module -fPIE -fpie main.ll");
 
     if (!lessVerbose)
         printf("Running Executable...\n");

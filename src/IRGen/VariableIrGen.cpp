@@ -14,22 +14,12 @@ optional<Value *> FloatExpr::codegen(CompilationContext &ctx)
 
 optional<Value *> StringExpr::codegen(CompilationContext &ctx)
 {
-    auto i8 = IntegerType::get(*ctx.context, 8);
-    vector<Constant*> chars(text.size());
-    for(int i = 0; i < text.size(); ++i) {
-        chars[i] = ConstantInt::get(i8, text[i]);
-    }
-    chars.push_back(ConstantInt::get(i8, 0));
+    auto st = llvm::ConstantDataArray::getString(*ctx.context, text);
+    llvm::GlobalVariable *formatStrVar = new llvm::GlobalVariable(*ctx.mod, st->getType(), true,
+                                        llvm::GlobalValue::PrivateLinkage, st, ".str");
 
-    auto stringType = ArrayType::get(i8, chars.size());
-
-    auto globalDecl = (GlobalVariable*) ctx.mod->getOrInsertGlobal(ctx.names.use(".str"), stringType);
-    globalDecl->setInitializer(ConstantArray::get(stringType, chars));
-    globalDecl->setConstant(true);
-    globalDecl->setLinkage(GlobalValue::LinkageTypes::PrivateLinkage);
-    globalDecl->setUnnamedAddr(GlobalValue::UnnamedAddr::Global);
-
-    return ConstantExpr::getBitCast(globalDecl, i8->getPointerTo());
+    llvm::Value* strPtr = ctx.builder->CreateBitCast(formatStrVar, ctx.convertToLLVMType("string"), "strPtr");
+    return strPtr;
 }
 
 optional<Value *> PointerExpr::codegen (CompilationContext &ctx) {

@@ -1,3 +1,0 @@
-char test = 'a'
-ptr<char> x = &test
-printf(x)
