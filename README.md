@@ -26,7 +26,9 @@ The Velva Programming Language is a low-level programming language designed for 
 	* Ig you can call `ld` and `clang` temporaily but one day you have to make it into a c interface one day you know
 
 * better error messages
-* enums, structs
+* enums, structs 
+
+* [more complex escape chars](https://en.cppreference.com/w/cpp/language/escape)
 
 ========================================================
 * Create a full or auto diff / neural network then :0

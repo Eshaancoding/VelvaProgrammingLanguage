@@ -23,6 +23,8 @@ optional<Value*> BinaryOpExpr::codegen (CompilationContext &ctx) {
             return ctx.builder->CreateIntCast(*(LHS->codegen(ctx)), ctx.convertToLLVMType(asTypeOp), false);
         if (retType == "float" || retType == "double")
             return ctx.builder->CreateFPCast(*(LHS->codegen(ctx)), ctx.convertToLLVMType(asTypeOp));
+        if (retType.substr(0, 4) == "ptr<") 
+            return ctx.builder->CreatePointerCast(*(LHS->codegen(ctx)), ctx.convertToLLVMType(asTypeOp));
 
         // more casts????
     }

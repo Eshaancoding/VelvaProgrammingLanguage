@@ -1,5 +1,34 @@
 #include "AST.hpp"
 #include "llvm/Passes/PassBuilder.h"
+#include <sstream>
+#include <iomanip>
+
+std::string escape_to_hex(const std::string& input_str) {
+    std::ostringstream hex_str;
+    bool isescapeChar = false;
+    for (char ch : input_str) {
+        if (ch == '\\' && !isescapeChar) isescapeChar = true;
+        else if (isescapeChar) {
+            switch (ch) {
+                case '\'': hex_str << "\x27"; break;
+                case '\"': hex_str << "\x22"; break;
+                case '?': hex_str << "\x3F"; break;
+                case '\\': hex_str << "\x5C"; break;
+                case 'a': hex_str << "\x07"; break;
+                case 'b': hex_str << "\x08"; break;
+                case 'f': hex_str << "\x0C"; break;
+                case 'n': hex_str << "\x0A"; break;
+                case 'r': hex_str << "\x0D"; break;
+                case 't': hex_str << "\x09"; break;
+                case 'v': hex_str << "\x0B"; break;
+            }
+
+            isescapeChar = false;
+        }
+        else hex_str << ch;
+    }
+    return hex_str.str();
+}
 
 // ********************************** TYPES **********************************
 optional<Value *> IntExpr::codegen(CompilationContext &ctx)
@@ -19,6 +48,8 @@ optional<Value *> DoubleExpr::codegen(CompilationContext &ctx)
 
 optional<Value *> StringExpr::codegen(CompilationContext &ctx)
 {
+    // change text such that any escape characters will be changed    
+    text = escape_to_hex(text);
     auto st = llvm::ConstantDataArray::getString(*ctx.context, text);
     llvm::GlobalVariable *formatStrVar = new llvm::GlobalVariable(*ctx.mod, st->getType(), true,
                                         llvm::GlobalValue::PrivateLinkage, st, ".str");
