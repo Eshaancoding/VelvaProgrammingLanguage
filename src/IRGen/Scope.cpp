@@ -42,8 +42,8 @@ variant<VariableScope, ClassScope> CompilationContext::findVarName(string varNam
     }
 
     // if we are comiling class it might be a class scope thing
-    if (runningClass != "" && this->classesDefined.rbegin() != this->classesDefined.rend())
-        return this->classesDefined.rbegin()->second;
+    if (runningClass != "")
+        return this->classesDefined[runningClass];
 
     throw invalid_argument("No variable by the name of '" + varName + "'");
 }

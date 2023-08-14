@@ -1,0 +1,51 @@
+func helloThere (int x, int i) {
+    // function tests
+    int glob_id = get_global_id(0)
+    
+    // types + var declare
+    int x = 2
+    float v = 3.0f
+    double db = 6.0
+    char ch = 'h'
+    
+    // binary op + ternary + var use expr + accessor
+    int bin = 3 + 3 * x + (x == 2 ? 6 : 2) 
+    
+    // assign expr
+    bin = 3  
+
+    // for loops + block expr 
+    for (int x = 0; x < 6; x++) {
+        bin = bin + x 
+    }
+
+    // while loops
+    int teh = 0
+    while (teh < 5) {
+        bin++ 
+        teh++ 
+    }
+
+    // if statements/branching   
+    int result = 0
+    if (teh == 3) {
+        result = 2 
+    } 
+    else if (teh == 6) {
+        result = 23
+    }
+    else if (teh == 23) {
+        result = 46
+    }
+    else {
+        result = 123
+    }
+    
+    // ptr tests
+    ptr<int> p = &x
+
+    a[0] = 3
+
+    float4 x = 3
+}
+

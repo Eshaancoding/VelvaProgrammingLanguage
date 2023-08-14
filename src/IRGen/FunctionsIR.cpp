@@ -55,7 +55,7 @@ optional<Function *> DeclareFunctionExpr::codegen(CompilationContext &ctx)
             } else if (ctx.runningClass != "") { // method (within class) declaration
                 // create GEP instruction
                 ctx.thisValue = &arg; // set the this value up for functions methods within functions methods to be called
-                auto scope = &ctx.classesDefined.rbegin()->second;
+                auto scope = &ctx.classesDefined[ctx.runningClass];
                 int indCount = 0;
                 for (int v = 0; v < scope->variables.size(); v++) {
                     scope->variableValues.push_back(ctx.builder->CreateGEP(

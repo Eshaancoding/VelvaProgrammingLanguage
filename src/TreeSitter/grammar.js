@@ -321,7 +321,10 @@ module.exports = grammar({
             ";",
         ), 
         anyVal: $ => /.*/,
-        identifier: $ => /[a-zA-Z]+/,
+
+        // me? copying crom tree-sitter-c? pfffffftt
+        identifier: $ => /(\p{XID_Start}|_|\\u[0-9A-Fa-f]{4}|\\U[0-9A-Fa-f]{8})(\p{XID_Continue}|\\u[0-9A-Fa-f]{4}|\\U[0-9A-Fa-f]{8})*/,
+
         number: $ => seq(
             /[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/,
             optional('f') // to denote float

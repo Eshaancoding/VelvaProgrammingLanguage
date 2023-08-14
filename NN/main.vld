@@ -1,0 +1,92 @@
+// 1d array
+class Vector { 
+private:
+    ptr<double> arr;
+    int len
+
+public:
+    init (int x) {
+        len = x
+        arr = malloc(len * 8) as ptr<double>
+    }
+    
+    func set (int ind, double val) {
+        arr[ind] = val
+    }
+    
+    func print () {
+        for (int i = 0; i < len; i++) {
+            printf("%.3f ", arr[i]);
+        }
+        printf("\n")
+    }
+}
+
+Vector vec (3)
+vec.set(2, 3.21)
+vec.print()
+printf("\n")
+
+// 2d array
+class Matrix {
+private:
+    int w
+    int h
+    ptr<double> arr
+
+public:
+    init (int wp, int hp) {
+        w = wp
+        h = hp
+        arr = malloc(w * h * 8) as ptr<double>
+    }
+
+    func set (int indY, int indX, double val) {
+        arr[indY * h + indX] = val
+    }
+
+    func print () {
+        for (int i = 0; i < h; i++) {
+            for (int x = 0; x < w; x++) {
+                printf("%.3f ", arr[i * h + x]) 
+            }
+
+            printf("\n");
+        }
+    }
+
+    int returnWidth () {
+        return w 
+    }
+
+    int returnHeight () {
+        return h
+    }
+}
+
+Matrix mat (3,3)
+mat.set(1,1,3.14159)
+mat.set(0,1,1.14159)
+mat.print()
+
+// Linear NN!
+class Linear {
+private:
+    Matrix weightMatrix
+    Vector biasMatrix
+    
+    func dotProduct (Vector x)
+    
+public:
+    init (int inputSize, int outputSize) {
+        weightMatrix = Matrix(inputSize, outputSize)
+        biasMatrix = Vector(outputSize)
+        
+    }
+
+    func forward () {
+         
+    }
+
+    func backward () {}
+}

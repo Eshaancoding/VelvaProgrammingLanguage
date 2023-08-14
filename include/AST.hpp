@@ -56,6 +56,11 @@ class Expr {
          */
         virtual string returnVariableDefined ();
 
+        /**
+         * @brief OpenCL stuff
+         * 
+         */
+        virtual string returnOpenCLStr ();
 };
 
 /**
@@ -73,6 +78,7 @@ class IntExpr : public Expr {
         IntExpr(int i, int numBits=32) : num(i), numBits(numBits) {}; // defaults to 32 for int
         optional<Value*> codegen(CompilationContext &ctx) override; 
         string return_type () override; // just returns string, declared in AST Constructors.cpp
+        string returnOpenCLStr () override; 
 };
 
 /**
@@ -89,6 +95,7 @@ class FloatExpr : public Expr {
         FloatExpr(float d) : decimal(d) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type () override; 
+        string returnOpenCLStr () override; 
 };
 
 class DoubleExpr : public Expr {
@@ -101,6 +108,7 @@ class DoubleExpr : public Expr {
         DoubleExpr (double d) : decimal(d) {};
         optional<Value*> codegen (CompilationContext &ctx) override;
         string return_type () override;
+        string returnOpenCLStr () override; 
 };
 
 /**
@@ -130,6 +138,8 @@ class CallFuncExpr : public Expr {
         CallFuncExpr(string classVar, string name, vector<unique_ptr<Expr>> params) : functionName(name), classVar(classVar), params(std::move(params)) {};
         std::optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type () override; 
+
+        string returnOpenCLStr () override;
 };
 
 /**
@@ -155,6 +165,7 @@ class BinaryOpExpr : public Expr {
         BinaryOpExpr (string op, unique_ptr<Expr> LHS, unique_ptr<Expr> RHS, string asTypeOp="") : op(op), LHS(move(LHS)), RHS(move(RHS)), asTypeOp(asTypeOp) {}
         std::optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type() override;
+        string returnOpenCLStr () override;
 };
 
 class DeclareFunctionExpr;
@@ -172,6 +183,8 @@ class BlockExpr : public Expr {
         string return_type () override;
         optional<Value*> codegen (CompilationContext &ctx) override;
         vector<string> varsDefined (); // this is particularly helpful when finding out init classes, defined in BlockIRGen.cpp
+
+        string returnOpenCLStr () override;
 };
 
 /**
@@ -230,6 +243,7 @@ class DeclareFunctionExpr {
         ) : isPure(isPure), name(name), params(params), returnType(returnType), isExternal(isExternal), body(move(body)), isPrivate(isPrivate), isVarArg(isVarArg) {};
         optional<Function*> codegen(CompilationContext &ctx);
         string return_type (); 
+        string returnOpenCLStr ();
 };
 
 
@@ -274,6 +288,7 @@ class VarUseExpr : public Expr {
         VarUseExpr(string var) : var(var) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type() override;
+        string returnOpenCLStr () override;
 };
 //didn't we have more mutability types before, we'll add more later.
 /**
@@ -301,10 +316,10 @@ typedef enum {
 class VarDeclareExpr : public Expr { 
     public:
         /**
-         * @brief if its a var decl, we might store parameters
+         * @brief if its a var decl class init (ex: Hello hell (param1, param2); initializes class ), we need to store parameters
          * 
          */
-        vector<unique_ptr<Expr>> params;
+        vector<unique_ptr<Expr>> params; 
 
         /**
          * @brief Represents the mutability protections of the variable
@@ -332,7 +347,7 @@ class VarDeclareExpr : public Expr {
         void alloc(CompilationContext &ctx);
         optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type() override;
-
+        string returnOpenCLStr () override;
 };
 
 /**
@@ -370,6 +385,7 @@ class AssignExpr : public Expr {
         string return_type() override;
 
         string returnVariableDefined () override {return varName;};
+        string returnOpenCLStr () override;
 };
 
 class BranchExpr: public Expr {
@@ -382,6 +398,7 @@ class BranchExpr: public Expr {
         BranchExpr(vector<tuple<optional<unique_ptr<Expr>>, unique_ptr<Expr>>> ifmaps) : ifMap(move(ifmaps)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type() override;
+        string returnOpenCLStr () override;
 };
 
 class ForExpr : public Expr {
@@ -396,6 +413,7 @@ class ForExpr : public Expr {
 
         optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type() override;
+        string returnOpenCLStr () override;
 };
 
 
@@ -408,6 +426,7 @@ class TernaryExpr: public Expr {
         TernaryExpr(unique_ptr<Expr> ifP, unique_ptr<Expr> thenP, unique_ptr<Expr> elseP) : _if(move(ifP)), then(move(thenP)), _else(move(elseP)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type() override;
+        string returnOpenCLStr () override;
 };
 
 class WhileExpr: public Expr {
@@ -426,6 +445,7 @@ class WhileExpr: public Expr {
         WhileExpr(unique_ptr<Expr> cond, unique_ptr<Expr> body) : cond(move(cond)), body(move(body)) {};
         optional<Value*> codegen(CompilationContext &ctx) override;
         string return_type() override;
+        string returnOpenCLStr () override;
 };
 
 /**
@@ -443,6 +463,7 @@ class ReturnExpr : public Expr {
         ReturnExpr (optional<unique_ptr<Expr>> val) : val(move(val)) {};
         optional<Value*> codegen (CompilationContext &ctx ) override; 
         string return_type() override;
+        string returnOpenCLStr () override;
 };
 
 /**
@@ -524,6 +545,7 @@ class PointerExpr : public Expr {
     
         optional<Value*> codegen (CompilationContext &ctx) override;
         string return_type() override;
+        string returnOpenCLStr () override;
 };
 
 class AccessorExpr : public Expr { // a[0]
@@ -535,6 +557,7 @@ class AccessorExpr : public Expr { // a[0]
 
         optional<Value*> codegen (CompilationContext &ctx) override;
         string return_type() override;
+        string returnOpenCLStr () override;
 };
 
 class CharExpr : public Expr { // 'a'
@@ -545,6 +568,7 @@ class CharExpr : public Expr { // 'a'
         
         optional<Value*> codegen (CompilationContext &ctx) override;
         string return_type() override;
+        string returnOpenCLStr () override;
 };
 
 #endif

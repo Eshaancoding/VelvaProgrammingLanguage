@@ -36,6 +36,11 @@ int main(int argc, const char **argv)
     if (!lessVerbose)
         pars.printTree(true);
     auto main_fn = pars.ParseAST();
+
+    // ================== DELETE THIS LATER  ================== 
+    printf("OpenCL str: \n%s\n", main_fn->returnOpenCLStr().c_str());
+    exit(0); // ================== DELETE THIS LATER  ================== 
+ 
     if (!lessVerbose) printf("============================= CodeGen =======================\n");
     
     auto fn = main_fn->codegen(ctx);

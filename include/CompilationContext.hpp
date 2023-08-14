@@ -75,7 +75,7 @@ struct CompilationContext {
         std::unique_ptr<IRBuilder<>> builder;
         std::unique_ptr<Module> mod;
 
-        map<string, ClassScope> classesDefined;
+        unordered_map<string, ClassScope> classesDefined;
         vector<Scope> scopes;
         Scope globals;
 
