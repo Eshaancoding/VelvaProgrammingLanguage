@@ -210,25 +210,7 @@ for (int i : array) {
 }
 
 for (int i = 0; i < 3; i++) {
-	// No one cares about you.
 }
-
-
-// Data structures, use only tensor
-
-// array
-
-int myTensor = tensor<type>(dimension); // arguments with dimensions of the 
-// one dimension makes array, other dimension can be fixed
-
-// 2d array
-int myMat = tensor<type type>(dimension, dimension); // matrix
-
-// 1d array
-tensor array = [2.3,4.2]
-
-// 2d array
-tensor array = [[2.3,4.2],[2.3,4.2]]
 
 // hashmap
 map<int, int> myMap = [{2.3:62}, {63:2.3}];
