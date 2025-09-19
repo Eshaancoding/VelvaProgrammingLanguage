@@ -1,10 +1,10 @@
 # Velva Programming Language
 
-The Velva Programming Language is a low-level programming language designed for extensibility, friendly syntax, and equipped with plenty of useful libraries.
+The Velva Programming Language is a low-level programming language designed for extensibility, friendly syntax, and equipped with plenty of useful libraries. It parses the frontend code using Treesitter. Then, it converts to individual IR instructions using LLVM.
 
 ## Todo:
 
-* Assign string??? idk how that works
+* Assign string
 	* escape characters like \n support
 
 * Check if scoping really works
@@ -52,8 +52,9 @@ The tests are at the `tests` folder of this repo. Almost all of .vld are then ch
 
 ## How to run?
 
-* You could go to the Releases tab and select your operating system. 
+* You could go to the Releases tab and select your operating system. /j
     * Our website is [here](https://www.google.com/search?q=nonexistent+programming+language+website).
+* Sadly, the way to run is the build it manually.
 
 ## How to build manually?
 
@@ -66,18 +67,6 @@ The tests are at the `tests` folder of this repo. Almost all of .vld are then ch
     * Recommended is Ninja, since it has default parrallel-worker support (faster).
 6. Then build the program using `make`, `ninja`, etc. (depends on the generator of your choice) 
 7. Use `veld main.vtk` to run the program
-
-## Why are we doing this?
-
-* We don't know
-* Why Beshaan is doing this: because he's bored of machine learning and frontend development from time to time
-    * He also likes C++ a lot and always wanted to make a big project out of it.
-    * He also wants to learn from Daniel D'Silva about low-level programming stuff.
-
-## How long will this take? 
-
-* Like forever.
-* No seriously. Like forever
 
 ## Target Syntax:
 
